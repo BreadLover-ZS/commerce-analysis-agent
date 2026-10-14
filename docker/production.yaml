@@ -1,0 +1,33 @@
+# Use together with docker-compose.yaml behind this TLS ingress.
+services:
+  init:
+    environment:
+      APP_ENV: production
+      COOKIE_SECURE: "true"
+      SEED_DEMO: "false"
+  api:
+    environment:
+      APP_ENV: production
+      COOKIE_SECURE: "true"
+      SEED_DEMO: "false"
+  worker:
+    environment:
+      APP_ENV: production
+      COOKIE_SECURE: "true"
+      SEED_DEMO: "false"
+  frontend:
+    ports: !reset []
+  ingress:
+    image: caddy:2-alpine
+    environment:
+      DOMAIN: ${DOMAIN:?Set a real domain}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [frontend]
+    restart: unless-stopped
+volumes:
+  caddy_data:
+  caddy_config:

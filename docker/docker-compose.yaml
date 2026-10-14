@@ -1,0 +1,63 @@
+name: commerce-analysis-agent
+x-app: &app
+  build:
+    context: ..
+    dockerfile: docker/backend.Dockerfile
+  env_file: ../.env
+  environment: &environment
+    DATABASE_URL: postgresql+psycopg://commerce:${APP_DB_PASSWORD:?Set APP_DB_PASSWORD}@postgres:5432/commerce
+    DATA_DIR: /app/.data
+  volumes: ["runtime_data:/app/.data"]
+  read_only: true
+  tmpfs: ["/tmp"]
+  security_opt: ["no-new-privileges:true"]
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: commerce
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set APP_DB_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init-postgres.sh:/docker-entrypoint-initdb.d/01-commerce.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d commerce"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  init:
+    <<: *app
+    command: ["python", "-m", "app.cli", "init"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: "no"
+  api:
+    <<: *app
+    depends_on:
+      init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  worker:
+    <<: *app
+    command: ["python", "-m", "app.tasks.worker"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    restart: unless-stopped
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+    ports: ["127.0.0.1:${WEB_PORT:-8080}:8080"]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+volumes:
+  runtime_data:
+  pg_data:

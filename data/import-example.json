@@ -1,0 +1,5 @@
+{
+  "currency": "CNY",
+  "products": [{"sku":"DEMO-NEW","name":"教学样例商品","category":"日用生活","price_cents":9900,"stock":50,"lead_days":7,"stock_as_of":"2026-09-30"}],
+  "daily_sales": [{"sku":"DEMO-NEW","day":"2026-09-30","paid_units":10,"refunded_units":1,"revenue_cents":99000,"refund_cents":9900}]
+}

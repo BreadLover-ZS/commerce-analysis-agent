@@ -1,0 +1,77 @@
+name: Verify commerce-analysis-agent
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: isolated-ci-password
+          POSTGRES_DB: commerce_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_POSTGRES_URL: postgresql+psycopg://postgres:isolated-ci-password@localhost:5432/commerce_test
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.16
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - run: uv run ruff check app tests migrations evaluations scripts
+      - run: uv run ruff format --check app tests migrations evaluations scripts
+      - run: uv run pytest -q
+      - run: uv run python -m evaluations.run --output evaluations/results/ci-demo.json
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.16
+          python-version: "3.12"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.25.0
+          run_install: false
+      - run: uv sync --frozen
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: pnpm build
+        working-directory: frontend
+      - run: pnpm format:check
+        working-directory: frontend
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: frontend
+      - run: pnpm test:e2e
+        working-directory: frontend
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: 0.11.16
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - run: cp .env.example .env
+      - run: docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
+      - run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:8080/api/config; then exit 0; fi
+            sleep 2
+          done
+          docker compose --env-file .env -f docker/docker-compose.yaml logs
+          exit 1
+      - run: uv run python scripts/container_smoke.py
+      - if: always()
+        run: docker compose --env-file .env -f docker/docker-compose.yaml down -v
