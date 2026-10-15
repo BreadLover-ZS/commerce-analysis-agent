@@ -10,8 +10,8 @@
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
 来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
 最新开发与验证范围见 [用量回执与服务核对](docs/16-usage-receipts-and-provider-check.md)。本地回归
-通过；70e5850对应的库存、内部规则真实单例通过。综合补货因研究阶段误报数据缺口
-而失败，可用性索引修复尚待真实复测，不将模拟结果当作模型效果。
+通过；70e5850对应的库存、内部规则真实单例通过。最新综合补货研究自动通过，
+但报告误拒回退，逐项核对还发现周期缺口错误；整条仍为FAIL，不将模拟结果当作模型效果。
 
 ![电商运营分析助手工作台](docs/images/commerce-analysis-desktop.png)
 

@@ -34,6 +34,7 @@ async def test_mixed_research_repair_knows_available_business_facts(setup, missi
                 context, sources = json.loads(context), json.loads(sources)
                 assert all(source["kind"] != "metrics" for source in sources)
                 assert context["selected_sources"] == ["inventory", "documents"]
+                assert context["period"] == ["2026-09-01", "2026-09-30"]
                 index = context["business_fact_index"]
                 assert len(index) == 1 and index[0]["tool"] == "inventory"
                 assert "CUP-01.stock" in index[0]["available_fact_keys"]

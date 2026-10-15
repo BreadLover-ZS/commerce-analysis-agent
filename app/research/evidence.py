@@ -7,6 +7,17 @@ from app.research.schemas import Claim, MetricReference, ReportSection, Research
 SECTION_NAMES = ["经营表现", "库存风险", "竞品观察", "行动建议"]
 
 
+def unique_limitations(notes):
+    """Ignore only surrounding space and sentence-final punctuation, not meaning."""
+    seen, result = set(), []
+    for note in notes:
+        key = note.strip().rstrip("。.!！")
+        if key and key not in seen:
+            seen.add(key)
+            result.append(note)
+    return result
+
+
 def numbers(text):
     text = re.sub(r"(?<=\d),(?=\d{3}(?:\D|$))", "", text)
     return {Decimal(n) for n in re.findall(r"(?<![A-Za-z0-9])[-+]?\d+(?:\.\d+)?", text)}
@@ -257,7 +268,7 @@ def deterministic_report(evidence: list[dict], gaps: list[str]) -> ResearchRepor
             sections=[
                 ReportSection(name=name, claims=claims[:8]) for name, claims in sections.items()
             ],
-            limitations=list(dict.fromkeys(gaps))[:20],
+            limitations=unique_limitations(gaps)[:20],
         ),
         evidence,
     )

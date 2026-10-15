@@ -8,7 +8,12 @@ from sqlalchemy import delete, select
 
 from app.commerce.service import inventory_risks, sales_summary, search_documents
 from app.research.context import evidence_package
-from app.research.evidence import deterministic_report, render_bound_metrics, validate_report
+from app.research.evidence import (
+    deterministic_report,
+    render_bound_metrics,
+    unique_limitations,
+    validate_report,
+)
 from app.research.schemas import Claim, MetricReference, ResearchReport, ResearchSynthesis
 from app.research.synthesis import validate_synthesis
 from app.research.tools import ToolGateway
@@ -16,6 +21,11 @@ from app.storage.models import Chunk, DailySale, Document, Product
 from app.tasks.worker import Worker, checkpoint_store
 from tests.conftest import new_task
 from tests.fake_model import ScriptedCommerceModel
+
+
+def test_limitation_dedup_preserves_negation_numbers_and_internal_space():
+    notes = ["已有库存。", "已有库存", "未有库存。", "阈值为60天。", "阈值为61天。", "1 0", "10"]
+    assert unique_limitations(notes) == [notes[0], *notes[2:]]
 
 
 @pytest.mark.parametrize(

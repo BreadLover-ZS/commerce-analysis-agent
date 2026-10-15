@@ -14,6 +14,39 @@ from tests.conftest import new_task
 from tests.fake_model import ScriptedCommerceModel
 
 
+async def test_review_receives_period_and_deduplicated_system_limitations(setup):
+    note = "库存为标注日期的快照；历史销量仅用于估计，不自动执行补货"
+
+    class LimitationReviewModel(ScriptedCommerceModel):
+        _reviewed: bool = PrivateAttr(default=False)
+
+        def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+            result = super()._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+            calls = result.generations[0].message.tool_calls
+            if not calls:
+                return result
+            if calls[0]["name"] == "ResearchReport":
+                calls[0]["args"]["limitations"].extend([note + "。", note + "."])
+            elif calls[0]["name"] == "SemanticReview":
+                context = json.loads(messages[-1].content.split("\n证据：\n", 1)[0])
+                assert context["period"] == ["2026-09-01", "2026-09-30"]
+                notes = context["report"]["limitations"]
+                assert sum(item.rstrip("。.!！") == note for item in notes) == 1
+                self._reviewed = True
+            return result
+
+    settings, repo, *_ = setup
+    settings.agent_mode, settings.llm_model = "live", "fake-commerce"
+    settings.openai_api_key = SecretStr("offline-limitations-review")
+    task = new_task(setup, sources=["inventory"])
+    model = LimitationReviewModel()
+    async with checkpoint_store(settings) as saver:
+        await Worker(repo, settings, saver, model).run_once()
+    done = repo.get_task(task["id"])
+    assert model._reviewed and done["validation"]["semantic_status"] == "model_reviewed"
+    assert not done["validation"].get("fallback_used")
+
+
 async def test_research_child_with_empty_next_is_resumed_before_reading_result(setup, monkeypatch):
     import app.research.graph as graph_module
 
