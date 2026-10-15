@@ -1,37 +1,22 @@
 """Offline SQLite backup; run with python -m scripts.backup_local, from repo root."""
 
 import argparse
-import hashlib
 import json
 import shutil
 import sqlite3
-import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
 from app.core.config import Settings
 from app.core.files import safe_path
+from scripts.backup_common import file_hash as _hash
+from scripts.backup_common import stage_directory as _stage
 
 
 def _sqlite_copy(source, target):
     with sqlite3.connect(f"file:{source.resolve()}?mode=ro", uri=True) as db:
         with sqlite3.connect(target) as destination:
             db.backup(destination)
-
-
-def _hash(path):
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def _stage(target):
-    if target.exists():
-        raise ValueError("目标必须是不存在的新目录，禁止覆盖")
-    target.parent.mkdir(parents=True, exist_ok=True)
-    return Path(tempfile.mkdtemp(prefix=".commerce-backup-", dir=target.parent))
 
 
 def create_backup(settings, target, services_stopped=False):

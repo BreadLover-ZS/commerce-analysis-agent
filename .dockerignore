@@ -2,6 +2,7 @@
 .env*
 .venv
 .data
+.backups
 .uv-cache
 **/__pycache__
 **/node_modules

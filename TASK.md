@@ -2,6 +2,10 @@
 
 目标：基于原项目实现可复现、证据可追溯、任务可恢复的求职与学习项目。
 
+当前交付：保持纯Python，按docs/17-python-delivery-plan.md补齐PostgreSQL备份恢复、
+隔离HTTP负载验收及运维入口。本地187条测试（含11条真实隔离PG）、32条离线评估通过；
+20任务PG教学负载通过，模型调用0。容器CI及发布结果见docs/18-python-delivery-validation.md。
+
 ## 已确认的设计
 
 - Python / FastAPI / React；LangGraph 管流程，Deep Agents 负责复杂研究。
@@ -18,10 +22,10 @@
 - [x] 前端、容器配置、自动化检查入口
 - [x] 固定评估、恢复与对抗测试、中文学习文档、验证报告
 
-当前开发验证：170条后端测试通过（包含7条真实隔离 PostgreSQL）、32条固定离线评估。
+当前开发验证：187条后端测试通过（包含11条真实隔离PostgreSQL）、32条固定离线评估。
 当前8条浏览器检查通过（7条模拟诊断、1条完整demo）；远端CI发布时单独核对。DeepSeek真实销售/
-库存/规则单用例在对应修复快照通过，综合研究仍有FAIL/未验，最新见
-docs/16-usage-receipts-and-provider-check.md；不视为完整模型验收。
+库存/规则/综合三个教学单例在f3a12de同一实现通过，历史失败保留，最新见
+docs/16-usage-receipts-and-provider-check.md；不视为完整模型或稳定性验收。
 
 第二轮按 docs/08-development-plan.md 实施：
 

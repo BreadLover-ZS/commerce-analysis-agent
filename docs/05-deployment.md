@@ -92,8 +92,8 @@ uv run python -m app.cli add-user --email colleague@example.com --tenant primary
 备份必须覆盖两者；仅备份检查点不能恢复文件，仅备份文件不能恢复任务和权限。
 本地 SQLite 检查点在 DATA_DIR/checkpoints.sqlite；PostgreSQL 在同一数据库 schema。
 
-不要对活跃任务做清理。当前没有自动保留周期/对象存储/PostgreSQL备份恢复工具，运营者需要
-设置卷容量监控、备份与保留策略；自动清理可作为后续独立、有测试的功能。
+不要对活跃任务做清理。SQLite和PostgreSQL均有离线备份恢复CLI；当前没有自动保留周期、
+对象存储或定时备份调度，运营者仍需设置卷容量监控、备份频率和保留策略。
 
 本地SQLite离线备份（先停止API和Worker，确认没有running/cancelling任务）：
 
@@ -107,6 +107,51 @@ uv run python -m scripts.backup_local restore /private/tmp/commerce-private-back
 --services-stopped是操作人员声明，工具不能证明所有进程已停；跨数据库/文件的一致性
 依赖离线前提。通过恢复演练验证人工复核可继续、不会重跑已完成研究、PDF下载可用。
 备份包含用户/文档/会话等敏感数据，使用私有目录，不上传Git，也不用于生产PostgreSQL。
+
+### PostgreSQL离线备份恢复
+
+先停止API、所有Worker及其他数据库/文件写入者，等任务离开running/cancelling状态。
+`--services-stopped`是操作者声明，程序不能证明其他进程已经停止。工具将业务表、
+LangGraph检查点与运行文件一起备份；检查登记产物的大小和SHA256，拒绝符号链接和覆盖。
+备份保留密码哈希、文档与会话，只能保存在可信私有目录；不备份.env或数据库角色。
+SHA256只校验损坏，不认证来源。**只恢复可信备份：数据库dump可以包含可执行SQL。**
+
+宿主机需要PostgreSQL16的`pg_dump`和`pg_restore`，或通过`--pg-bin`指定其目录。
+后端容器已包含客户端与运维脚本。连接账号须能读取业务/检查点对象；恢复账号须拥有
+事先创建的空目标数据库，应用账号不需要超级用户或创建数据库权限。
+
+```bash
+# .env中DATABASE_URL指向待备份的PostgreSQL，DATA_DIR指向对应运行目录。
+uv run python -m scripts.backup_postgres create .backups/snapshot-01 --services-stopped
+
+# 用管理员流程另外创建空库，再将连接配置写入私有.env.restore。
+# 该配置指向新库；不要先执行app.cli init。新运行目录也不能预先存在。
+# 清除可能覆盖配置文件的同名进程环境变量。
+env -u DATABASE_URL uv run python -m scripts.backup_postgres --settings-file .env.restore \
+  restore .backups/snapshot-01 /private/tmp/commerce-restored-runtime --services-stopped
+```
+
+恢复后，把服务的DATABASE_URL指向新库，DATA_DIR指向新运行目录；保留原库/卷以便回滚。
+先检查登录、旧任务/PDF下载、跨账户拒绝访问和人工复核继续执行，再切换入口。
+工具使用`pg_restore --single-transaction --exit-on-error`，拒绝非空库，不执行删除覆盖。
+数据库提交与运行目录发布不是一个事务：恢复命令发出后失败，会保留私有暂存目录并输出
+其位置。此时保持停服，核对目标库是否已提交及暂存文件，不要直接重复恢复或删除暂存目录。
+恢复前其他步骤失败会清理本次暂存文件。原库和备份始终保留。
+
+默认Compose数据库不发布端口，备份可以从一次性运维容器执行。Linux宿主机先创建专用
+`.backups`目录并为容器UID/GID 10001设置写权限和0700权限；不要挂载包含其他文件的目录。
+
+```bash
+docker compose --env-file .env -f docker/docker-compose.yaml stop api worker
+docker compose --env-file .env -f docker/docker-compose.yaml run --rm --no-deps \
+  -v "$PWD/.backups:/backups" api python -m scripts.backup_postgres \
+  create /backups/snapshot-01 --services-stopped
+docker compose --env-file .env -f docker/docker-compose.yaml up -d api worker
+```
+
+容器恢复时同样准备新库和持久化的新运行卷，并将其挂载为恢复目标；不要将恢复目录放在
+一次性容器的/tmp后退出。CI的`container_backup_smoke`专用于隔离教学库，临时恢复结果会
+销毁，不能作为正式恢复命令。真实恢复与失败分支证据见[交付验收](18-python-delivery-validation.md)。
 
 旧版运行中任务应在升级前完成/停止；新MetricReference要求实体/单位/周期维度。
 历史已导出文件仍可下载，不将缺少事实目录的旧任务自动认定为新标准通过。
@@ -123,8 +168,24 @@ uv run pytest -q
 uv run --with pgserver==0.1.4 python scripts/test_embedded_postgres.py tests
 ```
 
-也可以设置 TEST_POSTGRES_URL 指向一次性测试服务运行 pytest。测试会创建并删除随机
-schema 和测试角色，不能指向生产数据库。CI 使用 PostgreSQL16 服务运行相同用例。
+也可以设置TEST_POSTGRES_URL指向一次性测试服务，TEST_PG_BIN指向16版客户端目录再运行
+pytest。测试管理员需要CREATEDB/CREATEROLE；测试会创建并删除随机数据库、schema和角色，
+不能指向生产数据库。应用恢复则使用无超级用户/建库/建角色权限的账号。CI使用PG16服务。
+
+隔离HTTP教学负载（Linux/macOS）：
+
+```bash
+uv run python -m scripts.load_smoke --requests 20 --concurrency 4 --workers 2 \
+  --output evaluations/results/load-sqlite-01.json
+uv run --with pgserver==0.1.4 python -m scripts.load_smoke --backend postgres \
+  --requests 20 --concurrency 4 --workers 2 --output evaluations/results/load-pg-01.json
+```
+
+工具自建临时数据库、API和Worker，固定demo且不继承模型密钥/代理/业务连接，不接受外部URL。
+同一幂等键重放必须返回同一任务，完成后验证PDF内容及哈希，成功/失败均停止子进程并清理
+临时库；输出文件不得覆盖历史。上限200任务、16并发、4个Worker，每Worker执行并发1。
+吞吐和延迟只针对当前机器的闭环教学负载；端到端包括排队、轮询与下载，排除启动和登录，
+P50/P95为成功场景的nearest-rank统计。失败数必须一起看，不代表真实模型延迟或生产容量。
 
 浏览器测试：
 

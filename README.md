@@ -9,7 +9,8 @@
 
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
 来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
-最新开发与验证范围见 [用量回执与服务核对](docs/16-usage-receipts-and-provider-check.md)。本地回归
+最新纯Python交付与负载证据见[交付验收](docs/18-python-delivery-validation.md)，真实模型验证
+见[用量回执与服务核对](docs/16-usage-receipts-and-provider-check.md)。本地回归
 通过；f3a12de同一实现的库存、内部规则、综合补货三个教学单例均通过真实模型自动检查
 及逐项核对，无模板回退。单例结果不代表稳定通过率或生产验收，不将模拟结果当作模型效果。
 
@@ -26,6 +27,7 @@
 - PostgreSQL 任务队列、租约与晚到结果校验、幂等提交、取消、事件游标重放。
 - Cookie 登录、CSRF、资源归属、公开关键词边界、受限附件解析。
 - React 工作台、PDF 导出、固定评估集、真实 SDK 协议测试、故障注入和 CI。
+- SQLite/PostgreSQL离线备份恢复、可信备份校验与隔离HTTP教学负载入口。
 
 技术：Python3.12、Deep Agents0.7.25、LangChain1.4.5、LangGraph1.2.15、FastAPI、
 SQLAlchemy/Alembic、PostgreSQL16、React19、TypeScript、Vite、Playwright。依赖由 uv/pnpm 锁定。
@@ -73,7 +75,7 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 2. [源码调用链](docs/02-code-walkthrough.md)：一条请求经过哪些模块，每层保证什么。
 3. [六周学习路线](docs/03-learning-roadmap.md)：每阶段需要解释、修改与验证的内容。
 4. [评估与真实联调](docs/04-evaluation.md)：固定用例、人工核验、三种策略比较。
-5. [启动和部署](docs/05-deployment.md)、[最新验证记录](docs/16-usage-receipts-and-provider-check.md)。
+5. [启动和部署](docs/05-deployment.md)、[交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。
 6. [上传 GitHub 与成果整理](docs/07-publishing.md)：来源、凭据检查和简历边界。
 7. [第二轮开发文档](docs/08-development-plan.md)：问题根因、实现约束与逐项验收标准。
 

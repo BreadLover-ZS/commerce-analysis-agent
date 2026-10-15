@@ -1,5 +1,6 @@
 """Optional local verification; pgserver is not a production dependency."""
 
+import inspect
 import os
 import subprocess
 import sys
@@ -28,7 +29,11 @@ def main():
                     flush=True,
                 )
             engine.dispose()
-            env = {**os.environ, "TEST_POSTGRES_URL": url}
+            env = {
+                **os.environ,
+                "TEST_POSTGRES_URL": url,
+                "TEST_PG_BIN": str(Path(inspect.getfile(pgserver)).parent / "pginstall" / "bin"),
+            }
             result = subprocess.run(
                 [
                     sys.executable,
