@@ -1,6 +1,8 @@
 import json
+from types import SimpleNamespace
 
 import pytest
+from langchain_core.messages import AIMessage
 from pydantic import PrivateAttr, SecretStr
 from sqlalchemy import select
 
@@ -10,6 +12,47 @@ from app.storage.models import Artifact
 from app.tasks.worker import Worker, checkpoint_store
 from tests.conftest import new_task
 from tests.fake_model import ScriptedCommerceModel
+
+
+async def test_research_child_with_empty_next_is_resumed_before_reading_result(setup, monkeypatch):
+    import app.research.graph as graph_module
+
+    class PendingResearcher:
+        resumed = False
+
+        async def aget_state(self, config):
+            return SimpleNamespace(
+                values={"messages": [AIMessage("stale research snapshot")]}, next=()
+            )
+
+        async def ainvoke(self, value, config):
+            assert value is None
+            self.resumed = True
+            return {"messages": [AIMessage("finalized pending research")]}
+
+    child = PendingResearcher()
+    monkeypatch.setattr(graph_module, "create_researcher", lambda *args: child)
+
+    class InspectSynthesis(ScriptedCommerceModel):
+        _finalized_seen: bool = PrivateAttr(default=False)
+
+        def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+            names = [tool["function"]["name"] for tool in kwargs.get("tools", [])]
+            if "ResearchSynthesis" in names:
+                context = json.loads(messages[-1].content.split("\n证据：\n", 1)[0])
+                assert context["researcher_output"] == "finalized pending research"
+                self._finalized_seen = True
+            return super()._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+
+    settings, repo, *_ = setup
+    settings.agent_mode, settings.llm_model = "live", "fake-commerce"
+    settings.openai_api_key = SecretStr("offline-child-recovery")
+    task = new_task(setup, sources=["documents", "web"])
+    model = InspectSynthesis()
+    async with checkpoint_store(settings) as saver:
+        await Worker(repo, settings, saver, model).run_once()
+    assert child.resumed and model._finalized_seen
+    assert repo.get_task(task["id"])["status"] == "degraded"
 
 
 @pytest.mark.parametrize("strategy", ["single", "multi"])

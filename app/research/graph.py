@@ -164,10 +164,10 @@ def build_workflow(repo, settings, ctx, checkpointer, model=None):
                         },
                         config=child_config,
                     )
-                elif previous.next:
-                    result = await researcher.ainvoke(None, config=child_config)
                 else:
-                    result = previous.values
+                    # Finalize durable node writes even if `next` is empty;
+                    # reading the old snapshot alone can miss the last result.
+                    result = await researcher.ainvoke(None, config=child_config)
                 messages = result.get("messages", [])
                 if messages:
                     researcher_output = str(messages[-1].content)[:5000]

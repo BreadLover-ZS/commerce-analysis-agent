@@ -41,6 +41,31 @@
   负用量后只生成1次，后续评审被拦截。不是提供方真实计费或质量验收。
 - Ruff、格式和Git diff通过。当前修复的远端CI在发布后另行核对。
 
+## CI暴露的恢复判断缺陷
+
+f7068a9的[首次CI](https://github.com/BreadLover-ZS/commerce-analysis-agent/actions/runs/38680709647)
+为153 passed、1 failed，失败在SIGKILL导出后的接管，任务被标为failed；浏览器/容器
+通过。该失败保留，不用本地12次常规重跑通过取代远端结果。原CI未保存检查点，
+不能证明其唯一触发路径；随后确定性反例发现了能产生同一误判的实际缺陷。
+
+review节点输出已写入pending writes、后续完整检查点未提交时，已安装LangGraph的
+snapshot.next可以为空，而values尚无终态。旧Worker把空next当作图结束，直接取
+values.status，缺省为failed。构造该持久化窗口后旧代码稳定复现failed，直接
+ainvoke(None)则能应用已有写入并继续export，结果degraded。
+
+Worker及子研究图现在将已有状态交给LangGraph恢复，不仅凭next为空提前结束。
+真正已完成的图恢复为无操作；人工复核interrupt分支保持原有审批要求。没有删除或
+放宽原SIGKILL测试，而是增加失败时的检查点键、pending channels、错误码等诊断。
+另加review/export/completed三个确定性窗口验证不重跑研究，以及子图恢复委派测试。
+测试对临时SQLite删除较新检查点以构造持久化窗口，保留已提交的节点写入和业务副作用；
+不操作实际业务数据库。不宣称全部外部副作用exactly-once。
+
+接口依据与实际复现结合核对[LangGraph检查点与pending writes](https://docs.langchain.com/oss/python/langgraph/checkpointers)。
+恢复专项11条与子图协议1条通过；最终全量**158 passed，33.83秒**，含7条真实隔离PG。
+最终demo **32/32**，run_id `c5adb98b-77fd-445d-bd02-ad8b90d3bfde`，实现指纹
+`c2f14d0baa707310f98c22d29e8c209f5354aed98a0ea8a52c1b7103551ef86d`。
+新补丁的远端CI将在发布后另行核对，不能将首次失败改写为通过。
+
 ## 当前DeepSeek核对
 
 用户在本地回归完成后选择先核对当前DeepSeek服务和生成可用性。配置为官方
@@ -58,6 +83,11 @@ api.deepseek.com、deepseek-flash，密钥已配置，本地应用仍为demo。
 合计输入14/输出2。说明本次检查时现有配置能完成基础生成，没有证据要求更换密钥
 或修改代理；不能排除其他时段、复杂提示或JSON结构化调用的问题。未配置单价，不
 估算金额，账单以提供方为准。此前超时仍无用量回执，不能推断免费。
+
+用户随后明确授权当前版本按stock-risk、policy、replenishment顺序各运行1次真实
+业务评估，每条最多8次模型请求，任一自动或人工失败即停。按单条执行、逐条人工
+检查后再进入下一条，不一次性自动跑过尚未人工检查的结果。此授权待恢复补丁CI
+通过后执行，尚不计为业务质量PASS。
 
 ## 完成范围审计
 

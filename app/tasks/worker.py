@@ -84,10 +84,11 @@ class Worker:
                         )
                     else:
                         return "waiting_review"
-                elif snapshot.values and snapshot.next:
-                    result = await graph.ainvoke(None, config=config)
                 elif snapshot.values:
-                    return snapshot.values.get("status", "failed")
+                    # An empty `next` can mean the last node's writes are durable
+                    # but its follow-up checkpoint is not. Let LangGraph apply
+                    # those writes/edges; a genuinely finished graph is a no-op.
+                    result = await graph.ainvoke(None, config=config)
                 else:
                     result = await graph.ainvoke({}, config=config)
                 if result.get("__interrupt__"):

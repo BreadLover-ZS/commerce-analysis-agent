@@ -11,7 +11,9 @@ import pytest
 from pydantic import SecretStr
 from sqlalchemy import create_engine, inspect, select
 
+from app.research.graph import build_workflow
 from app.storage.models import Artifact
+from app.tasks.checkpoints import LeaseFencedSaver
 from app.tasks.worker import Worker, checkpoint_store
 from tests.conftest import expire_lease, new_task
 from tests.fake_model import ScriptedCommerceModel
@@ -40,8 +42,27 @@ async def test_sigkill_during_export_resumes_without_research_replay(setup):
         expire_lease(repo, task["id"])
         async with checkpoint_store(settings) as saver:
             await Worker(repo, settings, saver).run_once()
+            checkpoint = await saver.aget_tuple(
+                {"configurable": {"thread_id": task["id"], "checkpoint_ns": ""}}
+            )
         done = repo.get_task(task["id"])
-        assert done["status"] == "degraded" and done["attempts"] == 2
+        diagnosis = {
+            "status": done["status"],
+            "error_code": done["error_code"],
+            "attempts": done["attempts"],
+            "checkpoint_step": checkpoint.metadata.get("step") if checkpoint else None,
+            "checkpoint_keys": sorted(checkpoint.checkpoint["channel_values"])
+            if checkpoint
+            else [],
+            "checkpoint_status": checkpoint.checkpoint["channel_values"].get("status")
+            if checkpoint
+            else None,
+            "pending_channels": [write[1] for write in checkpoint.pending_writes]
+            if checkpoint
+            else [],
+            "events": [event["kind"] for event in repo.events(task["id"])],
+        }
+        assert done["status"] == "degraded" and done["attempts"] == 2, diagnosis
         assert done["metrics"]["tool_calls"] == before["metrics"]["tool_calls"]
         assert len(repo.artifacts(task["id"])) == 5
         assert sum(e["kind"] == "planning" for e in repo.events(task["id"])) == 1
@@ -126,6 +147,52 @@ async def test_recovery_after_unreported_model_request_blocks_new_generation(set
     assert not done["metrics"]["usage_complete"]
     assert model._tool_sets == []
     assert done["validation"]["draft_fallback_used"]
+
+
+@pytest.mark.parametrize("boundary", ["review", "export", "completed"])
+async def test_empty_next_with_pending_writes_must_be_finalized_not_failed(setup, boundary):
+    settings, repo, *_ = setup
+    task = new_task(setup, sources=["sales", "inventory", "documents"])
+    old = repo.claim()
+    config = {"configurable": {"thread_id": task["id"], "checkpoint_ns": ""}}
+    async with checkpoint_store(settings) as saver:
+        async with LeaseFencedSaver(saver, repo, old) as guarded:
+            graph = build_workflow(repo, settings, old, guarded)
+            result = await graph.ainvoke({}, config)
+            assert result["status"] == "degraded"
+            if boundary != "completed":
+                # Reproduce the durable crash window: node writes committed but
+                # the checkpoint applying them did not. Business side effects can
+                # already be committed, just as before the failed CI SIGKILL.
+                checkpoints = [checkpoint async for checkpoint in saver.alist(config)]
+                target = next(
+                    checkpoint
+                    for checkpoint in checkpoints
+                    if f"branch:to:{boundary}" in checkpoint.checkpoint["channel_values"]
+                )
+                assert target.pending_writes
+                async with saver.lock:
+                    await saver.conn.execute(
+                        "DELETE FROM checkpoints WHERE thread_id=? AND checkpoint_ns='' AND checkpoint_id>?",
+                        (task["id"], target.checkpoint["id"]),
+                    )
+                    await saver.conn.commit()
+            snapshot = await graph.aget_state(config)
+            assert not snapshot.next
+            if boundary == "review":
+                assert snapshot.values.get("status") is None
+        before = repo.get_task(task["id"])
+        exports = sum(event["kind"] == "exporting" for event in repo.events(task["id"]))
+        expire_lease(repo, task["id"])
+        await Worker(repo, settings, saver).run_once()
+        done = repo.get_task(task["id"])
+        assert done["status"] == "degraded" and done["attempts"] == 2
+        assert done["metrics"]["tool_calls"] == before["metrics"]["tool_calls"]
+        assert len(repo.artifacts(task["id"])) == 5
+        assert sum(e["kind"] == "planning" for e in repo.events(task["id"])) == 1
+        assert sum(e["kind"] == "exporting" for e in repo.events(task["id"])) == exports + (
+            boundary == "review"
+        )
 
 
 def test_migrations_upgrade_downgrade_and_reinitialize(tmp_path):
