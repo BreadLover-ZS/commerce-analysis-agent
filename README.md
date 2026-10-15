@@ -9,7 +9,7 @@
 
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
 来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
-最新开发与验证范围见 [可靠性与模型验证](docs/12-reliability-and-validation.md)。本地回归
+最新开发与验证范围见 [研究语义复核](docs/13-research-semantic-validation.md)。本地回归
 通过，真实库存/文档曾通过单用例；综合研究仍未验收通过，不将模拟结果当作模型效果。
 
 ![电商运营分析助手工作台](docs/images/commerce-analysis-desktop.png)
@@ -72,7 +72,7 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 2. [源码调用链](docs/02-code-walkthrough.md)：一条请求经过哪些模块，每层保证什么。
 3. [六周学习路线](docs/03-learning-roadmap.md)：每阶段需要解释、修改与验证的内容。
 4. [评估与真实联调](docs/04-evaluation.md)：固定用例、人工核验、三种策略比较。
-5. [启动和部署](docs/05-deployment.md)、[最新验证记录](docs/12-reliability-and-validation.md)。
+5. [启动和部署](docs/05-deployment.md)、[最新验证记录](docs/13-research-semantic-validation.md)。
 6. [上传 GitHub 与成果整理](docs/07-publishing.md)：来源、凭据检查和简历边界。
 7. [第二轮开发文档](docs/08-development-plan.md)：问题根因、实现约束与逐项验收标准。
 

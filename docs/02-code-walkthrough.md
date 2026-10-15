@@ -18,7 +18,8 @@ demo 不调用模型，不执行 Deep Agents 工具循环；它复用业务工�
 10. `app/research/agents.py` 创建受限 Deep Agent：可信 Skills、只读文件工具、预算中间件。
     `research/meter.py` 的模型回调负责请求准入/用量/延迟，覆盖 SDK 内部摘要；
     agents.py 中间件单独记录委派。
-11. `research/context.py` 选择指标、来源和原文窗口；`synthesis.py` 验证研究发现的逐字引用。
+11. `research/context.py` 选择指标、来源和原文窗口；`synthesis.py` 校验逐字引用并逐项
+    复核研究发现，最多修正一次；未通过时仅保留原文摘录，研究复核结果另存validation。
     findings/conflicts/gaps保存在LangGraph state，draft实际接收这些发现，导出research.json。
     模型gaps只是候选，不强制追加到报告；操作失败与确定性工具缺口分别保留。
 12. `app/research/evidence.py` 核对完整事实元组，按来源渲染指标句，并区分事实、分析和建议。
@@ -64,7 +65,9 @@ LangGraph 管理自己的 checkpoint 表。Alembic 管理业务表，两者不�
 数值匹配，指标句按程序渲染。原文数字检查仍只提供基础防线，不能证明文本语义对应。
 Schema提前拒绝analysis/recommendation携带指标引用，指标只在fact中呈现。
 语义复核覆盖claims与limitations，参考授权来源、实际选择与证据清单；对已有规则
-误报缺口会拒绝。修正接收原草稿、错误ID/索引和评审理由，所有模型请求仍计入预算。
+误报缺口的检查仍依赖评审判断。修正接收原草稿、错误ID/索引和评审理由，所有模型
+请求仍计入预算。研究发现另外逐项复核，结果保存在research_validation中；遗漏或
+重复发现ID、unsupported/uncertain意见均不能放行为研究语义通过。
 规则不能证明：来源本身正确、模型推断成立或建议有效。模型语义评审也是辅助手段，
 重要结论仍须人工核验。`semantic_status=model_reviewed` 不等于真实业务验收 PASS。
 

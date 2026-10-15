@@ -66,6 +66,25 @@ class ScriptedCommerceModel(BaseChatModel):
             calls = [
                 {"name": "ResearchSynthesis", "args": synthesis.model_dump(), "id": "synthesis"}
             ]
+        elif "ResearchSemanticReview" in names:
+            context = json.loads(content.split("\n证据：\n", 1)[0])
+            calls = [
+                {
+                    "name": "ResearchSemanticReview",
+                    "args": {
+                        "findings": [
+                            {
+                                "finding_id": finding["id"],
+                                "verdict": "supported",
+                                "explanation": "脚本化协议测试，不代表语义判断能力",
+                            }
+                            for finding in context["synthesis"]["findings"]
+                        ],
+                        "unsupported_gap_indices": [],
+                    },
+                    "id": "research-review",
+                }
+            ]
         elif "SemanticReview" in names:
             calls = [
                 {

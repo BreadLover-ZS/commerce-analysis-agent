@@ -52,6 +52,19 @@ def research_execution_ok(mode, evidence, research):
     )
 
 
+def research_semantics_ok(mode, evidence, research):
+    if mode == "demo":
+        return True
+    if not research_execution_ok(mode, evidence, research):
+        return False
+    if research.get("status") == "not_required":
+        return True
+    validation = research.get("validation", {})
+    return (
+        validation.get("passed") is True and validation.get("semantic_status") == "model_reviewed"
+    )
+
+
 async def evaluate(args):
     original = Settings()
     updates = {"agent_mode": args.mode}
@@ -113,6 +126,7 @@ async def evaluate(args):
                 )
                 checks = {
                     "research_execution": research_execution_ok(args.mode, evidence, research),
+                    "research_semantics": research_semantics_ok(args.mode, evidence, research),
                     "agent_execution": args.mode == "demo"
                     or bool(
                         result["validation"]

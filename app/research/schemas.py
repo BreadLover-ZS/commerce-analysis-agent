@@ -115,3 +115,22 @@ class ResearchFinding(BaseModel):
 class ResearchSynthesis(BaseModel):
     findings: list[ResearchFinding] = Field(default_factory=list, max_length=12)
     gaps: list[str] = Field(default_factory=list, max_length=10)
+
+
+class FindingVerdict(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    finding_id: str
+    verdict: Literal["supported", "unsupported", "uncertain"]
+    explanation: str = Field(
+        min_length=1, max_length=400, description="简短说明原文支持或不支持的关系，不输出推理过程"
+    )
+
+
+class ResearchSemanticReview(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    findings: list[FindingVerdict] = Field(
+        max_length=12, description="对每个研究发现ID恰好返回一条结论；不能遗漏、重复或添加ID"
+    )
+    unsupported_gap_indices: list[int] = Field(
+        max_length=10, description="与已取得资料或任务范围矛盾的gaps索引，从0开始；没有则返回[]"
+    )

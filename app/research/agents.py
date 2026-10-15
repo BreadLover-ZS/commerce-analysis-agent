@@ -44,6 +44,8 @@ def model_from_settings(settings):
 async def structured_call(model, schema, messages, repo, ctx):
     stage = {
         "TaskPlan": "分析计划",
+        "ResearchSynthesis": "研究归纳",
+        "ResearchSemanticReview": "研究语义复核",
         "ResearchReport": "报告草稿",
         "SemanticReview": "证据语义复核",
     }.get(schema.__name__, "结构化分析")

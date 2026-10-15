@@ -1,0 +1,91 @@
+{
+  "provenance": "Teaching documents and manually rejected F1/F8 from run e44c23b8-ef01-4b9c-91b1-37689fa73570; labels are human regression expectations, not model predictions.",
+  "sources": [
+    {
+      "id": "E-policy",
+      "kind": "document",
+      "locator": "document://a447cf8b-2fa9-43b8-99b6-7f788eb50948/lines=1-12;chars=0-258",
+      "excerpt": "# 示例公司经营分析规则\n\n这是教学模拟文档，不代表任何真实公司的制度。版本日期：2026-09-30。\n\n经营复盘需要注明销售周期和退款口径。净销售额等于支付金额减去退款金额，\n未扣除广告、物流、税费等成本，因此不能称为净利润。\n\n库存覆盖天数使用库存快照除以所选周期的日均净销量。库存覆盖天数小于补货\n提前期时应核对供应商交期；超过60天时可检查滞销、季节性与促销安排。\n没有销售数据时需要说明数据不足，不能把缺失数据当成零销量预测。\n\n分析建议须由运营人员结合供应商、毛利和现金流确认，系统不自动采购或改价。\n",
+      "payload": {
+        "sample": true
+      }
+    },
+    {
+      "id": "E-competitor",
+      "kind": "document",
+      "locator": "document://3ff7485b-e41d-42ed-820f-0cff2255191c/lines=1-10;chars=0-218",
+      "excerpt": "# 示例公司竞品研究规范\n\n这是教学模拟文档。竞品研究应优先使用品牌官网、平台官方公告和原始公开资料，\n并保留来源链接、获取时间及实际支持结论的片段。\n\n公开页面中的促销价格可能随时间和地区变化。没有同一时间、同一规格的证据时，\n不得直接判定竞品价格优势。没有销量或转化数据时，不得推断竞品经营效果。\n\n经营分析、库存风险、退款原因与竞品观察需要区分已知事实、推测和行动建议。\n客户名单、订单明细和内部经营材料禁止发送到公开搜索服务。\n",
+      "payload": {
+        "sample": true
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "net-units-vs-revenue",
+      "rejected": {
+        "id": "F1",
+        "kind": "finding",
+        "statement": "库存覆盖天数的计算口径为库存快照除以所选周期的日均净销量，且净销量基于净销售额口径（支付金额减退款金额）。",
+        "support": [
+          {
+            "evidence_id": "E-policy",
+            "quote": "库存覆盖天数使用库存快照除以所选周期的日均净销量。"
+          },
+          {
+            "evidence_id": "E-policy",
+            "quote": "净销售额等于支付金额减去退款金额，\n未扣除广告、物流、税费等成本，因此不能称为净利润。"
+          }
+        ]
+      },
+      "expected_verdict": "unsupported",
+      "explanation": "原文没有将净销量定义为净销售额；金额与件数不能相互替代。",
+      "corrected": {
+        "id": "F1",
+        "kind": "finding",
+        "statement": "库存覆盖天数使用库存快照除以所选周期的日均净销量。",
+        "support": [
+          {
+            "evidence_id": "E-policy",
+            "quote": "库存覆盖天数使用库存快照除以所选周期的日均净销量。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "complementary-rules",
+      "rejected": {
+        "id": "F8",
+        "kind": "conflict",
+        "statement": "两份资料对‘数据不足时的处理’存在观察到的差异：经营规则明确禁止把缺失销售数据当作零销量预测；竞品规范则规定没有销量或转化数据时不得推断竞品经营效果。两者约束对象不同（自身库存预测 vs 竞品效果推断），但均未给出在数据不足时可用于库存覆盖估计的替代计算或估算方法。",
+        "support": [
+          {
+            "evidence_id": "E-policy",
+            "quote": "没有销售数据时需要说明数据不足，不能把缺失数据当成零销量预测。"
+          },
+          {
+            "evidence_id": "E-competitor",
+            "quote": "没有销量或转化数据时，不得推断竞品经营效果。"
+          }
+        ]
+      },
+      "expected_verdict": "unsupported",
+      "explanation": "自身库存预测与竞品效果推断约束对象不同，两条规则可以同时成立。",
+      "corrected": {
+        "id": "F8",
+        "kind": "finding",
+        "statement": "缺失销售数据不能当作零销量预测；没有销量或转化数据也不得推断竞品经营效果。两项规则分别约束自身预测和竞品推断。",
+        "support": [
+          {
+            "evidence_id": "E-policy",
+            "quote": "没有销售数据时需要说明数据不足，不能把缺失数据当成零销量预测。"
+          },
+          {
+            "evidence_id": "E-competitor",
+            "quote": "没有销量或转化数据时，不得推断竞品经营效果。"
+          }
+        ]
+      }
+    }
+  ]
+}

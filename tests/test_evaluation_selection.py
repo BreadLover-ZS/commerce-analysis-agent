@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from evaluations.run import load_cases, research_execution_ok
+from evaluations.run import load_cases, research_execution_ok, research_semantics_ok
 
 
 def test_selected_case_fingerprint_matches_executed_content_only(tmp_path):
@@ -46,3 +46,48 @@ def test_duplicate_source_cases_are_rejected_before_execution(tmp_path):
 )
 def test_live_research_gate_requires_retained_stage_evidence(evidence, research, expected):
     assert research_execution_ok("live", evidence, research) is expected
+
+
+@pytest.mark.parametrize(
+    "research,expected",
+    [
+        (None, False),
+        ({"status": "completed"}, False),
+        (
+            {
+                "status": "completed",
+                "validation": {"passed": True, "semantic_status": "unavailable"},
+            },
+            False,
+        ),
+        (
+            {
+                "status": "failed",
+                "validation": {"passed": True, "semantic_status": "model_reviewed"},
+            },
+            False,
+        ),
+        (
+            {
+                "status": "completed",
+                "validation": {"passed": False, "semantic_status": "model_reviewed"},
+            },
+            False,
+        ),
+        (
+            {
+                "status": "completed",
+                "validation": {"passed": True, "semantic_status": "model_reviewed"},
+            },
+            True,
+        ),
+    ],
+)
+def test_quote_completion_is_not_semantic_acceptance(research, expected):
+    assert research_semantics_ok("live", [{"kind": "document"}], research) is expected
+
+
+def test_metrics_only_and_demo_do_not_require_text_semantic_review():
+    assert research_semantics_ok("live", [{"kind": "metrics"}], {"status": "not_required"})
+    assert not research_semantics_ok("live", [{"kind": "document"}], {"status": "not_required"})
+    assert research_semantics_ok("demo", [], None)
