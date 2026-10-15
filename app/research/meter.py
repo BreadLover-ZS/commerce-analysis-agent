@@ -5,6 +5,8 @@ import time
 
 from langchain_core.callbacks import AsyncCallbackHandler
 
+from app.core.errors import provider_error_data
+
 
 class RuntimeModelMeter(AsyncCallbackHandler):
     raise_error = True
@@ -57,7 +59,7 @@ class RuntimeModelMeter(AsyncCallbackHandler):
                 self.ctx,
                 "model_error",
                 "模型请求失败，Token使用量未知",
-                {"error_type": type(error).__name__},
+                provider_error_data(error),
             )
         except TaskCancelled:
             pass

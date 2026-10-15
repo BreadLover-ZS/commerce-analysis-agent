@@ -3,13 +3,13 @@ from datetime import date
 from uuid import uuid4
 
 import pytest
-from pydantic import SecretStr
+from pydantic import SecretStr, ValidationError
 from sqlalchemy import delete, select
 
 from app.commerce.service import inventory_risks, sales_summary, search_documents
 from app.research.context import evidence_package
 from app.research.evidence import deterministic_report, render_bound_metrics, validate_report
-from app.research.schemas import ResearchSynthesis
+from app.research.schemas import Claim, MetricReference, ResearchReport, ResearchSynthesis
 from app.research.synthesis import validate_synthesis
 from app.research.tools import ToolGateway
 from app.storage.models import Chunk, DailySale, Document, Product
@@ -59,6 +59,79 @@ async def test_correct_number_with_wrong_product_prose_is_rejected(setup):
     render_bound_metrics(report, evidence)
     assert "通勤收纳包" in bag.text and "保温杯" not in bag.text
     assert validate_report(report, evidence)["passed"]
+
+
+@pytest.mark.parametrize("kind", ["analysis", "recommendation"])
+async def test_non_fact_cannot_carry_even_a_valid_metric_reference(setup, kind):
+    settings, repo, *_ = setup
+    task = new_task(setup, sources=["inventory"])
+    ctx = repo.claim()
+    await ToolGateway(repo, settings, ctx, task["parameters"]).metrics("inventory")
+    report = deterministic_report(repo.evidence(task["id"]), [])
+    claim = report.sections[1].claims[0]
+    assert Claim.model_validate(claim.model_dump()).metrics
+    data = {**claim.model_dump(), "kind": kind}
+    with pytest.raises(ValidationError) as caught:
+        Claim.model_validate(data)
+    assert caught.value.errors(include_input=False)[0]["type"] == "non_fact_metrics"
+    repo.finish(ctx, "cancelled", 0)
+
+
+def test_document_threshold_can_be_quoted_but_not_disguised_as_computed_metric():
+    source = {
+        "id": "doc-rule",
+        "kind": "document",
+        "excerpt": "覆盖超过60天时检查滞销。",
+        "payload": {},
+    }
+    report = ResearchReport.model_validate(
+        {
+            "title": "规则核对",
+            "sections": [
+                {"name": "经营表现", "claims": []},
+                {
+                    "name": "库存风险",
+                    "claims": [
+                        {
+                            "id": "rule",
+                            "kind": "fact",
+                            "text": source["excerpt"],
+                            "evidence_ids": [source["id"]],
+                        }
+                    ],
+                },
+                {"name": "竞品观察", "claims": []},
+                {"name": "行动建议", "claims": []},
+            ],
+            "limitations": ["经营表现无数据", "竞品观察无数据", "行动建议未生成"],
+        }
+    )
+    assert validate_report(report, [source])["passed"]
+    report.sections[1].claims[0].metrics = [
+        MetricReference(
+            evidence_id=source["id"],
+            key="threshold",
+            value="60",
+            entity_id="demo",
+            unit="days",
+            period_start="2026-09-01",
+            period_end="2026-09-30",
+        )
+    ]
+    source["payload"] = {
+        "metrics": {"threshold": "60"},
+        "fact_catalog": {
+            "threshold": {
+                "value": "60",
+                "entity_id": "demo",
+                "unit": "days",
+                "period_start": "2026-09-01",
+                "period_end": "2026-09-30",
+                "snapshot_as_of": None,
+            }
+        },
+    }
+    assert not validate_report(report, [source])["passed"]
 
 
 def test_partial_days_and_old_snapshot_are_explicit(setup):

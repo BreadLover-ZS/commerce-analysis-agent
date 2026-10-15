@@ -28,6 +28,8 @@ def metric_reference(source, key):
 def metric_binding_issues(metric, source):
     if not source:
         return ["指标没有对应来源"]
+    if source.get("kind") != "metrics":
+        return ["指标引用不是受限业务指标来源"]
     catalog = source.get("payload", {}).get("fact_catalog", {})
     item = catalog.get(metric.key)
     if not item:

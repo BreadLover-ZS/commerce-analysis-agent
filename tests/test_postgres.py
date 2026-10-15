@@ -3,12 +3,13 @@
 import asyncio
 import os
 import secrets
-from datetime import date
+from datetime import date, timedelta
 from uuid import uuid4
 
 import pytest
 from alembic import command
 from alembic.config import Config
+from langgraph.checkpoint.base import empty_checkpoint
 from sqlalchemy import create_engine, delete, select, text
 from sqlalchemy.engine import make_url
 
@@ -16,8 +17,9 @@ from app.commerce.service import inventory_risks, sales_summary, seed_commerce
 from app.core.auth import bootstrap_user
 from app.core.config import Settings
 from app.research.schemas import TaskRequest
-from app.storage.models import DailySale, Product, User
-from app.storage.repository import Repository
+from app.storage.models import DailySale, Product, Task, User, utcnow
+from app.storage.repository import Repository, StaleLease
+from app.tasks.checkpoints import LeaseFencedSaver
 from app.tasks.worker import Worker, checkpoint_store
 
 pytestmark = pytest.mark.skipif(
@@ -103,6 +105,48 @@ async def test_postgres_concurrent_budget_updates_are_not_lost(postgres_setup):
     await asyncio.gather(*[asyncio.to_thread(repo.consume, ctx, "tool") for _ in range(8)])
     assert repo.get_task(task["id"])["metrics"]["tool_calls"] == 8
     repo.finish(ctx, "cancelled", 0)
+
+
+async def test_postgres_checkpoint_write_lock_serializes_takeover(postgres_setup, monkeypatch):
+    settings, repo, user = postgres_setup
+    task = repo.create_task(
+        user,
+        TaskRequest(conversation_id=repo.create_conversation(user.id), query="验证检查点接管"),
+        str(uuid4()),
+    )
+    old = repo.claim()
+    config = {"configurable": {"thread_id": task["id"], "checkpoint_ns": ""}}
+    entered, release = asyncio.Event(), asyncio.Event()
+    async with checkpoint_store(settings) as raw:
+        original = raw.aput
+
+        async def delayed_put(*args):
+            entered.set()
+            await release.wait()
+            return await original(*args)
+
+        monkeypatch.setattr(raw, "aput", delayed_put)
+        async with LeaseFencedSaver(raw, repo, old) as guarded:
+            with repo.session() as db:
+                db.get(Task, task["id"]).lease_until = utcnow() + timedelta(seconds=0.5)
+                db.commit()
+            writing = asyncio.create_task(
+                guarded.aput(config, empty_checkpoint(), {"source": "update", "step": 0}, {})
+            )
+            try:
+                await asyncio.wait_for(entered.wait(), timeout=5)
+                await asyncio.sleep(0.6)
+                assert await asyncio.to_thread(repo.claim) is None
+            finally:
+                release.set()
+                saved = await writing
+            current = await asyncio.to_thread(repo.claim)
+            assert current is not None and current.lease_token != old.lease_token
+            with pytest.raises(StaleLease):
+                await guarded.aput_writes(saved, [("late", "old-worker")], "late-node")
+            result = await raw.aget_tuple(config)
+            assert result.pending_writes == []
+    repo.finish(current, "cancelled", 0)
 
 
 def test_postgres_partial_day_and_priority_before_limit(postgres_setup):

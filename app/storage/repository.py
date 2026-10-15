@@ -45,6 +45,21 @@ class RunContext:
     lease_token: str
 
 
+def validate_task_lease(task, ctx, allow_cancel=False):
+    """Shared admission rule; callers must hold the task row/write lock."""
+    if (
+        not task
+        or task.lease_token != ctx.lease_token
+        or not task.lease_until
+        or task.lease_until <= utcnow()
+    ):
+        raise StaleLease("执行租约已失效")
+    if task.status == "cancelling" and not allow_cancel:
+        raise TaskCancelled()
+    if task.status not in {"running", "cancelling"}:
+        raise StaleLease("任务已结束")
+
+
 def evidence_dict(item: Evidence) -> dict:
     return {
         "id": item.id,
@@ -284,17 +299,7 @@ class Repository:
 
     def _fenced(self, db, ctx, allow_cancel=False):
         task = db.scalar(select(Task).where(Task.id == ctx.task_id).with_for_update())
-        if (
-            not task
-            or task.lease_token != ctx.lease_token
-            or not task.lease_until
-            or task.lease_until <= utcnow()
-        ):
-            raise StaleLease("执行租约已失效")
-        if task.status == "cancelling" and not allow_cancel:
-            raise TaskCancelled()
-        if task.status not in {"running", "cancelling"}:
-            raise StaleLease("任务已结束")
+        validate_task_lease(task, ctx, allow_cancel)
         return task
 
     def heartbeat(self, ctx):

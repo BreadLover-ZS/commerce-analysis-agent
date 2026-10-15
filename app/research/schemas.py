@@ -2,6 +2,7 @@ from datetime import date
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic_core import PydanticCustomError
 
 Source = Literal["sales", "inventory", "documents", "web"]
 
@@ -45,8 +46,8 @@ class TaskPlan(BaseModel):
 
 class MetricReference(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    evidence_id: str
-    key: str
+    evidence_id: str = Field(description="只能引用kind=metrics的证据，不能引用文档或网页")
+    key: str = Field(description="必须原样取自该指标证据的fact_catalog键，不得自行计算或创建")
     value: str
     entity_id: str
     unit: Literal["CNY", "count", "percent", "days"]
@@ -57,10 +58,25 @@ class MetricReference(BaseModel):
 
 class Claim(BaseModel):
     id: str
-    kind: Literal["fact", "analysis", "recommendation"]
+    kind: Literal["fact", "analysis", "recommendation"] = Field(
+        description="fact呈现可核对事实；analysis解释事实；recommendation提出待人工确认的建议"
+    )
     text: str = Field(min_length=1, max_length=1200)
     evidence_ids: list[str] = Field(default_factory=list, max_length=8)
-    metrics: list[MetricReference] = Field(default_factory=list, max_length=8)
+    metrics: list[MetricReference] = Field(
+        default_factory=list,
+        max_length=8,
+        description="仅kind=fact可以包含指标引用；analysis/recommendation必须为空列表，使用evidence_ids引用依据",
+    )
+
+    @model_validator(mode="after")
+    def metrics_only_on_facts(self):
+        if self.metrics and self.kind != "fact":
+            raise PydanticCustomError(
+                "non_fact_metrics",
+                "指标引用只允许用于fact；analysis/recommendation的metrics必须为空",
+            )
+        return self
 
 
 class ReportSection(BaseModel):
@@ -76,6 +92,11 @@ class ResearchReport(BaseModel):
 
 class SemanticReview(BaseModel):
     unsupported_claim_ids: list[str] = Field(default_factory=list)
+    unsupported_limitation_indices: list[int] = Field(
+        default_factory=list,
+        max_length=20,
+        description="不支持或与已提供原文矛盾的limitations索引（从0开始），特别检查把已有规则误称为缺失",
+    )
     explanation: str = Field(max_length=1500)
 
 

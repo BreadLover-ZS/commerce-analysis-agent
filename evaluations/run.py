@@ -23,16 +23,44 @@ from app.tasks.worker import Worker, checkpoint_store
 from evaluations.fixtures import prepare_case
 
 
+def load_cases(path, case_ids=None):
+    content = path.read_bytes()
+    rows = [(line, json.loads(line)) for line in content.splitlines(keepends=True) if line.strip()]
+    ids = [case["id"] for _, case in rows]
+    if len(ids) != len(set(ids)):
+        raise ValueError("评估集用例ID重复")
+    if case_ids is not None:
+        if not case_ids or len(case_ids) != len(set(case_ids)):
+            raise ValueError("选取的用例ID为空或重复")
+        if set(case_ids) - set(ids):
+            raise ValueError("选取了评估集中不存在的用例")
+        rows = [(line, case) for line, case in rows if case["id"] in case_ids]
+        content = b"".join(line for line, _ in rows)
+    if not rows:
+        raise ValueError("评估集为空")
+    return [case for _, case in rows], hashlib.sha256(content).hexdigest()
+
+
+def research_execution_ok(mode, evidence, research):
+    if mode == "demo":
+        return True
+    if not research:
+        return False
+    return research.get("status") == "completed" or (
+        research.get("status") == "not_required"
+        and not any(e["kind"] != "metrics" for e in evidence)
+    )
+
+
 async def evaluate(args):
     original = Settings()
-    original = original.model_copy(update={"agent_mode": args.mode})
+    updates = {"agent_mode": args.mode}
+    if getattr(args, "max_model_calls", None) is not None:
+        updates["max_model_calls"] = args.max_model_calls
+    original = original.model_copy(update=updates)
     # Re-validate live credentials after an explicit mode override; never silently use demo.
     original = Settings(_env_file=None, **original.model_dump())
-    cases = [
-        json.loads(line)
-        for line in args.cases.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    cases, cases_hash = load_cases(args.cases, getattr(args, "case_ids", None))
     results = []
     with TemporaryDirectory(prefix="commerce-eval-") as directory:
         root = Path(directory)
@@ -84,6 +112,7 @@ async def evaluate(args):
                     + (result.get("report") or {}).get("limitations", [])
                 )
                 checks = {
+                    "research_execution": research_execution_ok(args.mode, evidence, research),
                     "agent_execution": args.mode == "demo"
                     or bool(
                         result["validation"]
@@ -173,7 +202,7 @@ async def evaluate(args):
         "passed": sum(r["passed"] for r in results),
         "median_runtime_ms": statistics.median(runtimes) if runtimes else None,
         "results": results,
-        "cases_sha256": hashlib.sha256(args.cases.read_bytes()).hexdigest(),
+        "cases_sha256": cases_hash,
         "fixture_sha256": hashlib.sha256(
             b"".join(p.read_bytes() for p in sorted(Path("data").rglob("*")) if p.is_file())
         ).hexdigest(),
@@ -217,6 +246,10 @@ def main():
     parser.add_argument("--mode", choices=["demo", "live"], default="demo")
     parser.add_argument("--strategy", choices=["workflow", "single", "multi"], default="single")
     parser.add_argument("--cases", type=Path, default=Path("evaluations/cases.jsonl"))
+    parser.add_argument(
+        "--case", dest="case_ids", action="append", help="仅运行指定用例，可重复提供"
+    )
+    parser.add_argument("--max-model-calls", type=int, help="单用例模型调用上限，计入修正和SDK调用")
     parser.add_argument("--output", type=Path, default=Path("evaluations/results/latest.json"))
     asyncio.run(evaluate(parser.parse_args()))
 

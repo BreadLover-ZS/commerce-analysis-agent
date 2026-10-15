@@ -8,6 +8,8 @@ from langchain_core.tools import tool
 
 from app.commerce.service import DATA_ROOT, inventory_risks, sales_summary, search_documents
 
+MAX_TOOL_RESPONSE_BYTES = 2 * 1024 * 1024
+
 
 class ToolGateway:
     """Identity comes from the worker lease, never from model arguments."""
@@ -78,14 +80,19 @@ class ToolGateway:
         ) as client:
             for attempt in range(2):
                 try:
-                    response = await client.post(url, json=body, headers=headers)
-                    if response.status_code in {429, 502, 503, 504} and attempt == 0:
+                    async with client.stream("POST", url, json=body, headers=headers) as response:
+                        if response.status_code in {429, 502, 503, 504} and attempt == 0:
+                            retry = True
+                        else:
+                            response.raise_for_status()
+                            content = bytearray()
+                            async for chunk in response.aiter_bytes(chunk_size=64 * 1024):
+                                if len(content) + len(chunk) > MAX_TOOL_RESPONSE_BYTES:
+                                    raise ValueError("工具响应超过大小上限")
+                                content.extend(chunk)
+                            return json.loads(content)
+                    if retry:
                         await asyncio.sleep(0.5)
-                        continue
-                    response.raise_for_status()
-                    if len(response.content) > 2 * 1024 * 1024:
-                        raise ValueError("工具响应超过大小上限")
-                    return response.json()
                 except (httpx.TimeoutException, httpx.ConnectError):
                     if attempt == 1:
                         raise

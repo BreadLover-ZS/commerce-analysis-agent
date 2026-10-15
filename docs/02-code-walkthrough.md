@@ -10,7 +10,8 @@ demo 不调用模型，不执行 Deep Agents 工具循环；它复用业务工�
 3. `app/api/server.py` 的 `/api/tasks` 获取服务端身份，校验请求，调用 Repository。
 4. `app/storage/repository.py:create_task` 锁住用户，校验会话归属、活跃任务上限和幂等。
 5. `app/tasks/worker.py` 从数据库领取任务，建立租约/心跳/超时保护。
-6. `app/research/graph.py` 从已保存状态启动或恢复 LangGraph。
+6. `app/tasks/checkpoints.py` 将检查点/pending writes纳入租约保护，原始Saver负责存储；
+   `app/research/graph.py` 从已保存状态启动或恢复 LangGraph。
 7. `ToolGateway` 使用不可由模型填写的 RunContext 绑定用户、组织、会话和租约。
 8. 经营工具调用 `app/commerce/service.py`：静态 SQL、只读事务、Decimal/cents 计算。
 9. 检索工具保存原始依据，再返回 evidence_id。RAGFlow 使用片段检索而非嵌套问答。
@@ -19,6 +20,7 @@ demo 不调用模型，不执行 Deep Agents 工具循环；它复用业务工�
     agents.py 中间件单独记录委派。
 11. `research/context.py` 选择指标、来源和原文窗口；`synthesis.py` 验证研究发现的逐字引用。
     findings/conflicts/gaps保存在LangGraph state，draft实际接收这些发现，导出research.json。
+    模型gaps只是候选，不强制追加到报告；操作失败与确定性工具缺口分别保留。
 12. `app/research/evidence.py` 核对完整事实元组，按来源渲染指标句，并区分事实、分析和建议。
 13. 复核通过后导出。API 只按 opaque artifact_id 下载，不接受文件系统路径。
 
@@ -60,6 +62,9 @@ LangGraph 管理自己的 checkpoint 表。Alembic 管理业务表，两者不�
 
 规则能够证明：引用来自当前任务、必需章节存在、经营指标的商品/单位/周期/快照与
 数值匹配，指标句按程序渲染。原文数字检查仍只提供基础防线，不能证明文本语义对应。
+Schema提前拒绝analysis/recommendation携带指标引用，指标只在fact中呈现。
+语义复核覆盖claims与limitations，参考授权来源、实际选择与证据清单；对已有规则
+误报缺口会拒绝。修正接收原草稿、错误ID/索引和评审理由，所有模型请求仍计入预算。
 规则不能证明：来源本身正确、模型推断成立或建议有效。模型语义评审也是辅助手段，
 重要结论仍须人工核验。`semantic_status=model_reviewed` 不等于真实业务验收 PASS。
 

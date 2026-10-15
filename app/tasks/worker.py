@@ -11,6 +11,7 @@ from langgraph.types import Command
 from app.core.config import get_settings
 from app.research.graph import build_workflow
 from app.storage.repository import BudgetExceeded, Repository, StaleLease, TaskCancelled
+from app.tasks.checkpoints import LeaseFencedSaver
 
 logger = logging.getLogger(__name__)
 
@@ -57,40 +58,41 @@ class Worker:
                     return
 
         async def execute():
-            graph = build_workflow(self.repo, self.settings, ctx, self.saver, self.model)
-            config = {
-                "configurable": {"thread_id": ctx.task_id},
-                "recursion_limit": 20,
-                "run_name": "commerce_analysis_workflow",
-                "metadata": {"task_id": ctx.task_id, "mode": task["mode"]},
-            }
-            snapshot = await graph.aget_state(config)
-            if snapshot.interrupts:
-                if (
-                    task["status"] == "running"
-                    and task["parameters"]["require_review"]
-                    and task.get("report")
-                ):
-                    with self.repo.session() as db:
-                        from app.storage.models import Task
+            async with LeaseFencedSaver(self.saver, self.repo, ctx) as saver:
+                graph = build_workflow(self.repo, self.settings, ctx, saver, self.model)
+                config = {
+                    "configurable": {"thread_id": ctx.task_id},
+                    "recursion_limit": 20,
+                    "run_name": "commerce_analysis_workflow",
+                    "metadata": {"task_id": ctx.task_id, "mode": task["mode"]},
+                }
+                snapshot = await graph.aget_state(config)
+                if snapshot.interrupts:
+                    if (
+                        task["status"] == "running"
+                        and task["parameters"]["require_review"]
+                        and task.get("report")
+                    ):
+                        with self.repo.session() as db:
+                            from app.storage.models import Task
 
-                        decision = db.get(Task, ctx.task_id).review_decision
-                    if decision is None:
+                            decision = db.get(Task, ctx.task_id).review_decision
+                        if decision is None:
+                            return "waiting_review"
+                        result = await graph.ainvoke(
+                            Command(resume={"approved": decision}), config=config
+                        )
+                    else:
                         return "waiting_review"
-                    result = await graph.ainvoke(
-                        Command(resume={"approved": decision}), config=config
-                    )
+                elif snapshot.values and snapshot.next:
+                    result = await graph.ainvoke(None, config=config)
+                elif snapshot.values:
+                    return snapshot.values.get("status", "failed")
                 else:
+                    result = await graph.ainvoke({}, config=config)
+                if result.get("__interrupt__"):
                     return "waiting_review"
-            elif snapshot.values and snapshot.next:
-                result = await graph.ainvoke(None, config=config)
-            elif snapshot.values:
-                return snapshot.values.get("status", "failed")
-            else:
-                result = await graph.ainvoke({}, config=config)
-            if result.get("__interrupt__"):
-                return "waiting_review"
-            return result.get("status", "failed")
+                return result.get("status", "failed")
 
         execution = asyncio.create_task(execute())
         heartbeat = asyncio.create_task(heartbeats())

@@ -27,6 +27,24 @@ demo 的毫秒级耗时是模板与本地工具耗时，不是大模型延迟或
 SEMANTIC_REVIEW=true 时还会发生一次或多次语义评审调用，计入模型预算。
 接口兼容不保证模型行为相同，应逐个验证实际使用的模型。
 
+使用官方 DeepSeek 接口（`https://api.deepseek.com` 或其 `/v1`、`/beta` 路径）时，
+模型适配层显式设置 `thinking.type=disabled`。DeepSeek 默认思考模式不支持指定工具选择，
+会返回400。非思考模式的普通工具参数仍可能产生无效 JSON，因此 DeepSeek 的计划/
+研究归纳/报告/评审使用 `json_object` 输出模式，在提示中提供完整 JSON Schema。
+结果继续经过 Pydantic 和业务规则校验；不修剪或猜测损坏的 JSON，也不放宽数字与引用
+要求。整条 DeepSeek 流程采用非思考模式。
+结构化解析失败时，会携带字段错误与先前输出最多修正一次；日志仅保存错误字段/类型，
+不保存原始模型内容。仍失败则保留现有回退。此修正与原有业务数字/引用校验的修正
+分别限次，所有调用均计入模型调用和 Token 预算；不能把回退算成模型成功。
+业务校验修正时同时提供原草稿与错误结论ID，避免只有错误ID而无法定位内容。
+分析/建议不重复未经指标绑定的数字，关键数字与日期由事实句呈现；没有业务阈值不
+自行判定退款比例高低或经营健康。数字、实体、单位、周期和引用校验保持原有规则。
+其他服务商不会收到此专用参数，第三方转发地址尚未自动适配。若未来启用思考模式，
+需要另行验证工具选择及 `reasoning_content` 回传，不能直接移除此设置。
+接口约束见 [DeepSeek 官方文档](https://api-docs.deepseek.com/api/create-chat-completion/)。
+JSON 输出要求见 [官方指南](https://api-docs.deepseek.com/guides/json_mode/)。
+本次修复、失败证据与单条真实验证范围见 [DeepSeek 验证记录](11-deepseek-validation.md)。
+
 公开关键词独立填写，每条最多160字符，最多3条。内部经营数据与文档不会被 Gateway
 自动复制到公开搜索参数。公开搜索返回的片段不代表系统已经读取完整网页。
 
@@ -80,6 +98,10 @@ uv run python -m evaluations.review compare evaluations/results/live-*-r*.json -
 live 评估还检查模型是否实际完成草稿、是否使用回退、用量是否完整、是否完成配置的
 语义复核。系统通过确定性回退完成报告，不能算成模型研究任务成功。
 
+`research_execution`要求live结果保留研究阶段产物：文本归纳完成，或纯指标任务明确
+标为无需文本归纳。没有阶段产物或归纳失败均不通过。归纳完成只表示执行及摘录校验
+成功；发现的语义、金额/件数维度和规则冲突仍需人工核对，不能由该字段推定正确。
+
 ## 费用与失败记录
 
 可设置 INPUT_PRICE_PER_MILLION / OUTPUT_PRICE_PER_MILLION，单位须与提供方价格表
@@ -90,3 +112,7 @@ live 评估还检查模型是否实际完成草稿、是否使用回退、用量
 evaluations/results，发布可脱敏的验收结论及必要失败样本。
 
 真实联调入口已经实现，但本次未配置相关密钥；最新验证结果见 `09-validation-round2.md`。
+上述“未配置”是第二轮记录时的状态。DeepSeek已配置；本轮库存/教学规则文档的
+真实验证、人工核对失败及修复见 [可靠性与模型验证](12-reliability-and-validation.md)。
+可使用 `--case stock-risk` 选择一个固定用例，并用 `--max-model-calls 8` 限制单用例请求，
+重复 `--case` 可选择多个；用例指纹只绑定实际选中的内容，失败仍停止并保留结果。
