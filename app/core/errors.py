@@ -1,5 +1,23 @@
 """Fixed provider diagnostics; never retain message text, headers or request bodies."""
 
+import httpx
+
+
+def _timeout_phase(error):
+    seen = set()
+    while error is not None and id(error) not in seen and len(seen) < 6:
+        seen.add(id(error))
+        for error_type, phase in (
+            (httpx.ConnectTimeout, "connect"),
+            (httpx.ReadTimeout, "read"),
+            (httpx.WriteTimeout, "write"),
+            (httpx.PoolTimeout, "pool"),
+        ):
+            if isinstance(error, error_type):
+                return phase
+        error = error.__cause__
+    return "unknown"
+
 
 def provider_error_data(error):
     status = getattr(error, "status_code", None)
@@ -34,4 +52,7 @@ def provider_error_data(error):
         category = "connection"
     else:
         category = "unknown"
-    return {"error_type": name, "http_status": status, "category": category}
+    result = {"error_type": name, "http_status": status, "category": category}
+    if category == "timeout":
+        result["timeout_phase"] = _timeout_phase(error)
+    return result

@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from urllib.parse import urlsplit
 
+import httpx
 from deepagents import (
     GeneralPurposeSubagentProfile,
     HarnessProfile,
@@ -35,7 +36,12 @@ def model_from_settings(settings):
         base_url=settings.openai_base_url,
         temperature=0,
         max_tokens=3000,
-        timeout=25,
+        timeout=httpx.Timeout(
+            read=settings.model_read_timeout_seconds,
+            connect=settings.model_connect_timeout_seconds,
+            write=10,
+            pool=5,
+        ),
         max_retries=0,
         extra_body=extra_body,
     )

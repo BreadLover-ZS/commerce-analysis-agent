@@ -243,6 +243,8 @@ async def evaluate(args):
             "max_tool_calls": settings.max_tool_calls,
             "max_tokens": settings.max_tokens,
             "max_runtime_seconds": settings.max_runtime_seconds,
+            "model_read_timeout_seconds": settings.model_read_timeout_seconds,
+            "model_connect_timeout_seconds": settings.model_connect_timeout_seconds,
             "input_price_per_million": settings.input_price_per_million,
             "output_price_per_million": settings.output_price_per_million,
         },

@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     openai_api_key: SecretStr = SecretStr("")
     openai_base_url: str = "https://api.openai.com/v1"
     llm_model: str = ""
+    model_read_timeout_seconds: float = Field(60, ge=1, le=120)
+    model_connect_timeout_seconds: float = Field(5, ge=1, le=30)
     tavily_api_key: SecretStr = SecretStr("")
     knowledge_provider: Literal["local", "ragflow"] = "local"
     ragflow_api_url: str = ""

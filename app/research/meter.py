@@ -48,7 +48,7 @@ class RuntimeModelMeter(AsyncCallbackHandler):
     async def on_llm_error(self, error, *, run_id, **kwargs):
         if run_id not in self.starts:
             return
-        self.starts.pop(run_id)
+        started, _ = self.starts.pop(run_id)
         await asyncio.to_thread(self.repo.record_usage, self.ctx, None)
         # During cancellation, usage is recorded but ordinary business events are fenced off.
         from app.storage.repository import TaskCancelled
@@ -59,7 +59,10 @@ class RuntimeModelMeter(AsyncCallbackHandler):
                 self.ctx,
                 "model_error",
                 "模型请求失败，Token使用量未知",
-                provider_error_data(error),
+                {
+                    **provider_error_data(error),
+                    "elapsed_ms": int((time.monotonic() - started) * 1000),
+                },
             )
         except TaskCancelled:
             pass

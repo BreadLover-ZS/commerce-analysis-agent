@@ -24,6 +24,15 @@ pnpm dev
 `uv run uvicorn app.api.server:app --host 127.0.0.1 --port 8000`、
 `uv run python -m app.tasks.worker`。只有 API 运行时，任务会排队，不会执行。
 
+## 模型请求超时
+
+`.env`可配置`MODEL_READ_TIMEOUT_SECONDS=60`（1–120秒）和
+`MODEL_CONNECT_TIMEOUT_SECONDS=5`（1–30秒）。读取值约束等待响应数据的无活动时长，
+不等同于任务总耗时；`MAX_RUNTIME_SECONDS`仍限制整个任务。SDK自动重试为0。
+模型超时且没有用量回执时，后续模型调用被阻止，费用以服务商账单为准。
+安全错误事件包含timeout_phase和elapsed_ms；unknown表示未取得可确认的底层阶段。
+本地测试和真实验证范围见[超时记录](14-model-timeouts.md)。
+
 ## Docker 本地部署（PostgreSQL）
 
 ```bash
