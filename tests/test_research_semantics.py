@@ -5,17 +5,70 @@ from pathlib import Path
 
 import pytest
 from pydantic import PrivateAttr, SecretStr
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 from app.research.schemas import ResearchSemanticReview, ResearchSynthesis
 from app.research.synthesis import research_review_issues, validate_synthesis
-from app.storage.models import Artifact
+from app.storage.models import Artifact, DailySale
 from app.tasks.worker import Worker, checkpoint_store
 from evaluations.run import research_semantics_ok
 from tests.conftest import new_task
 from tests.fake_model import ScriptedCommerceModel
 
 FIXTURE = json.loads((Path(__file__).parent / "fixtures/research_semantics.json").read_text())
+
+
+@pytest.mark.parametrize("missing_sales", [False, True])
+async def test_mixed_research_repair_knows_available_business_facts(setup, missing_sales):
+    class GapRepairModel(ScriptedCommerceModel):
+        _syntheses: int = PrivateAttr(default=0)
+
+        def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+            result = super()._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+            calls = result.generations[0].message.tool_calls
+            if not calls:
+                return result
+            call = calls[0]
+            if call["name"] == "ResearchSynthesis":
+                context, sources = messages[-1].content.split("\n证据：\n", 1)
+                context, sources = json.loads(context), json.loads(sources)
+                assert all(source["kind"] != "metrics" for source in sources)
+                assert context["selected_sources"] == ["inventory", "documents"]
+                index = context["business_fact_index"]
+                assert len(index) == 1 and index[0]["tool"] == "inventory"
+                assert "CUP-01.stock" in index[0]["available_fact_keys"]
+                assert (
+                    "CUP-01.coverage_days" in index[0]["available_fact_keys"]
+                ) is not missing_sales
+                assert "metrics" not in index[0] and "value" not in json.dumps(index)
+                if self._syntheses:
+                    assert context["prior_synthesis"]["gaps"] == ["未提供库存快照数值"]
+                    assert context["prior_review"]["unsupported_gap_indices"] == [0]
+                    call["args"]["gaps"] = []
+                else:
+                    call["args"]["gaps"] = ["未提供库存快照数值"]
+                self._syntheses += 1
+            elif call["name"] == "ResearchSemanticReview":
+                call["args"]["unsupported_gap_indices"] = [0] if self._syntheses == 1 else []
+            return result
+
+    settings, repo, *_ = setup
+    if missing_sales:
+        with repo.session() as db:
+            db.execute(delete(DailySale))
+            db.commit()
+    settings.agent_mode, settings.llm_model = "live", "fake-commerce"
+    settings.openai_api_key = SecretStr("offline-business-availability")
+    settings.max_model_calls = 8
+    task = new_task(setup, sources=["inventory", "documents"])
+    model = GapRepairModel()
+    async with checkpoint_store(settings) as saver:
+        await Worker(repo, settings, saver, model).run_once()
+    done = repo.get_task(task["id"])
+    assert model._syntheses == 2
+    assert done["validation"]["research_validation"]["passed"]
+    rejected = [e for e in repo.events(task["id"]) if e["kind"] == "research_synthesis_rejected"]
+    assert len(rejected) == 1 and rejected[0]["data"]["research"]["gaps"] == ["未提供库存快照数值"]
 
 
 def verdict(finding, value="supported", explanation="原文支持此陈述"):
