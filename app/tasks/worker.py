@@ -80,7 +80,7 @@ class Worker:
                         if decision is None:
                             return "waiting_review"
                         result = await graph.ainvoke(
-                            Command(resume={"approved": decision}), config=config
+                            Command(resume={"approved": decision}), config=config, durability="sync"
                         )
                     else:
                         return "waiting_review"
@@ -88,9 +88,12 @@ class Worker:
                     # An empty `next` can mean the last node's writes are durable
                     # but its follow-up checkpoint is not. Let LangGraph apply
                     # those writes/edges; a genuinely finished graph is a no-op.
-                    result = await graph.ainvoke(None, config=config)
+                    result = await graph.ainvoke(None, config=config, durability="sync")
                 else:
-                    result = await graph.ainvoke({}, config=config)
+                    # A completed step must be durable before the next step can
+                    # make business/model side effects. Async persistence can
+                    # otherwise lose earlier progress during a later SIGKILL.
+                    result = await graph.ainvoke({}, config=config, durability="sync")
                 if result.get("__interrupt__"):
                     return "waiting_review"
                 return result.get("status", "failed")

@@ -126,8 +126,33 @@ api.deepseek.com、deepseek-flash，密钥已配置，本地应用仍为demo。
   [官方case接口示例](https://docs.sqlalchemy.org/en/20/core/sqlelement.html#sqlalchemy.sql.expression.case)，
   无新依赖或数据库迁移；本地修复实施置信度95%，不推导真实模型通过率。
 
-本次失败已经触发授权批次停止。修复后的真实效果尚未复测，需要另行明确授权；
-不能继续使用已停止批次去补跑剩余两条。
+本次失败已经触发原授权批次停止。用户随后另行明确授权：CI通过后，在修复版依次
+执行库存、内部规则、综合补货各一次，每条最多8次请求，任何自动或人工失败即停。
+新授权在以下CI修复完成前尚未使用，不沿用已停止批次。
+
+## 第二次CI故障：下一步早于检查点落盘
+
+库存参数补丁5a7eb63的[CI](https://github.com/BreadLover-ZS/commerce-analysis-agent/actions/runs/38682553404)
+为164 passed、1 failed；浏览器/容器通过。artifact-unregistered SIGKILL恢复后的工具
+调用由3增至6，说明已完成的采集被重新执行；没有删测试或直接重跑CI取代失败证据。
+
+已安装LangGraph默认durability=async，允许下一步与先前检查点持久化并发。另一个
+确定性反例在租约准入前阻塞collect结果检查点，旧代码仍进入draft；修复前该测试
+失败，修复后等待落盘才进入draft。该机制与CI表现一致，但未保存原CI检查点，不能
+声称唯一还原当时的调度路径。此前7016340处理的是“已有pending writes的结束判断”，
+不能覆盖检查点本身尚未落盘的窗口。
+
+主流程的新任务、接管、人工复核继续，以及研究子图的新建/恢复均显式使用
+durability=sync，保证前一步检查点完成后再进入下一步。沿用租约保护，不更改审批
+要求或任务总时限。核对[官方持久化模式](https://docs.langchain.com/oss/python/langgraph/checkpointers#durability-modes)
+及已安装1.2.15的await检查点实现；无新依赖。代价是增加每步写入等待，不保证节点
+内部业务提交、模型请求或外部副作用exactly-once；未完成节点仍可重放，用量未知
+继续阻止新生成。新增实际图的延迟写入反例，保留所有原SIGKILL断言。
+
+恢复与子图专项11条通过。最终全量**166 passed，35.19秒**（含7条隔离真实PG），
+demo **32/32**，run_id `9e7033f8-2c7a-4f0e-b53c-64144321ce03`，实现指纹
+`522784031550b5ec4bbbb598225488ee20d41e4da2ae59cc6982e2fd910749e0`。
+当前同步持久化补丁远端CI待发布后核对；真实批次仍未执行。
 
 ## 完成范围审计
 

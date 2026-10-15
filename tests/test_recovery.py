@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -17,6 +18,43 @@ from app.tasks.checkpoints import LeaseFencedSaver
 from app.tasks.worker import Worker, checkpoint_store
 from tests.conftest import expire_lease, new_task
 from tests.fake_model import ScriptedCommerceModel
+
+
+async def test_worker_waits_for_collect_checkpoint_before_drafting(setup, monkeypatch):
+    settings, repo, *_ = setup
+    task = new_task(setup, sources=["sales", "inventory", "documents"])
+    checkpoint_started, release_checkpoint = asyncio.Event(), asyncio.Event()
+    draft_started = threading.Event()
+    original_put, original_emit = LeaseFencedSaver.aput, repo.emit
+
+    async def delayed_put(self, config, checkpoint, metadata, new_versions):
+        values = checkpoint["channel_values"]
+        if "evidence_context" in values and "report" not in values:
+            # Hold the completed collect checkpoint before lease admission, as
+            # a delayed background writer can be scheduled after later nodes.
+            checkpoint_started.set()
+            await release_checkpoint.wait()
+        return await original_put(self, config, checkpoint, metadata, new_versions)
+
+    def record_draft(ctx, kind, *args, **kwargs):
+        if kind == "drafting":
+            draft_started.set()
+        return original_emit(ctx, kind, *args, **kwargs)
+
+    monkeypatch.setattr(LeaseFencedSaver, "aput", delayed_put)
+    monkeypatch.setattr(repo, "emit", record_draft)
+    async with checkpoint_store(settings) as saver:
+        execution = asyncio.create_task(Worker(repo, settings, saver).run_once())
+        try:
+            await asyncio.wait_for(checkpoint_started.wait(), timeout=5)
+            await asyncio.sleep(0.2)
+            advanced_while_checkpoint_blocked = draft_started.is_set()
+        finally:
+            release_checkpoint.set()
+            await asyncio.wait_for(execution, timeout=10)
+    assert not advanced_while_checkpoint_blocked, "draft ran before collect checkpoint was durable"
+    done = repo.get_task(task["id"])
+    assert done["status"] == "degraded" and done["metrics"]["tool_calls"] == 3
 
 
 async def test_sigkill_during_export_resumes_without_research_replay(setup):

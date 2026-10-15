@@ -25,8 +25,9 @@ async def test_research_child_with_empty_next_is_resumed_before_reading_result(s
                 values={"messages": [AIMessage("stale research snapshot")]}, next=()
             )
 
-        async def ainvoke(self, value, config):
+        async def ainvoke(self, value, config, *, durability):
             assert value is None
+            assert durability == "sync"
             self.resumed = True
             return {"messages": [AIMessage("finalized pending research")]}
 

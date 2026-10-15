@@ -163,11 +163,12 @@ def build_workflow(repo, settings, ctx, checkpointer, model=None):
                             ]
                         },
                         config=child_config,
+                        durability="sync",
                     )
                 else:
                     # Finalize durable node writes even if `next` is empty;
                     # reading the old snapshot alone can miss the last result.
-                    result = await researcher.ainvoke(None, config=child_config)
+                    result = await researcher.ainvoke(None, config=child_config, durability="sync")
                 messages = result.get("messages", [])
                 if messages:
                     researcher_output = str(messages[-1].content)[:5000]
