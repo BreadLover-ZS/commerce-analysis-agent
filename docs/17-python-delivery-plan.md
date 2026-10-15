@@ -3,7 +3,7 @@
 日期：2026-10-15。用户明确保持纯 Python 项目，先完成开发再系统读源码。
 不新增 Java 服务，继续使用 FastAPI、PostgreSQL、LangGraph 和 React 工作台。
 
-本文件先记录实施计划，完成状态和实测结果随后补充，不能把计划视为已交付。
+本文件记录实施范围与约束；完成证据见[交付验收](18-python-delivery-validation.md)。
 
 ## 交付范围
 
@@ -45,6 +45,6 @@
 - [x] PostgreSQL备份/恢复CLI与边界回归
 - [x] 真实临时PostgreSQL恢复演练
 - [x] 隔离负载验收入口与一轮实测
-- [ ] 容器支持、CI、文档与最终本地回归
+- [x] 容器支持、CI、文档与最终本地回归
 
 验收证据持续记录在[纯Python交付验收](18-python-delivery-validation.md)。

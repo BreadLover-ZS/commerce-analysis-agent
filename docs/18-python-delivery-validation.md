@@ -38,9 +38,12 @@ PermissionError，保留记录后在获准的本地网络权限下完成演练�
 
 ## CI与未验范围
 
-CI新增PG16客户端和真实备份测试；容器任务在原有HTTP烟测后停API/Worker，恢复到额外空库，
-检查用户、任务、产物、检查点数量及文件哈希。当前等待发布后的远端运行结果。
-本机没有Docker，不能将本地PG验证写成已验证容器；最终CI状态单独记录。
+实现提交`a4a23bf9f0bce0e648d0fd8e77f978e5b00a0ee9`已推送main，
+[远端CI](https://github.com/BreadLover-ZS/commerce-analysis-agent/actions/runs/38706315862)
+的backend、browser、container三项全部success。后端新增PG16客户端和真实备份测试；
+容器任务在原有HTTP烟测后停API/Worker，恢复到额外空库，检查用户、任务、产物、检查点
+数量及文件哈希。浏览器覆盖7条模拟诊断和1条完整demo流程，不将模拟诊断算作真实模型验证。
+本机没有Docker，容器结果来自上述隔离CI，不代表用户实际生产环境恢复。
 
 未验证：实际用户生产库恢复、HTTPS目标服务器、长时间压力、自动调度/保留策略、对象存储、
 Tavily/RAGFlow真实联调和模型稳定通过率。之前库存/规则/综合三个真实教学单例仍是对应
