@@ -10,7 +10,8 @@
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
 来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
 最新开发与验证范围见 [用量回执与服务核对](docs/16-usage-receipts-and-provider-check.md)。本地回归
-通过，真实库存/文档曾通过单用例；综合研究仍未验收通过，不将模拟结果当作模型效果。
+通过；最新真实库存单例因数字引用失败已停止批次，修复已完成本地验证，真实效果待复测。
+历史库存/文档曾通过对应快照单例；综合研究仍未验收通过。
 
 ![电商运营分析助手工作台](docs/images/commerce-analysis-desktop.png)
 

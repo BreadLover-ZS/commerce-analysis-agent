@@ -12,6 +12,8 @@ from sqlalchemy import Numeric, case, cast, func, or_, select, text
 from app.storage.models import Chunk, DailySale, Document, Product
 
 DATA_ROOT = Path(__file__).resolve().parents[2] / "data"
+# Tool classification parameter, not a verified enterprise replenishment policy.
+OVERSTOCK_THRESHOLD_DAYS = 60
 
 
 def decimal_string(value, scale=2):
@@ -171,11 +173,14 @@ def inventory_risks(repo, tenant_id, start, end):
             func.coalesce(sales.c.units, 0) <= 0
         )
         priority = case(
-            (unavailable, 0), (coverage < Product.lead_days, 1), (coverage > 60, 2), else_=3
+            (unavailable, 0),
+            (coverage < Product.lead_days, 1),
+            (coverage > OVERSTOCK_THRESHOLD_DAYS, 2),
+            else_=3,
         )
         severity = case(
             (coverage < Product.lead_days, coverage / Product.lead_days),
-            (coverage > 60, -coverage),
+            (coverage > OVERSTOCK_THRESHOLD_DAYS, -coverage),
             else_=coverage,
         )
         rows = db.execute(
@@ -206,7 +211,7 @@ def inventory_risks(repo, tenant_id, start, end):
             else "stockout"
             if Decimal(value) < product.lead_days
             else "overstock"
-            if Decimal(value) > 60
+            if Decimal(value) > OVERSTOCK_THRESHOLD_DAYS
             else "normal"
         )
         age = (end - product.stock_as_of).days
@@ -235,6 +240,13 @@ def inventory_risks(repo, tenant_id, start, end):
             ("stock", "库存快照数量", "count", product.stock),
             ("net_units", "已记录净销量", "count", units if observed else None),
             ("coverage_days", "按历史日均净销量估算的库存覆盖天数", "days", value),
+            ("lead_days", "当前商品配置的补货提前期", "days", product.lead_days),
+            (
+                "overstock_threshold_days",
+                "本工具积压判定阈值（非企业规则）",
+                "days",
+                OVERSTOCK_THRESHOLD_DAYS,
+            ),
         ]:
             if field_value is not None:
                 key = f"{product.sku}.{field}"
@@ -266,7 +278,8 @@ def inventory_risks(repo, tenant_id, start, end):
         "definitions": {
             "coverage_days": "完整日期记录的库存快照 / 所选周期日均净销量；不代表未来销量预测",
             "stockout": "覆盖天数小于补货提前期",
-            "overstock": "覆盖天数大于60天",
+            "overstock": f"覆盖天数大于{OVERSTOCK_THRESHOLD_DAYS}天；这是本工具算法阈值，非企业规则",
+            "lead_days": "当前商品配置值，不证明该提前期在历史销量周期内有效；下单前须确认实际交期",
         },
         "limitations": list(dict.fromkeys(gaps)),
     }

@@ -243,6 +243,7 @@ def build_workflow(repo, settings, ctx, checkpointer, model=None):
                             """生成电商报告，sections必须依次为经营表现、库存风险、竞品观察、行动建议。
 每个章节最多8条claims，limitations最多20条。相同实体/周期的相关指标可合并为一条fact，包含多个metrics引用。
 每条事实和分析必须引用真实 evidence_id。经营计算数字必须提供kind=metrics证据中fact_catalog的完整metrics引用：key/value/entity_id/unit/period_start/period_end/snapshot_as_of；数值与维度原样复制。指标独立作为fact，text由程序按引用渲染。
+库存的配置提前期lead_days、算法积压阈值overstock_threshold_days也必须用该商品fact_catalog的完整引用，不得仅在text写数字并令metrics=[]。可与同商品覆盖天数合并为fact；风险比较及解释另列analysis。配置交期不是历史承诺，工具算法阈值不能表述为企业补货规则。
 文档或网页原文中的数字（例如规则阈值）可以作为fact.text陈述并使用evidence_ids引用原文；这类事实metrics必须为[]，不得给文档构造fact_catalog引用。
 analysis/recommendation的metrics必须为[]，只用evidence_ids指向依据；不要为了支持分析或建议而复制metrics引用。需要展示数值时新增或合并fact，不能把建议改称事实。
 研究阶段gaps只是候选缺口，不能直接照抄到limitations；核对已有原文，不把已提供的阈值/规则说成缺失。区分已有判断条件与尚缺的实际数据或具体执行方案。

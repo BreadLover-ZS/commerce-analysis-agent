@@ -124,7 +124,12 @@ def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
                         for item in source["payload"].get("items", []):
                             known |= numbers(item.get("name", ""))
                 if not numbers(claim.text).issubset(known):
-                    issues.append(f"{claim.id}: 数字没有可核对的指标引用或原文依据")
+                    issues.append(
+                        f"{claim.id}: 数字没有可核对的指标引用或原文依据。"
+                        "经营来源的数值（包括配置提前期、算法阈值）须从fact_catalog复制完整metrics引用，"
+                        "由程序渲染独立fact；关系判断另列analysis。"
+                        "仅调整空格或将数字改成中文不能补足依据；确无来源则删除该数值并说明缺口。"
+                    )
             if (
                 any(by_id.get(eid, {}).get("kind") == "fixture" for eid in claim.evidence_ids)
                 and "模拟" not in claim.text
