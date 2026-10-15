@@ -71,13 +71,14 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 
 ## 阅读顺序
 
-1. [架构与边界](docs/01-architecture.md)：流程/Agent、状态/检查点、预算与取舍。
-2. [源码调用链](docs/02-code-walkthrough.md)：一条请求经过哪些模块，每层保证什么。
-3. [六周学习路线](docs/03-learning-roadmap.md)：每阶段需要解释、修改与验证的内容。
-4. [评估与真实联调](docs/04-evaluation.md)：固定用例、人工核验、三种策略比较。
-5. [启动和部署](docs/05-deployment.md)、[交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。
-6. [上传 GitHub 与成果整理](docs/07-publishing.md)：来源、凭据检查和简历边界。
-7. [第二轮开发文档](docs/08-development-plan.md)：问题根因、实现约束与逐项验收标准。
+1. [循序学习：从总览开始](docs/learning/01-总览.md)：面向 Java 后端背景与 Python/Agent 初学者，按“基础 → 模块 → 链路自测 → 动手调试与修改 → 面试表达”逐步阅读，共14篇。
+2. [架构与边界](docs/01-architecture.md)：流程/Agent、状态/检查点、预算与取舍。
+3. [源码调用链速查](docs/02-code-walkthrough.md)：一条请求经过哪些模块，每层保证什么。
+4. [六周学习路线](docs/03-learning-roadmap.md)：较长期的学习与复现安排，具体入口和成果测试见循序学习系列。
+5. [评估与真实联调](docs/04-evaluation.md)：固定用例、人工核验、三种策略比较。
+6. [启动和部署](docs/05-deployment.md)、[交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。
+7. [上传 GitHub 与成果整理](docs/07-publishing.md)：来源、凭据检查和简历边界。
+8. [第二轮开发文档](docs/08-development-plan.md)：问题根因、实现约束与逐项验收标准。
 
 ## 项目结构
 
