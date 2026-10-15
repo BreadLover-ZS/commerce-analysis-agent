@@ -390,6 +390,16 @@ small {
 .ant-alert {
   margin: 12px 0;
 }
+.task-diagnostics p {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.task-diagnostics summary {
+  cursor: pointer;
+}
+.task-diagnostics details {
+  margin-top: 10px;
+}
 @media (max-width: 1050px) {
   .workspace {
     grid-template-columns: 205px minmax(0, 1fr);

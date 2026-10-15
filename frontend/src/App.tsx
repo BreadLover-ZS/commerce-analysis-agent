@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { api, apiUrl, setAuth } from "./lib/api";
+import TaskDiagnostics from "./TaskDiagnostics";
 import type {
   AppConfig,
   Evidence,
@@ -584,9 +585,7 @@ export default function App() {
                   </b>
                 </span>
               </div>
-              {task.error_code && (
-                <Alert type="error" message={`任务失败：${task.error_code}`} />
-              )}
+              <TaskDiagnostics task={task} events={events} />
               {running && (
                 <Button
                   danger

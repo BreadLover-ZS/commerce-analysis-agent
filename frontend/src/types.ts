@@ -42,6 +42,10 @@ export interface Task {
     semantic_status: string;
     note: string;
     issues: string[];
+    research_validation?: {
+      passed: boolean;
+      semantic_status: string;
+    };
   } | null;
   metrics: {
     tool_calls: number;
