@@ -10,8 +10,8 @@
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
 来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
 最新开发与验证范围见 [用量回执与服务核对](docs/16-usage-receipts-and-provider-check.md)。本地回归
-通过；f3a12de对应的综合补货真实单例已通过自动及逐项核对，5次请求、无模板回退。
-库存/内部规则单例通过于70e5850；不称同版本三条全绿，也不将模拟结果当作模型效果。
+通过；f3a12de同一实现的库存、内部规则、综合补货三个教学单例均通过真实模型自动检查
+及逐项核对，无模板回退。单例结果不代表稳定通过率或生产验收，不将模拟结果当作模型效果。
 
 ![电商运营分析助手工作台](docs/images/commerce-analysis-desktop.png)
 
