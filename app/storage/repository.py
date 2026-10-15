@@ -14,6 +14,14 @@ from app.storage.models import Artifact, Conversation, Event, Evidence, Task, Us
 
 TERMINAL = {"succeeded", "degraded", "failed", "cancelled", "rejected"}
 ACTIVE = {"queued", "running", "cancelling", "waiting_review"}
+MAX_STORED_TOKENS = 2_147_483_647  # PostgreSQL INTEGER columns, also enforced on SQLite.
+
+
+def usage_counters_valid(task):
+    return all(
+        type(value) is int and 0 <= value <= MAX_STORED_TOKENS
+        for value in (task.input_tokens, task.output_tokens)
+    )
 
 
 class Conflict(Exception):
@@ -93,7 +101,9 @@ def task_dict(item: Task) -> dict:
             "model_calls": item.model_calls,
             "input_tokens": item.input_tokens,
             "output_tokens": item.output_tokens,
-            "usage_complete": item.usage_complete and item.usage_reports == item.model_calls,
+            "usage_complete": item.usage_complete
+            and item.usage_reports == item.model_calls
+            and usage_counters_valid(item),
         },
     }
 
@@ -337,7 +347,10 @@ class Repository:
                     raise BudgetExceeded("tool_budget")
                 task.tool_calls += 1
             else:
-                if not task.usage_complete:
+                if not task.usage_complete or not usage_counters_valid(task):
+                    if task.usage_complete:
+                        task.usage_complete = False
+                        db.commit()
                     raise BudgetExceeded("模型Token使用量不完整，停止后续调用")
                 if (
                     task.model_calls >= self.settings.max_model_calls
@@ -351,12 +364,22 @@ class Repository:
         with self.session() as db:
             task = self._fenced(db, ctx, allow_cancel=True)
             task.usage_reports += 1
-            if not usage or "input_tokens" not in usage or "output_tokens" not in usage:
+            valid = (
+                isinstance(usage, dict)
+                and usage_counters_valid(task)
+                and all(
+                    type(usage.get(name)) is int
+                    and 0 <= usage[name] <= MAX_STORED_TOKENS - getattr(task, name)
+                    for name in ("input_tokens", "output_tokens")
+                )
+            )
+            if not valid:
                 task.usage_complete = False
             else:
-                task.input_tokens += int(usage["input_tokens"])
-                task.output_tokens += int(usage["output_tokens"])
+                task.input_tokens += usage["input_tokens"]
+                task.output_tokens += usage["output_tokens"]
             db.commit()
+            return valid
 
     def account_unreported_usage(self, ctx):
         with self.session() as db:

@@ -18,7 +18,7 @@ from app.core.auth import bootstrap_user
 from app.core.config import Settings
 from app.research.schemas import TaskRequest
 from app.storage.models import DailySale, Product, Task, User, utcnow
-from app.storage.repository import Repository, StaleLease
+from app.storage.repository import BudgetExceeded, Repository, StaleLease
 from app.tasks.checkpoints import LeaseFencedSaver
 from app.tasks.worker import Worker, checkpoint_store
 
@@ -104,6 +104,25 @@ async def test_postgres_concurrent_budget_updates_are_not_lost(postgres_setup):
     ctx = repo.claim()
     await asyncio.gather(*[asyncio.to_thread(repo.consume, ctx, "tool") for _ in range(8)])
     assert repo.get_task(task["id"])["metrics"]["tool_calls"] == 8
+    repo.finish(ctx, "cancelled", 0)
+
+
+@pytest.mark.parametrize("invalid_count", [-100, 2_147_483_648])
+def test_postgres_invalid_usage_never_credits_or_overflows_database(postgres_setup, invalid_count):
+    _, repo, user = postgres_setup
+    task = repo.create_task(
+        user,
+        TaskRequest(conversation_id=repo.create_conversation(user.id), query="验证用量回执"),
+        str(uuid4()),
+    )
+    ctx = repo.claim()
+    repo.consume(ctx, "model")
+    assert not repo.record_usage(ctx, {"input_tokens": invalid_count, "output_tokens": 5})
+    metrics = repo.get_task(task["id"])["metrics"]
+    assert not metrics["usage_complete"]
+    assert metrics["input_tokens"] == metrics["output_tokens"] == 0
+    with pytest.raises(BudgetExceeded):
+        repo.consume(ctx, "model")
     repo.finish(ctx, "cancelled", 0)
 
 

@@ -28,15 +28,23 @@ class RuntimeModelMeter(AsyncCallbackHandler):
             response.generations[0][0] if response.generations and response.generations[0] else None
         )
         usage = getattr(getattr(first, "message", None), "usage_metadata", None)
-        if not usage and response.llm_output:
+        if not usage and isinstance(response.llm_output, dict):
             raw = response.llm_output.get("token_usage", {})
-            if "prompt_tokens" in raw and "completion_tokens" in raw:
+            if isinstance(raw, dict) and "prompt_tokens" in raw and "completion_tokens" in raw:
                 usage = {
                     "input_tokens": raw["prompt_tokens"],
                     "output_tokens": raw["completion_tokens"],
                 }
-        await asyncio.to_thread(self.repo.record_usage, self.ctx, usage)
+        valid_usage = await asyncio.to_thread(self.repo.record_usage, self.ctx, usage)
         started, phase = self.starts.pop(run_id, (time.monotonic(), "模型"))
+        if not valid_usage:
+            await asyncio.to_thread(
+                self.repo.emit,
+                self.ctx,
+                "model_usage_incomplete",
+                "模型用量缺失或无效，后续新模型请求将被拦截",
+                {"reason": "missing_or_invalid_token_counts"},
+            )
         await asyncio.to_thread(
             self.repo.emit,
             self.ctx,
