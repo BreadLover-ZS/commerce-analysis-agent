@@ -120,8 +120,16 @@ export default function CommerceDataPanel({
   }
   return (
     <section className="panel commerce-data" aria-label="经营数据管理">
-      <h3>经营数据</h3>
-      <p>先生成模拟场景或导入CSV，检查后确认使用。每次复盘绑定固定数据版本。</p>
+      <div className="section-heading">
+        <div>
+          <span className="section-kicker">数据准备</span>
+          <h2>经营数据</h2>
+        </div>
+        <span>02 / 03</span>
+      </div>
+      <p className="field-hint">
+        生成模拟场景或导入 CSV，预览后确认使用。每次复盘绑定固定数据版本。
+      </p>
       {error && (
         <Alert
           type="error"
@@ -130,7 +138,7 @@ export default function CommerceDataPanel({
           onClose={() => setError("")}
         />
       )}
-      <div className="form-grid">
+      <div className="data-source-actions">
         <label>
           模拟场景
           <select
@@ -164,49 +172,77 @@ export default function CommerceDataPanel({
           下载模拟CSV模板
         </a>
       </div>
-      <Checkbox checked={sample} onChange={(e) => setSample(e.target.checked)}>
-        导入内容为模拟数据
-      </Checkbox>
-      <label>
-        导入经营CSV
-        <input
-          aria-label="导入经营CSV"
-          type="file"
-          accept=".csv"
-          disabled={busy}
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            e.target.value = "";
-            if (!file) return;
-            setPreview(null);
-            void run(async () => {
-              const data = new FormData();
-              data.append("file", file);
-              data.append("sample", String(sample));
-              setPreview(
-                await api<Dataset>("/api/commerce/datasets/preview", {
-                  method: "POST",
-                  body: data,
-                }),
-              );
-            });
-          }}
-        />
-      </label>
+      <div className="import-row">
+        <Checkbox
+          checked={sample}
+          onChange={(e) => setSample(e.target.checked)}
+        >
+          导入内容为模拟数据
+        </Checkbox>
+        <label>
+          导入经营CSV
+          <input
+            aria-label="导入经营CSV"
+            type="file"
+            accept=".csv"
+            disabled={busy}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (!file) return;
+              setPreview(null);
+              void run(async () => {
+                const data = new FormData();
+                data.append("file", file);
+                data.append("sample", String(sample));
+                setPreview(
+                  await api<Dataset>("/api/commerce/datasets/preview", {
+                    method: "POST",
+                    body: data,
+                  }),
+                );
+              });
+            }}
+          />
+        </label>
+      </div>
       {!sample && (
         <p>请确认上传内容确为真实数据。模板和生成场景都属于模拟数据。</p>
       )}
       {preview && (
         <div className="dataset-preview" aria-label="导入预览">
-          <p>
-            {preview.name} ·{" "}
-            {preview.sample ? "模拟数据" : "用户声明的真实数据"} ·{" "}
-            {preview.products}个商品 / {preview.rows}条记录
-          </p>
-          <p>
-            默认分析周期：{preview.suggested_start} 至 {preview.period_end}
-          </p>
-          <p>版本校验：{preview.content_hash.slice(0, 12)}</p>
+          <div className="section-heading">
+            <h3>确认数据预览</h3>
+            <span>尚未提交</span>
+          </div>
+          <table className="data-table">
+            <tbody>
+              <tr>
+                <th scope="row">数据名称</th>
+                <td>{preview.name}</td>
+              </tr>
+              <tr>
+                <th scope="row">数据性质</th>
+                <td>{preview.sample ? "模拟数据" : "用户声明的真实数据"}</td>
+              </tr>
+              <tr>
+                <th scope="row">数据规模</th>
+                <td>
+                  {preview.products} 个商品 / {preview.rows} 条记录
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">默认分析周期</th>
+                <td>
+                  {preview.suggested_start} 至 {preview.period_end}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">版本校验</th>
+                <td>{preview.content_hash.slice(0, 12)}</td>
+              </tr>
+            </tbody>
+          </table>
           {preview.quality?.limitations.map((note) => (
             <p key={note}>{note}</p>
           ))}
@@ -222,7 +258,7 @@ export default function CommerceDataPanel({
           </Button>
         </div>
       )}
-      <label>
+      <label className="version-select">
         已确认的数据版本
         <select
           aria-label="已确认的数据版本"
@@ -244,7 +280,7 @@ export default function CommerceDataPanel({
         </select>
       </label>
       {quality && (
-        <div aria-label="数据质量检查">
+        <div className="quality-summary" aria-label="数据质量检查">
           <p>
             当前周期：预期{quality.coverage.expected_records}条，已记录
             {quality.coverage.observed_records}条，缺失

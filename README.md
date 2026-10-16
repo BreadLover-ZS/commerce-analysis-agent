@@ -22,7 +22,9 @@
 f3a12de的库存、内部规则、综合补货三个真实教学单例见[模型记录](docs/16-usage-receipts-and-provider-check.md)，
 它们是原实现的历史证据，本轮没有新增真实模型复测；不代表新实现模型效果、稳定通过率或生产验收。
 
-![电商运营分析助手工作台](docs/images/commerce-analysis-desktop.png)
+浅色工作台的界面、交互与本地验证见[前端重构记录](docs/22-frontend-redesign.md)。
+
+![电商运营分析助手工作台](docs/images/workbench-report.png)
 
 ## 主要能力
 

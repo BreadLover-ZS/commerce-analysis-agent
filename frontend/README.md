@@ -4,6 +4,9 @@ React/TypeScript/Vite，展示任务、复核、执行事件、依据和报告�
 API通过同源 `/api` 访问；开发代理默认 localhost:8000，部署由Nginx转发。
 当前界面使用事件游标轮询，后端另提供SSE接口。
 
+界面采用浅色运营工作台，新建配置与任务详情分别展示。组件职责、截图与本地验证见
+[前端工作台重构](../docs/22-frontend-redesign.md)。
+
 ```bash
 pnpm install --frozen-lockfile
 pnpm dev

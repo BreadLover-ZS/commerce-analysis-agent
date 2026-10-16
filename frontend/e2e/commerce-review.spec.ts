@@ -51,6 +51,23 @@ test("scenario preview, version binding, review, evidence and PDF", async ({
   await expect(
     page.getByRole("heading", { name: "变化贡献", exact: true }),
   ).toBeVisible();
+  // Dataset selection survives visiting a report and coming back to configuration.
+  const record = page
+    .getByRole("navigation", { name: "研究记录" })
+    .getByRole("button")
+    .first();
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "新建分析", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("已确认的数据版本", { exact: true }),
+  ).toHaveValue(params.dataset_id);
+  await expect(page.getByRole("button", { name: "开始分析" })).toBeEnabled();
+  await record.click();
+  await expect(
+    page.getByRole("heading", { name: "经营复盘报告", exact: true }),
+  ).toBeVisible();
   await page.locator(".citations button").first().click();
   await expect(page.locator(".evidence-detail pre")).toContainText(
     params.dataset_id,

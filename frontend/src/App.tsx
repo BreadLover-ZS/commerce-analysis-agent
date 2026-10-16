@@ -6,11 +6,13 @@ import {
   Input,
   Select,
   Tag,
-  message,
+  App as AntApp,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { api, apiUrl, setAuth } from "./lib/api";
-import TaskDiagnostics from "./TaskDiagnostics";
+import TaskReport from "./TaskReport";
+import WorkspaceSidebar from "./WorkspaceSidebar";
+import Icon from "./Icon";
 import CommerceDataPanel from "./CommerceDataPanel";
 import type { Dataset } from "./CommerceDataPanel";
 import type {
@@ -22,18 +24,6 @@ import type {
   User,
 } from "./types";
 
-const active = new Set(["queued", "running", "cancelling", "waiting_review"]);
-const statusLabels: Record<string, string> = {
-  queued: "排队中",
-  running: "分析中",
-  cancelling: "取消中",
-  waiting_review: "待复核",
-  succeeded: "已完成",
-  degraded: "已完成 · 有信息缺口",
-  failed: "执行失败",
-  cancelled: "已取消",
-  rejected: "已驳回",
-};
 const sourceLabels: Record<Source, string> = {
   sales: "销售与退款",
   inventory: "库存",
@@ -61,6 +51,8 @@ const examples = [
 ];
 
 export default function App() {
+  const { message } = AntApp.useApp();
+  const contentRef = useRef<HTMLElement>(null);
   const [config, setConfig] = useState<AppConfig | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
@@ -207,6 +199,22 @@ export default function App() {
     else window.sessionStorage.removeItem(key);
   }, [selectedId, user]);
 
+  function openTask(id: string | null) {
+    if (id !== null && id === selectedId) return;
+    setTask(null);
+    setEvents([]);
+    setEvidence([]);
+    setOpenedEvidence(null);
+    setError("");
+    setSelectedId(id);
+    if (!id) {
+      setConversation(null);
+      setUploads([]);
+    }
+    window.scrollTo({ top: 0 });
+    contentRef.current?.focus({ preventScroll: true });
+  }
+
   async function signIn() {
     setBusy(true);
     setError("");
@@ -347,14 +355,51 @@ export default function App() {
     }
   }
 
-  if (!authReady) return <main className="loading">正在连接研究工作台…</main>;
+  if (!authReady)
+    return (
+      <main className="loading" role="status">
+        正在连接工作台…
+      </main>
+    );
   if (!user)
     return (
       <main className="login-shell">
+        <div className="login-brand">
+          <span className="brand-mark">
+            <Icon name="chart" size={22} />
+          </span>
+          <span>电商运营分析助手</span>
+        </div>
+        <section className="login-intro">
+          <span className="section-kicker">经营分析工作台</span>
+          <h1>
+            每一次复盘，
+            <br />
+            都有据可循。
+          </h1>
+          <p>
+            整理经营数据，核对变化原因，
+            <br />
+            让下一步行动有清晰的依据。
+          </p>
+          <ol className="login-workflow">
+            <li>
+              <span>01</span>导入数据<small>预览并确认本次分析的数据版本</small>
+            </li>
+            <li>
+              <span>02</span>查看分析<small>经营变化、库存风险与竞品资料</small>
+            </li>
+            <li>
+              <span>03</span>核对与导出
+              <small>回到原始证据，复核后保留报告</small>
+            </li>
+          </ol>
+        </section>
         <section className="login-card">
-          <span className="eyebrow">COMMERCE ANALYSIS AGENT</span>
-          <h1>电商运营分析助手</h1>
-          <p>用经营数据与可追溯证据，形成可核对的分析。</p>
+          <div>
+            <h2>登录工作台</h2>
+            <p>使用你的账户继续分析。</p>
+          </div>
           {config?.demo_accounts && (
             <Alert
               type="info"
@@ -385,425 +430,320 @@ export default function App() {
           <Button type="primary" block loading={busy} onClick={signIn}>
             登录工作台
           </Button>
+          <p className="login-footnote">数据与报告按账户独立保存</p>
         </section>
+        <footer className="login-footer">
+          COMMERCE ANALYSIS <span>数据 · 分析 · 决策</span>
+        </footer>
       </main>
     );
-
-  const running =
-    task && active.has(task.status) && task.status !== "waiting_review";
   return (
     <div className="workspace">
-      <aside className="sidebar">
-        <span className="eyebrow">COMMERCE ANALYSIS AGENT</span>
-        <h1>电商运营分析助手</h1>
-        <p className="muted">让结论有据可查</p>
-        <Button
-          block
-          onClick={() => {
-            setSelectedId(null);
-            setTask(null);
-            setConversation(null);
-            setUploads([]);
-            setError("");
-          }}
-        >
-          新建研究
-        </Button>
-        <h3>研究记录</h3>
-        <nav aria-label="研究记录">
-          {tasks.map((t) => (
-            <button
-              type="button"
-              key={t.id}
-              className={
-                selectedId === t.id ? "task-link selected" : "task-link"
-              }
-              onClick={() => setSelectedId(t.id)}
-            >
-              <strong>{t.query}</strong>
-              <small>{statusLabels[t.status] || t.status}</small>
-            </button>
-          ))}
-        </nav>
-        <div className="account">
-          <span>{user.email}</span>
-          <Button size="small" onClick={signOut}>
-            退出
-          </Button>
-        </div>
-      </aside>
-      <main className="main-panel">
-        <header className="page-header">
-          <div>
-            <span className="eyebrow">经营分析 · 库存诊断 · 竞品研究</span>
-            <h2>从数据到有依据的建议</h2>
-          </div>
-          <Tag color={config?.mode === "demo" ? "gold" : "blue"}>
-            {config?.mode === "demo" ? "离线演示" : "真实模型"}
-          </Tag>
-        </header>
-        {config?.mode === "demo" && (
-          <Alert
-            type="info"
-            showIcon
-            message="离线模式未调用模型或真实搜索；竞品资料为模拟，经营数据性质以证据标记为准。"
-          />
-        )}
-        {task?.parameters.dataset_id && (
-          <p className="muted">
-            当前报告数据版本：{task.parameters.dataset_id}；执行模式：
-            {task.mode === "demo" ? "离线模板" : "真实模型"}
-            。数据性质见报告与证据标记。
-          </p>
-        )}
-        {error && (
-          <Alert
-            type="error"
-            closable
-            onClose={() => setError("")}
-            message={error}
-          />
-        )}
-        <label className="panel">
-          任务类型
-          <select
-            aria-label="任务类型"
-            value={profile}
-            onChange={(e) => setProfile(e.target.value)}
+      <a className="skip-link" href="#main-content">
+        跳到主要内容
+      </a>
+      <WorkspaceSidebar
+        tasks={tasks}
+        selectedId={selectedId}
+        email={user.email}
+        onSelect={openTask}
+        onSignOut={signOut}
+      />
+      <div className="workspace-content">
+        <div className="topbar">
+          <span className="breadcrumb">
+            工作台 <span>/</span>{" "}
+            <strong>{selectedId ? "任务详情" : "新建分析"}</strong>
+          </span>
+          <span
+            className={`mode-badge ${config?.mode === "demo" ? "is-demo" : ""}`}
           >
-            <option value="commerce_review">经营复盘（固定流程）</option>
-            <option value="research">库存与竞品研究（高级）</option>
-          </select>
-        </label>
-        {profile === "commerce_review" && (
-          <CommerceDataPanel
-            key={user.email}
-            selected={datasetId}
-            start={startDate}
-            end={endDate}
-            onSelect={selectDataset}
-            onChecked={setCheckedDataset}
-          />
-        )}
-        <section className="panel composer">
-          <div className="section-heading">
-            <h3>研究任务</h3>
-            <span>明确范围，控制信息来源</span>
-          </div>
-          {profile === "research" && (
-            <div className="examples">
-              {examples.map((e) => (
-                <button
-                  type="button"
-                  key={e.title}
-                  onClick={() => {
-                    setQuery(e.query);
-                    setSources(e.sources);
-                  }}
-                >
-                  {e.title}
-                </button>
-              ))}
+            <span />
+            {config
+              ? config.mode === "demo"
+                ? "离线演示"
+                : "真实模型"
+              : "正在读取配置"}
+          </span>
+        </div>
+        <main
+          className="main-panel"
+          id="main-content"
+          tabIndex={-1}
+          ref={contentRef}
+        >
+          <header className="page-header">
+            <div>
+              <h1>{selectedId ? "分析详情" : "新建分析"}</h1>
+              <p>
+                {selectedId
+                  ? "查看报告、核对证据与跟进执行进度。"
+                  : "选择数据与分析范围，开始一次经营复盘。"}
+              </p>
             </div>
-          )}
-          <Input.TextArea
-            aria-label="研究任务"
-            rows={3}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            maxLength={2000}
-          />
-          <div className="form-grid">
-            <label>
-              开始日期
-              <input
-                aria-label="开始日期"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </label>
-            <label>
-              结束日期
-              <input
-                aria-label="结束日期"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </label>
-            {profile === "research" && (
-              <label>
-                研究方式
-                <Select
-                  aria-label="研究方式"
-                  value={strategy}
-                  onChange={setStrategy}
-                  options={[
-                    { value: "workflow", label: "固定资料流程（对比基线）" },
-                    { value: "single", label: "集中分析" },
-                    { value: "multi", label: "专家分工（可能增加耗时与成本）" },
-                  ]}
-                />
-              </label>
+            {selectedId ? (
+              <Button
+                icon={<Icon name="plus" />}
+                onClick={() => openTask(null)}
+              >
+                新建分析
+              </Button>
+            ) : (
+              <span className="page-caption">
+                <Icon name="file" />
+                报告与证据自动保留
+              </span>
             )}
-          </div>
-          {profile === "research" && (
-            <Checkbox.Group
-              value={sources}
-              onChange={(values) => setSources(values as Source[])}
-              options={Object.entries(sourceLabels).map(([value, label]) => ({
-                value,
-                label,
-              }))}
+          </header>
+          {config?.mode === "demo" && (
+            <Alert
+              type="info"
+              showIcon
+              message="离线模式未调用模型或真实搜索；竞品资料为模拟，经营数据性质以证据标记为准。"
             />
           )}
-          {profile === "research" && sources.includes("web") && (
-            <label className="public-query">
-              公开搜索关键词（每行一条，最多三条）
-              <Input.TextArea
-                aria-label="公开搜索关键词"
-                rows={2}
-                value={publicQuery}
-                onChange={(e) => setPublicQuery(e.target.value)}
-              />
-              <small>
-                仅这些关键词会发送到公开搜索；请填写可公开的品牌、品类或产品名称。
-              </small>
-            </label>
+          {selectedId && task?.parameters.dataset_id && (
+            <p className="dataset-binding">
+              当前报告数据版本：{task.parameters.dataset_id}；执行模式：
+              {task.mode === "demo" ? "离线模板" : "真实模型"}
+              。数据性质见报告与证据标记。
+            </p>
           )}
-          <div className="composer-actions">
-            {profile === "research" && (
-              <label className="upload-label">
-                添加内部附件
-                <input
-                  aria-label="添加内部附件"
-                  type="file"
-                  multiple
-                  accept=".md,.txt,.pdf,.docx,.xlsx"
-                  onChange={(e) => {
-                    void upload(e.target.files);
-                    e.target.value = "";
-                  }}
-                  disabled={busy}
-                />
-              </label>
-            )}
-            <Checkbox
-              checked={requireReview}
-              onChange={(e) => setRequireReview(e.target.checked)}
-            >
-              导出前由我复核草稿
-            </Checkbox>
-            <Button
-              type="primary"
-              loading={busy}
-              disabled={
-                !query.trim() ||
-                !sources.length ||
-                (profile === "commerce_review" &&
-                  checkedDataset !== `${datasetId}:${startDate}:${endDate}`)
-              }
-              onClick={submit}
-            >
-              开始分析
-            </Button>
-          </div>
-          {uploads.length > 0 && (
-            <div className="uploads">当前研究附件：{uploads.join("、")}</div>
+          {error && (
+            <Alert
+              type="error"
+              closable
+              onClose={() => setError("")}
+              message={error}
+            />
           )}
-          <small className="muted">
-            {profile === "commerce_review"
-              ? "经营CSV最多2 MiB、100个商品、10000条记录；日期跨度最多366天。缺失记录不会补零。"
-              : "样例销售周期为2026-08-02至2026-09-30，库存快照为2026-09-30；内部附件每个最多5MB。"}
-          </small>
-        </section>
-        {task && (
-          <>
-            <section className="panel">
-              <div className="section-heading">
-                <div>
-                  <h3>{task.report?.title || "研究进度"}</h3>
-                  <p className="muted">{task.query}</p>
-                  <small>
-                    统计周期：{task.parameters.start_date} 至{" "}
-                    {task.parameters.end_date} · CNY · Asia/Shanghai ·{" "}
-                    {task.mode === "demo"
-                      ? "本任务离线执行"
-                      : "本任务请求真实模型"}
-                  </small>
+          {!selectedId && (
+            <div className="analysis-setup">
+              <section className="task-type-section">
+                <div className="section-heading">
+                  <div>
+                    <span className="section-kicker">分析设置</span>
+                    <h2>本次要分析什么？</h2>
+                  </div>
+                  <span>
+                    {profile === "commerce_review" ? "01 / 03" : "01 / 02"}
+                  </span>
                 </div>
-                <Tag color={task.status === "failed" ? "red" : "cyan"}>
-                  {statusLabels[task.status]}
-                </Tag>
-              </div>
-              <div className="metrics">
-                <span>
-                  工具执行 <b>{task.metrics.tool_calls}</b>
-                </span>
-                <span>
-                  模型调用 <b>{task.metrics.model_calls}</b>
-                </span>
-                <span>
-                  累计执行 <b>{(task.metrics.runtime_ms / 1000).toFixed(1)}s</b>
-                </span>
-                <span>
-                  Token{" "}
-                  <b>
-                    {task.metrics.usage_complete
-                      ? task.metrics.input_tokens + task.metrics.output_tokens
-                      : "数据不完整"}
-                  </b>
-                </span>
-              </div>
-              <TaskDiagnostics task={task} events={events} />
-              {running && (
-                <Button
-                  danger
-                  onClick={() => action(`/api/tasks/${task.id}/cancel`)}
-                  disabled={busy || task.status === "cancelling"}
-                >
-                  取消任务
-                </Button>
+                <label className="task-type-label">
+                  任务类型
+                  <select
+                    aria-label="任务类型"
+                    value={profile}
+                    onChange={(e) => setProfile(e.target.value)}
+                  >
+                    <option value="commerce_review">
+                      经营复盘（固定流程）
+                    </option>
+                    <option value="research">库存与竞品研究（高级）</option>
+                  </select>
+                </label>
+                <p className="field-hint">
+                  {profile === "commerce_review"
+                    ? "基于指定数据版本，复盘销售、商品贡献和退款变化。"
+                    : "结合销售、库存、内部附件与公开资料，开展专题研究。"}
+                </p>
+              </section>
+              {profile === "commerce_review" && (
+                <CommerceDataPanel
+                  key={user.email}
+                  selected={datasetId}
+                  start={startDate}
+                  end={endDate}
+                  onSelect={selectDataset}
+                  onChecked={setCheckedDataset}
+                />
               )}
-              {task.status === "waiting_review" && (
-                <div className="review-actions">
-                  <p>草稿及证据已保存。请核对重要结论后决定是否导出。</p>
+              <section className="panel composer">
+                <div className="section-heading">
+                  <div>
+                    <span className="section-kicker">
+                      {profile === "commerce_review" ? "分析要求" : "研究范围"}
+                    </span>
+                    <h2>定义分析任务</h2>
+                  </div>
+                  <span>
+                    {profile === "commerce_review" ? "03 / 03" : "02 / 02"}
+                  </span>
+                </div>
+                {profile === "research" && (
+                  <div className="examples">
+                    {examples.map((e) => (
+                      <button
+                        type="button"
+                        key={e.title}
+                        onClick={() => {
+                          setQuery(e.query);
+                          setSources(e.sources);
+                        }}
+                      >
+                        {e.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <label className="query-label">
+                  分析要求
+                  <Input.TextArea
+                    aria-label="研究任务"
+                    rows={3}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    maxLength={2000}
+                  />
+                </label>
+                <div
+                  className={`form-grid ${profile === "commerce_review" ? "date-grid" : ""}`}
+                >
+                  <label>
+                    开始日期
+                    <input
+                      aria-label="开始日期"
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    结束日期
+                    <input
+                      aria-label="结束日期"
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </label>
+                  {profile === "research" && (
+                    <label>
+                      研究方式
+                      <Select
+                        aria-label="研究方式"
+                        value={strategy}
+                        onChange={setStrategy}
+                        options={[
+                          {
+                            value: "workflow",
+                            label: "固定资料流程（对比基线）",
+                          },
+                          { value: "single", label: "集中分析" },
+                          {
+                            value: "multi",
+                            label: "专家分工（可能增加耗时与成本）",
+                          },
+                        ]}
+                      />
+                    </label>
+                  )}
+                </div>
+                {profile === "research" && (
+                  <Checkbox.Group
+                    value={sources}
+                    onChange={(values) => setSources(values as Source[])}
+                    options={Object.entries(sourceLabels).map(
+                      ([value, label]) => ({
+                        value,
+                        label,
+                      }),
+                    )}
+                  />
+                )}
+                {profile === "research" && sources.includes("web") && (
+                  <label className="public-query">
+                    公开搜索关键词（每行一条，最多三条）
+                    <Input.TextArea
+                      aria-label="公开搜索关键词"
+                      rows={2}
+                      value={publicQuery}
+                      onChange={(e) => setPublicQuery(e.target.value)}
+                    />
+                    <small>
+                      仅这些关键词会发送到公开搜索；请填写可公开的品牌、品类或产品名称。
+                    </small>
+                  </label>
+                )}
+                <div className="composer-actions">
+                  {profile === "research" && (
+                    <label className="upload-label">
+                      添加内部附件
+                      <input
+                        aria-label="添加内部附件"
+                        type="file"
+                        multiple
+                        accept=".md,.txt,.pdf,.docx,.xlsx"
+                        onChange={(e) => {
+                          void upload(e.target.files);
+                          e.target.value = "";
+                        }}
+                        disabled={busy}
+                      />
+                    </label>
+                  )}
+                  <Checkbox
+                    checked={requireReview}
+                    onChange={(e) => setRequireReview(e.target.checked)}
+                  >
+                    导出前由我复核草稿
+                  </Checkbox>
                   <Button
                     type="primary"
-                    onClick={() =>
-                      action(`/api/tasks/${task.id}/review`, { approved: true })
+                    loading={busy}
+                    disabled={
+                      !query.trim() ||
+                      !sources.length ||
+                      (profile === "commerce_review" &&
+                        checkedDataset !==
+                          `${datasetId}:${startDate}:${endDate}`)
                     }
-                    disabled={busy}
+                    onClick={submit}
                   >
-                    确认并导出
-                  </Button>
-                  <Button
-                    danger
-                    onClick={() =>
-                      action(`/api/tasks/${task.id}/review`, {
-                        approved: false,
-                      })
-                    }
-                    disabled={busy}
-                  >
-                    驳回草稿
+                    开始分析
                   </Button>
                 </div>
-              )}
-              {task.report?.sections.map((section) => (
-                <section className="report-section" key={section.name}>
-                  <h4>{section.name}</h4>
-                  {section.claims.length === 0 && (
-                    <p className="muted">当前证据不足，无法形成可靠结论。</p>
-                  )}
-                  {section.claims.map((claim) => (
-                    <div className="claim" key={claim.id}>
-                      <Tag>
-                        {
-                          {
-                            fact: "事实",
-                            analysis: "分析推断",
-                            recommendation: "行动建议",
-                          }[claim.kind]
-                        }
-                      </Tag>
-                      <p>{claim.text}</p>
-                      <div className="citations">
-                        {claim.evidence_ids.map((id, i) => (
-                          <button
-                            type="button"
-                            key={id}
-                            onClick={() =>
-                              setOpenedEvidence(
-                                evidence.find((e) => e.id === id) || null,
-                              )
-                            }
-                          >
-                            依据 {i + 1}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </section>
-              ))}
-              {!!task.report?.limitations.length && (
-                <div className="limitations">
-                  <h4>信息缺口与适用边界</h4>
-                  <ul>
-                    {task.report.limitations.map((text, i) => (
-                      <li key={i}>{text}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {task.validation && (
-                <p className="validation-note">{task.validation.note}</p>
-              )}
-              {!!task.artifacts?.length && (
-                <div className="downloads">
-                  {task.artifacts.map((file) => (
-                    <a key={file.id} href={apiUrl(`/api/artifacts/${file.id}`)}>
-                      {file.name} ↓
-                    </a>
-                  ))}
-                </div>
-              )}
-            </section>
-            <div className="detail-grid">
-              <section className="panel">
-                <div className="section-heading">
-                  <h3>执行事件</h3>
-                  <span>刷新页面可继续查看</span>
-                </div>
-                <ol className="event-list">
-                  {events.map((e) => (
-                    <li key={e.id}>
-                      <time>
-                        {new Date(e.timestamp).toLocaleTimeString("zh-CN", {
-                          hour12: false,
-                        })}
-                      </time>
-                      <span>{e.message}</span>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-              <section className="panel">
-                <div className="section-heading">
-                  <h3>证据目录</h3>
-                  <span>{evidence.length} 项</span>
-                </div>
-                <div className="evidence-list">
-                  {evidence.map((e) => (
-                    <button
-                      type="button"
-                      key={e.id}
-                      onClick={() => setOpenedEvidence(e)}
-                    >
-                      <strong>{e.title}</strong>
-                      <small>
-                        {e.payload.sample ? "模拟资料" : "查看原文片段"}
-                      </small>
-                    </button>
-                  ))}
-                </div>
+                {uploads.length > 0 && (
+                  <div className="uploads">
+                    当前研究附件：{uploads.join("、")}
+                  </div>
+                )}
+                {profile === "commerce_review" && !checkedDataset && (
+                  <p className="field-hint">
+                    请先确认数据版本，并通过所选周期的数据质量检查。
+                  </p>
+                )}
+                <small className="muted">
+                  {profile === "commerce_review"
+                    ? "经营CSV最多2 MiB、100个商品、10000条记录；日期跨度最多366天。缺失记录不会补零。"
+                    : "样例销售周期为2026-08-02至2026-09-30，库存快照为2026-09-30；内部附件每个最多5MB。"}
+                </small>
               </section>
             </div>
-          </>
-        )}
-        {!task && (
-          <p className="empty-state">
-            选择一个研究记录，或开始新的分析。结果将保留可核对的指标与来源。
-          </p>
-        )}
-      </main>
+          )}
+          {selectedId && task && (
+            <TaskReport
+              task={task}
+              events={events}
+              evidence={evidence}
+              busy={busy}
+              action={action}
+              onOpenEvidence={setOpenedEvidence}
+            />
+          )}
+          {selectedId && !task && (
+            <div className="loading" role="status">
+              正在加载任务详情…
+            </div>
+          )}
+        </main>
+      </div>
       <Drawer
         title={openedEvidence?.title}
         open={!!openedEvidence}
         onClose={() => setOpenedEvidence(null)}
         width={640}
+        rootClassName="evidence-drawer"
       >
         {openedEvidence && (
           <div className="evidence-detail">
