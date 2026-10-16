@@ -1,0 +1,15 @@
+{
+  "fixture": "scenario_payload(seed=42), 2026-09-01 to 2026-09-30",
+  "derivation": "Normal: gross 57000, refunds 4200. Sales decline: gross 27800, refunds 4200. Refund spike: refunds 27800. Top decline: CUP net contribution -9600. Missing: omit net 400. New product: base 40800 plus 8400. Cross refund: additional refund 620.",
+  "cases": {
+    "normal": {"net_revenue": "52800.00", "comparable": true},
+    "sales_decline": {"net_revenue": "23600.00", "comparable": true},
+    "refund_spike": {"net_revenue": "29200.00", "comparable": true},
+    "top_decline": {"net_revenue": "43200.00", "comparable": true},
+    "missing": {"net_revenue": "52400.00", "comparable": false},
+    "zero": {"net_revenue": "0.00", "comparable": true},
+    "no_prior": {"net_revenue": "52800.00", "comparable": false},
+    "new_product": {"net_revenue": "49200.00", "comparable": true},
+    "cross_refund": {"net_revenue": "52180.00", "comparable": true}
+  }
+}

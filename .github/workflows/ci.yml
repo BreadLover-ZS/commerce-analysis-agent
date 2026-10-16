@@ -30,6 +30,7 @@ jobs:
       - run: uv run ruff format --check app tests migrations evaluations scripts
       - run: uv run pytest -q
       - run: uv run python -m evaluations.run --output evaluations/results/ci-demo.json
+      - run: uv run python -m evaluations.commerce_review --mode demo --output evaluations/results/ci-commerce-review
   browser:
     runs-on: ubuntu-latest
     steps:
@@ -75,6 +76,7 @@ jobs:
           docker compose --env-file .env -f docker/docker-compose.yaml logs
           exit 1
       - run: uv run python scripts/container_smoke.py
+      - run: uv run python scripts/container_smoke.py --profile commerce_review
       - name: Reject forged client forwarding headers
         run: uv run python -m scripts.proxy_smoke --confirm-isolated-compose --mode untrusted
       - name: Trusted ingress to Nginx to API login isolation

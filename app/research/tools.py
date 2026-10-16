@@ -57,10 +57,24 @@ class ToolGateway:
                 "evidence": [snapshot],
                 "limitations": snapshot["payload"].get("limitations", []),
             }
-        function = sales_summary if name == "sales" else inventory_risks
-        result = await asyncio.to_thread(function, self.repo, self.ctx.tenant_id, start, end)
+        if self.parameters.get("profile") == "commerce_review":
+            from app.commerce.review import dataset_review
+
+            result = await asyncio.to_thread(
+                dataset_review,
+                self.repo,
+                self.ctx.user_id,
+                self.ctx.tenant_id,
+                self.parameters["dataset_id"],
+                start,
+                end,
+            )
+        else:
+            function = sales_summary if name == "sales" else inventory_risks
+            result = await asyncio.to_thread(function, self.repo, self.ctx.tenant_id, start, end)
         if (
-            name == "sales"
+            self.parameters.get("profile") != "commerce_review"
+            and name == "sales"
             and not result["row_count"]
             or name == "inventory"
             and not result["items"]

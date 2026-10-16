@@ -9,7 +9,22 @@
 4. 浏览器中的真实 API/Worker/React 操作及 PDF 文件下载。
 5. 真实模型、Tavily、RAGFlow 的业务答案质量、延迟和费用。
 
-## 固定离线评估
+## 默认经营复盘评估
+
+新增九类模拟场景评估：
+
+```bash
+uv run python -m evaluations.commerce_review --mode demo --output evaluations/results/my-review-demo
+uv run python -m evaluations.commerce_review --mode live --output evaluations/results/my-review-live
+```
+
+始终使用临时SQLite，不连接现有业务数据库。live读取现有模型配置，只发送模拟经营数据。
+首个自动失败即停止；自动与人工语义结论分别记录，模板回退不算模型成功。
+手工预期值见`evaluations/commerce_review_cases.json`，独立计算/隔离/迁移/恢复见
+`tests/test_commerce_review.py`；真实模型曾多次自动通过而人工失败，已保留反例并收紧设计，
+见[开发与验证记录](21-commerce-review-development-validation.md)。
+
+## 原综合研究固定离线评估
 
 ```bash
 uv run python -m evaluations.run --mode demo --output evaluations/results/demo.json

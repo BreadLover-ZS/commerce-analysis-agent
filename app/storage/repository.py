@@ -167,6 +167,10 @@ class Repository:
             conversation = db.get(Conversation, request.conversation_id)
             if not conversation or conversation.user_id != user.id:
                 raise NotFound()
+            if request.profile == "commerce_review":
+                from app.commerce.datasets import owned_dataset
+
+                owned_dataset(db, request.dataset_id, user.id, user.tenant_id)
             count = db.scalar(
                 select(func.count())
                 .select_from(Task)

@@ -321,3 +321,25 @@ def test_postgres_partial_day_and_priority_before_limit(postgres_setup):
     assert cup["missing_days"] == 1 and cup["coverage_days"] is None
     sales = sales_summary(repo, "demo", date(2026, 9, 30), date(2026, 9, 30))
     assert not sales["coverage"]["complete"] and sales["coverage"]["missing_records"] == 1
+
+
+async def test_postgres_dataset_profile_migration_version_and_worker(postgres_setup):
+    from app.commerce.datasets import commit_dataset, list_datasets, scenario_payload, stage_dataset
+    from tests.test_commerce_review import request
+
+    settings, repo, user = postgres_setup
+    payload = scenario_payload("normal")
+
+    def stage():
+        return stage_dataset(repo, user, payload, "并发经营导入", True, "0" * 64)
+
+    infos = await asyncio.gather(*(asyncio.to_thread(stage) for _ in range(4)))
+    assert len({i["id"] for i in infos}) == 1
+    dataset = commit_dataset(repo, user, infos[0]["id"])
+    assert len(list_datasets(repo, user)) == 1
+    task = repo.create_task(user, request(repo, user, dataset["id"]), str(uuid4()))
+    async with checkpoint_store(settings) as saver:
+        await Worker(repo, settings, saver).run_once()
+    done = repo.get_task(task["id"])
+    assert done["validation"]["passed"] and done["status"] == "degraded"
+    assert repo.evidence(task["id"])[0]["payload"]["dataset_hash"] == dataset["content_hash"]

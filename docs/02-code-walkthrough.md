@@ -1,11 +1,24 @@
 # 源码调用链与模块责任
 
-本篇用于快速定位。第一次系统学习请从[循序学习总览](learning/01-总览.md)开始，按模块读完后完成[链路成果测试](learning/03-链路与阅读成果测试.md)。
+本篇用于快速定位。第一次系统学习请从[学习总览](learning/01-总览.md)开始，读完主链后完成[实践与自测](learning/04-实践与自测.md)。
 
 先通过 demo 看懂执行链，再通过协议测试理解真实 Agent SDK 路径，最后进行 live 联调。
 demo 不调用模型，不执行 Deep Agents 工具循环；它复用业务工具、LangGraph、校验和导出。
 
-## 一次任务如何执行
+## 默认经营复盘调用链
+
+`CommerceDataPanel → /api/commerce/datasets/preview（或scenarios）→ stage_dataset → commit_dataset`；
+任务带`profile=commerce_review/dataset_id`，`Repository.create_task`检查本人已确认版本。
+`Worker → build_workflow → ToolGateway.metrics → dataset_review → calculate_review`。
+`deterministic_report → commerce_review_report`生成锁定的事实与观察；
+`allowed_hypotheses → ReviewNarrative`让模型仅选择允许的候选解释及提出核对建议。
+`validate_report`同时校验事实章节、观察前缀、假设目录、数字与已知方向反例。
+`review → export`及取消、租约保护沿用原流程。
+新增表`commerce_datasets`保存用户归属、内容/文件哈希、预览状态及不可变payload；
+新路径不读取旧`products/daily_sales`，也不把文档附件当成销售导入。
+详见[数据契约与验证](21-commerce-review-development-validation.md)。
+
+## 一次高级研究任务如何执行
 
 1. `frontend/src/App.tsx` 收集目标、周期、来源、公开关键词、策略与复核选项。
 2. `frontend/src/lib/api.ts` 发送 Cookie、CSRF 和幂等键。重复网络尝试保留同一个键。

@@ -2,10 +2,12 @@ import json
 import re
 from decimal import Decimal, InvalidOperation
 
+from app.commerce.hypotheses import allowed_hypotheses
 from app.research.schemas import Claim, MetricReference, ReportSection, ResearchReport
 from app.storage.evidence import authoritative_evidence
 
 SECTION_NAMES = ["经营表现", "库存风险", "竞品观察", "行动建议"]
+REVIEW_SECTIONS = ["经营表现", "变化贡献", "退款观察", "经营解读", "行动建议"]
 
 
 def unique_limitations(notes):
@@ -99,12 +101,63 @@ def render_bound_metrics(report, evidence):
     return report
 
 
+def review_direction_issues(text, payload):
+    """Targeted guards for observed amount/rate confusion, not a general semantic proof."""
+    issues = []
+    for subject, key in (
+        ("退款金额", "refund_amount_delta"),
+        ("退款件数", "refunded_units_delta"),
+        ("支付金额", "gross_revenue_delta"),
+        ("净销售额", "net_revenue_delta"),
+    ):
+        for pattern, direction in ((r"(?:上升|增加|增长)", 1), (r"(?:下降|减少|下滑)", -1)):
+            if re.search(
+                subject + r"(?:的|较前期|相比前期|有所|出现|明显|显著|大幅|小幅)*" + pattern, text
+            ):
+                delta = payload["metrics"].get(key)
+                if delta is None or Decimal(delta) * direction <= 0:
+                    issues.append(f"{subject}的方向断言与确定性变化金额/件数不符或缺少可比数据")
+    if re.search(r"退款(?:率|占比|件数占比).{0,12}(?:偏高|过高|较高|很高|偏低|过低|较低)", text):
+        issues.append("未配置业务阈值，不能将退款占比判断为绝对高低")
+    return issues
+
+
 def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
     evidence, _ = authoritative_evidence(evidence)
     by_id = {e["id"]: e for e in evidence}
     issues, seen = [], set()
-    if [s.name for s in report.sections] != SECTION_NAMES:
+    is_review = any(e["payload"].get("review_profile") == "commerce_review" for e in evidence)
+    if [s.name for s in report.sections] != (REVIEW_SECTIONS if is_review else SECTION_NAMES):
         issues.append("章节缺失、重复或顺序错误")
+    if is_review:
+        expected = commerce_review_report(evidence, [])
+        for actual, required in zip(report.sections[:3], expected.sections[:3]):
+            if actual.model_dump() != required.model_dump():
+                issues.append("经营复盘的确定性事实章节被修改或遗漏")
+        for section in report.sections[3:]:
+            kind = "analysis" if section.name == "经营解读" else "recommendation"
+            if any(c.kind != kind or not c.evidence_ids for c in section.claims):
+                issues.append("经营解读与建议必须引用证据且保持声明类型")
+        payload = next(
+            e["payload"]
+            for e in evidence
+            if e["payload"].get("review_profile") == "commerce_review"
+        )
+        if len(report.sections) == 5:
+            baseline = expected.sections[3].claims
+            actual = report.sections[3].claims
+            if [c.model_dump() for c in actual[: len(baseline)]] != [
+                c.model_dump() for c in baseline
+            ]:
+                issues.append("经营解读中的确定性观察被修改或遗漏")
+            allowed = set(allowed_hypotheses(payload).values())
+            if any(c.text not in allowed for c in actual[len(baseline) :]):
+                issues.append("经营解释超出当前证据允许的待验证假设目录")
+        for section in report.sections[3:]:
+            for claim in section.claims:
+                issues.extend(
+                    f"{claim.id}: {issue}" for issue in review_direction_issues(claim.text, payload)
+                )
     for section in report.sections:
         if not section.claims and not any(section.name in note for note in report.limitations):
             issues.append(f"{section.name}: 空章节没有具体说明范围或信息缺口")
@@ -160,6 +213,8 @@ def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
 
 def deterministic_report(evidence: list[dict], gaps: list[str]) -> ResearchReport:
     evidence, _ = authoritative_evidence(evidence)
+    if any(e["payload"].get("review_profile") == "commerce_review" for e in evidence):
+        return commerce_review_report(evidence, gaps)
     sections = {name: [] for name in SECTION_NAMES}
     for source in evidence:
         payload, eid = source["payload"], source["id"]
@@ -278,6 +333,86 @@ def deterministic_report(evidence: list[dict], gaps: list[str]) -> ResearchRepor
     )
 
 
+def commerce_review_report(evidence, gaps):
+    sections = {name: [] for name in REVIEW_SECTIONS}
+    source = next(e for e in evidence if e["payload"].get("review_profile") == "commerce_review")
+    payload, eid = source["payload"], source["id"]
+
+    def add(section, claim_id, keys):
+        keys = [k for k in keys if k in payload["metrics"]]
+        if keys:
+            sections[section].append(
+                Claim(
+                    id=claim_id,
+                    kind="fact",
+                    text="由程序生成的指标事实",
+                    evidence_ids=[eid],
+                    metrics=[metric_reference(source, key) for key in keys],
+                )
+            )
+
+    add("经营表现", "review-summary", ["gross_revenue", "net_revenue", "paid_units", "net_units"])
+    add(
+        "经营表现",
+        "review-change",
+        ["net_revenue_delta", "net_revenue_change_pct", "gross_revenue_delta"],
+    )
+    for kind, entries in payload["dimensions"].items():
+        for index, entry in enumerate(entries[:4]):
+            if not entry["delta_key"]:
+                continue
+            add("变化贡献", f"review-{kind}-{index}", [entry["delta_key"] or entry["fact_key"]])
+    add(
+        "退款观察",
+        "review-refund",
+        [
+            "refund_amount",
+            "refunded_units",
+            "refund_rate_pct",
+            "refund_amount_delta",
+            "refunded_units_delta",
+        ],
+    )
+    for index, finding in enumerate(payload["findings"]):
+        sections["经营解读"].append(
+            Claim(
+                id=f"review-finding-{index}",
+                kind="analysis",
+                text=finding["text"],
+                evidence_ids=[eid],
+            )
+        )
+    if not sections["经营解读"]:
+        sections["经营解读"].append(
+            Claim(
+                id="review-neutral",
+                kind="analysis",
+                evidence_ids=[eid],
+                text=(
+                    "本期与前期资料不足以比较，应先补齐记录再判断变化。"
+                    if not payload["previous_period"]["comparable"]
+                    else "现有规则未识别可确认的下降或退款占比增加；这不代表经营健康或没有其他风险。"
+                ),
+            )
+        )
+    sections["行动建议"].append(
+        Claim(
+            id="review-action",
+            kind="recommendation",
+            evidence_ids=[eid],
+            text="建议先核对数据完整性与退款记账归属，再结合商品变化贡献补充原因资料，由运营人员确认后执行。",
+        )
+    )
+    return render_bound_metrics(
+        ResearchReport(
+            title="经营复盘报告",
+            sections=[ReportSection(name=name, claims=claims) for name, claims in sections.items()],
+            limitations=unique_limitations(gaps + payload["limitations"])[:20],
+        ),
+        evidence,
+    )
+
+
 def render_markdown(
     task: dict, report: ResearchReport, evidence: list[dict], validation: dict
 ) -> str:
@@ -301,6 +436,12 @@ def render_markdown(
         ),
         "",
     ]
+    for source in evidence:
+        if source["payload"].get("review_profile") == "commerce_review":
+            lines += [
+                f"数据版本：{source['payload']['dataset_id']}；内容SHA-256：{source['payload']['dataset_hash']}。",
+                "",
+            ]
     for section in report.sections:
         lines += ["## " + section.name, ""]
         if not section.claims:

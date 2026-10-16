@@ -24,6 +24,17 @@ pnpm dev
 `uv run uvicorn app.api.server:app --host 127.0.0.1 --port 8000`、
 `uv run python -m app.tasks.worker`。只有 API 运行时，任务会排队，不会执行。
 
+## 经营复盘数据版本升级
+
+本轮新增迁移`c21a01600001`和`commerce_datasets`表。已有环境先停API/Worker并完成
+下文的数据库、检查点与产物备份，再运行`uv run python -m app.cli init`迁移到head。
+真实数据环境必须保持`SEED_DEMO=false`。初始化成功后重新启动；不要删表或降级迁移清理版本。
+版本由用户隔离，当前每用户最多50个，含预览；只有超过一天的未确认预览在新导入时清理。
+已确认版本不自动删除，首版未实现自助归档。文档附件与经营CSV分别管理。
+本机已验证本地迁移/备份范围，实际Docker与目标HTTPS仍需另行验收。
+新增隔离容器探针入口：`uv run python scripts/container_smoke.py --profile commerce_review`。
+使用与验证范围见[经营复盘交付](21-commerce-review-development-validation.md)。
+
 ## 模型请求超时
 
 `.env`可配置`MODEL_READ_TIMEOUT_SECONDS=60`（1–120秒）和

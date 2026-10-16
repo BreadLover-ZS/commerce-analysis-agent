@@ -35,7 +35,13 @@ export interface Task {
   mode: string;
   created_at: string;
   error_code: string | null;
-  parameters: { start_date: string; end_date: string; strategy: string };
+  parameters: {
+    start_date: string;
+    end_date: string;
+    strategy: string;
+    profile?: string;
+    dataset_id?: string | null;
+  };
   report: Report | null;
   validation: {
     passed: boolean;

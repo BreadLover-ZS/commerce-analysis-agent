@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic_core import PydanticCustomError
@@ -21,9 +21,21 @@ class TaskRequest(BaseModel):
     strategy: Literal["workflow", "single", "multi"] = "single"
     public_queries: list[str] = Field(default_factory=list, max_length=3)
     require_review: bool = False
+    profile: Literal["research", "commerce_review"] = "research"
+    dataset_id: str | None = Field(default=None, min_length=36, max_length=36)
 
     @model_validator(mode="after")
     def check_period(self):
+        if self.profile == "commerce_review":
+            if (
+                not self.dataset_id
+                or self.sources != ["sales"]
+                or self.strategy != "workflow"
+                or self.public_queries
+            ):
+                raise ValueError("经营复盘须绑定数据集，仅允许sales来源与workflow策略")
+        elif self.dataset_id is not None:
+            raise ValueError("数据集仅用于经营复盘")
         self.query = self.query.strip()
         if len(self.query) < 2:
             raise ValueError("请输入具体分析任务")
@@ -80,14 +92,26 @@ class Claim(BaseModel):
 
 
 class ReportSection(BaseModel):
-    name: Literal["经营表现", "库存风险", "竞品观察", "行动建议"]
+    name: Literal[
+        "经营表现", "库存风险", "竞品观察", "行动建议", "变化贡献", "退款观察", "经营解读"
+    ]
     claims: list[Claim] = Field(default_factory=list, max_length=8)
 
 
 class ResearchReport(BaseModel):
     title: str = Field(max_length=120)
-    sections: list[ReportSection] = Field(max_length=4)
+    sections: list[ReportSection] = Field(max_length=5)
     limitations: list[str] = Field(default_factory=list, max_length=20)
+
+
+class ReviewNarrative(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    analysis: list[
+        Literal["sales_drivers", "refund_drivers", "product_mix", "daily_structure", "data_quality"]
+    ] = Field(min_length=1, max_length=4)
+    recommendations: list[Annotated[str, Field(min_length=1, max_length=1000)]] = Field(
+        min_length=1, max_length=4
+    )
 
 
 class SemanticReview(BaseModel):

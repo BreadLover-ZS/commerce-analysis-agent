@@ -3,6 +3,6 @@
 这里保留上游 Deep Agents 教程示例，便于对照学习。它们对应上游0.5.7等依赖和
 原始环境变量，不属于改进后主应用的启动入口或验收范围。
 
-新项目从 README、docs/03-learning-roadmap.md 和 tests/test_live_protocol.py 开始。
+新项目从 README、[学习总览](../docs/learning/01-总览.md) 和 tests/test_live_protocol.py 开始。
 若要严格复现历史示例，请在独立目录使用 PROVENANCE 中的上游快照与它的锁文件，
 不要在改进环境中盲目运行旧脚本或把它们的结果当作主应用能力。

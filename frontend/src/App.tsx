@@ -11,6 +11,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { api, apiUrl, setAuth } from "./lib/api";
 import TaskDiagnostics from "./TaskDiagnostics";
+import CommerceDataPanel from "./CommerceDataPanel";
+import type { Dataset } from "./CommerceDataPanel";
 import type {
   AppConfig,
   Evidence,
@@ -73,7 +75,12 @@ export default function App() {
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [openedEvidence, setOpenedEvidence] = useState<Evidence | null>(null);
   const [conversation, setConversation] = useState<string | null>(null);
-  const [query, setQuery] = useState(examples[1].query);
+  const [profile, setProfile] = useState("commerce_review");
+  const [datasetId, setDatasetId] = useState<string | null>(null);
+  const [checkedDataset, setCheckedDataset] = useState<string | null>(null);
+  const [query, setQuery] = useState(
+    "复盘本期经营表现、商品变化贡献和退款情况，区分事实与待验证的原因。",
+  );
   const [sources, setSources] = useState<Source[]>(examples[1].sources);
   const [startDate, setStartDate] = useState("2026-09-01");
   const [endDate, setEndDate] = useState("2026-09-30");
@@ -100,6 +107,8 @@ export default function App() {
       setEvents([]);
       setConversation(null);
       setUploads([]);
+      setDatasetId(null);
+      setCheckedDataset(null);
     };
     window.addEventListener("commerce:unauthorized", clear);
     return () => window.removeEventListener("commerce:unauthorized", clear);
@@ -225,8 +234,19 @@ export default function App() {
     return result.id;
   }
 
+  function selectDataset(dataset: Dataset) {
+    setDatasetId(dataset.id);
+    setStartDate(dataset.suggested_start);
+    setEndDate(dataset.period_end);
+  }
+
   async function submit() {
     if (!query.trim() || sources.length === 0) return;
+    if (
+      profile === "commerce_review" &&
+      checkedDataset !== `${datasetId}:${startDate}:${endDate}`
+    )
+      return;
     setBusy(true);
     setError("");
     try {
@@ -236,15 +256,18 @@ export default function App() {
         query,
         start_date: startDate,
         end_date: endDate,
-        sources,
-        strategy,
+        profile,
+        dataset_id: profile === "commerce_review" ? datasetId : null,
+        sources: profile === "commerce_review" ? ["sales"] : sources,
+        strategy: profile === "commerce_review" ? "workflow" : strategy,
         require_review: requireReview,
-        public_queries: sources.includes("web")
-          ? publicQuery
-              .split("\n")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [],
+        public_queries:
+          profile !== "commerce_review" && sources.includes("web")
+            ? publicQuery
+                .split("\n")
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : [],
       };
       const fingerprint = JSON.stringify(payload);
       if (pendingSubmission.current?.fingerprint !== fingerprint)
@@ -317,6 +340,8 @@ export default function App() {
       setEvents([]);
       setConversation(null);
       setUploads([]);
+      setDatasetId(null);
+      setCheckedDataset(null);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -424,6 +449,13 @@ export default function App() {
             message="离线模式未调用模型或真实搜索；竞品资料为模拟，经营数据性质以证据标记为准。"
           />
         )}
+        {task?.parameters.dataset_id && (
+          <p className="muted">
+            当前报告数据版本：{task.parameters.dataset_id}；执行模式：
+            {task.mode === "demo" ? "离线模板" : "真实模型"}
+            。数据性质见报告与证据标记。
+          </p>
+        )}
         {error && (
           <Alert
             type="error"
@@ -432,25 +464,48 @@ export default function App() {
             message={error}
           />
         )}
+        <label className="panel">
+          任务类型
+          <select
+            aria-label="任务类型"
+            value={profile}
+            onChange={(e) => setProfile(e.target.value)}
+          >
+            <option value="commerce_review">经营复盘（固定流程）</option>
+            <option value="research">库存与竞品研究（高级）</option>
+          </select>
+        </label>
+        {profile === "commerce_review" && (
+          <CommerceDataPanel
+            key={user.email}
+            selected={datasetId}
+            start={startDate}
+            end={endDate}
+            onSelect={selectDataset}
+            onChecked={setCheckedDataset}
+          />
+        )}
         <section className="panel composer">
           <div className="section-heading">
             <h3>研究任务</h3>
             <span>明确范围，控制信息来源</span>
           </div>
-          <div className="examples">
-            {examples.map((e) => (
-              <button
-                type="button"
-                key={e.title}
-                onClick={() => {
-                  setQuery(e.query);
-                  setSources(e.sources);
-                }}
-              >
-                {e.title}
-              </button>
-            ))}
-          </div>
+          {profile === "research" && (
+            <div className="examples">
+              {examples.map((e) => (
+                <button
+                  type="button"
+                  key={e.title}
+                  onClick={() => {
+                    setQuery(e.query);
+                    setSources(e.sources);
+                  }}
+                >
+                  {e.title}
+                </button>
+              ))}
+            </div>
+          )}
           <Input.TextArea
             aria-label="研究任务"
             rows={3}
@@ -477,29 +532,33 @@ export default function App() {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </label>
-            <label>
-              研究方式
-              <Select
-                aria-label="研究方式"
-                value={strategy}
-                onChange={setStrategy}
-                options={[
-                  { value: "workflow", label: "固定资料流程（对比基线）" },
-                  { value: "single", label: "集中分析" },
-                  { value: "multi", label: "专家分工（可能增加耗时与成本）" },
-                ]}
-              />
-            </label>
+            {profile === "research" && (
+              <label>
+                研究方式
+                <Select
+                  aria-label="研究方式"
+                  value={strategy}
+                  onChange={setStrategy}
+                  options={[
+                    { value: "workflow", label: "固定资料流程（对比基线）" },
+                    { value: "single", label: "集中分析" },
+                    { value: "multi", label: "专家分工（可能增加耗时与成本）" },
+                  ]}
+                />
+              </label>
+            )}
           </div>
-          <Checkbox.Group
-            value={sources}
-            onChange={(values) => setSources(values as Source[])}
-            options={Object.entries(sourceLabels).map(([value, label]) => ({
-              value,
-              label,
-            }))}
-          />
-          {sources.includes("web") && (
+          {profile === "research" && (
+            <Checkbox.Group
+              value={sources}
+              onChange={(values) => setSources(values as Source[])}
+              options={Object.entries(sourceLabels).map(([value, label]) => ({
+                value,
+                label,
+              }))}
+            />
+          )}
+          {profile === "research" && sources.includes("web") && (
             <label className="public-query">
               公开搜索关键词（每行一条，最多三条）
               <Input.TextArea
@@ -514,20 +573,22 @@ export default function App() {
             </label>
           )}
           <div className="composer-actions">
-            <label className="upload-label">
-              添加内部附件
-              <input
-                aria-label="添加内部附件"
-                type="file"
-                multiple
-                accept=".md,.txt,.pdf,.docx,.xlsx"
-                onChange={(e) => {
-                  void upload(e.target.files);
-                  e.target.value = "";
-                }}
-                disabled={busy}
-              />
-            </label>
+            {profile === "research" && (
+              <label className="upload-label">
+                添加内部附件
+                <input
+                  aria-label="添加内部附件"
+                  type="file"
+                  multiple
+                  accept=".md,.txt,.pdf,.docx,.xlsx"
+                  onChange={(e) => {
+                    void upload(e.target.files);
+                    e.target.value = "";
+                  }}
+                  disabled={busy}
+                />
+              </label>
+            )}
             <Checkbox
               checked={requireReview}
               onChange={(e) => setRequireReview(e.target.checked)}
@@ -537,7 +598,12 @@ export default function App() {
             <Button
               type="primary"
               loading={busy}
-              disabled={!query.trim() || !sources.length}
+              disabled={
+                !query.trim() ||
+                !sources.length ||
+                (profile === "commerce_review" &&
+                  checkedDataset !== `${datasetId}:${startDate}:${endDate}`)
+              }
               onClick={submit}
             >
               开始分析
@@ -547,8 +613,9 @@ export default function App() {
             <div className="uploads">当前研究附件：{uploads.join("、")}</div>
           )}
           <small className="muted">
-            样例销售周期为 2026-08-02 至 2026-09-30，库存快照为
-            2026-09-30。支持每个文件最多5MB。
+            {profile === "commerce_review"
+              ? "经营CSV最多2 MiB、100个商品、10000条记录；日期跨度最多366天。缺失记录不会补零。"
+              : "样例销售周期为2026-08-02至2026-09-30，库存快照为2026-09-30；内部附件每个最多5MB。"}
           </small>
         </section>
         {task && (

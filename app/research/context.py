@@ -56,6 +56,14 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                 for k, v in payload["fact_catalog"].items()
                 if not payload.get("items") or v["entity_id"] in skus
             }
+            if payload.get("review_profile") == "commerce_review":
+                # Preserve summary and the exact contribution facts used in the report.
+                # Keep the full per-product ledger out of the model character budget.
+                chosen = {k for k in catalog if "." not in k}
+                for entries in payload["dimensions"].values():
+                    for entry in entries[:4]:
+                        chosen.add(entry["delta_key"] or entry["fact_key"])
+                catalog = {k: v for k, v in catalog.items() if k in chosen}
             item["excerpt"] = "权威事实见payload.fact_catalog；完整计算结果保存在证据账本。"
             item["payload"] = {
                 "sample": payload.get("sample"),
@@ -69,6 +77,19 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                 "limitations": payload.get("limitations", []),
                 "definitions": payload.get("definitions", {}),
             }
+            if payload.get("review_profile") == "commerce_review":
+                item["payload"].update(
+                    {
+                        k: payload[k]
+                        for k in (
+                            "dataset_id",
+                            "dataset_hash",
+                            "schema_version",
+                            "review_profile",
+                            "findings",
+                        )
+                    }
+                )
             omitted = len(payload.get("items", [])) - len(kept_items)
             if omitted:
                 truncations.append({"id": source["id"], "omitted_inventory_items": omitted})

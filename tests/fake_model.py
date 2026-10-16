@@ -51,6 +51,17 @@ class ScriptedCommerceModel(BaseChatModel):
                 "document_query": "经营分析 库存 退款",
             }
             calls = [{"name": "TaskPlan", "args": args, "id": "plan"}]
+        elif "ReviewNarrative" in names:
+            calls = [
+                {
+                    "name": "ReviewNarrative",
+                    "id": "narrative",
+                    "args": {
+                        "analysis": ["data_quality"],
+                        "recommendations": ["建议核对商品变化贡献及退款记账归属。"],
+                    },
+                }
+            ]
         elif "ResearchReport" in names:
             evidence = json.loads(content.split("证据：\n", 1)[1])
             metadata = json.loads(content.split("\n证据：\n", 1)[0])

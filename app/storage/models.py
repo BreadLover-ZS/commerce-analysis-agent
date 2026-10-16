@@ -170,6 +170,25 @@ class Document(Base):
     sample: Mapped[bool] = mapped_column(default=True)
 
 
+class CommerceDataset(Base):
+    """Owner-scoped immutable payload; only draft -> committed is mutable."""
+
+    __tablename__ = "commerce_datasets"
+    __table_args__ = (
+        UniqueConstraint("user_id", "content_hash", "sample", name="uq_dataset_content"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String(36))
+    name: Mapped[str] = mapped_column(String(120))
+    content_hash: Mapped[str] = mapped_column(String(64))
+    file_hash: Mapped[str] = mapped_column(String(64))
+    sample: Mapped[bool] = mapped_column()
+    committed: Mapped[bool] = mapped_column(default=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
 class Chunk(Base):
     __tablename__ = "document_chunks"
     id: Mapped[str] = mapped_column(String(36), primary_key=True)

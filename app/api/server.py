@@ -1,8 +1,10 @@
 """Authenticated API. Execution belongs to the independent durable worker."""
 
 import asyncio
+import hashlib
 import json
 from contextlib import asynccontextmanager
+from datetime import date
 from typing import Annotated
 from uuid import UUID
 
@@ -23,6 +25,19 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import delete, text
 
+from app.commerce.datasets import (
+    MAX_FILE_BYTES,
+    SCENARIOS,
+    commit_dataset,
+    csv_bytes,
+    dataset_info,
+    list_datasets,
+    owned_dataset,
+    parse_csv,
+    scenario_payload,
+    stage_dataset,
+)
+from app.commerce.review import calculate_review, dataset_review
 from app.commerce.service import add_document
 from app.core.auth import COOKIE, authenticate, check_origin, csrf_token, login, token_hash
 from app.core.config import Settings, get_settings
@@ -42,6 +57,12 @@ class LoginRequest(BaseModel):
 class ReviewRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     approved: StrictBool
+
+
+class ScenarioRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    scenario: str = Field(max_length=40)
+    seed: int = Field(default=42, ge=0, le=1000000, strict=True)
 
 
 def create_app(settings: Settings | None = None, repository: Repository | None = None):
@@ -89,11 +110,125 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
     def live():
         return {"status": "ok"}
 
+    @app.get("/api/commerce/scenarios")
+    def scenarios(user: CurrentUser):
+        return {"scenarios": [{"id": k, "name": v} for k, v in SCENARIOS.items()]}
+
+    @app.get("/api/commerce/template")
+    def template(user: CurrentUser):
+        return Response(
+            csv_bytes(scenario_payload("normal")),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="commerce-sample-template.csv"'},
+        )
+
+    def preview_result(info, user):
+        with repo.session() as db:
+            item = owned_dataset(db, info["id"], user.id, user.tenant_id, committed=False)
+            result = calculate_review(
+                item.payload,
+                date.fromisoformat(info["suggested_start"]),
+                date.fromisoformat(info["period_end"]),
+                dataset_id=item.id,
+                content_hash=item.content_hash,
+                sample=item.sample,
+            )
+        return {
+            **info,
+            "quality": {
+                "coverage": result["coverage"],
+                "previous_period": result["previous_period"],
+                "limitations": result["limitations"],
+                "metrics": result["metrics"],
+            },
+        }
+
+    @app.post("/api/commerce/scenarios")
+    def generate_scenario(body: ScenarioRequest, user: CurrentUser):
+        try:
+            payload = scenario_payload(body.scenario, body.seed)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from None
+        raw = csv_bytes(payload)
+        info = stage_dataset(
+            repo,
+            user,
+            payload,
+            f"模拟：{SCENARIOS[body.scenario]} / seed={body.seed}",
+            True,
+            hashlib.sha256(raw).hexdigest(),
+        )
+        return preview_result(info, user)
+
+    @app.post("/api/commerce/datasets/preview")
+    def preview_dataset(user: CurrentUser, file: UploadFile = File(), sample: bool = Form(True)):
+        try:
+            content = file.file.read(MAX_FILE_BYTES + 1)
+            payload = parse_csv(content)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from None
+        finally:
+            file.file.close()
+        info = stage_dataset(
+            repo,
+            user,
+            payload,
+            file.filename or "经营数据.csv",
+            sample,
+            hashlib.sha256(content).hexdigest(),
+        )
+        return preview_result(info, user)
+
+    @app.post("/api/commerce/datasets/{dataset_id}/commit")
+    def confirm_dataset(dataset_id: str, user: CurrentUser):
+        return commit_dataset(repo, user, dataset_id)
+
+    @app.get("/api/commerce/datasets")
+    def datasets(user: CurrentUser):
+        return {"datasets": list_datasets(repo, user)}
+
+    @app.get("/api/commerce/datasets/{dataset_id}")
+    def dataset_detail(dataset_id: str, user: CurrentUser):
+        with repo.session() as db:
+            info = dataset_info(owned_dataset(db, dataset_id, user.id, user.tenant_id))
+        return preview_result(info, user)
+
+    @app.get("/api/commerce/datasets/{dataset_id}/quality")
+    def quality(dataset_id: str, user: CurrentUser, start: str, end: str):
+        try:
+            result = dataset_review(
+                repo,
+                user.id,
+                user.tenant_id,
+                dataset_id,
+                date.fromisoformat(start),
+                date.fromisoformat(end),
+            )
+        except ValueError:
+            raise HTTPException(422, "需要有效日期，周期为1–90天") from None
+        return {
+            k: result[k]
+            for k in (
+                "dataset_id",
+                "dataset_hash",
+                "sample",
+                "period",
+                "coverage",
+                "previous_period",
+                "limitations",
+                "metrics",
+                "dimensions",
+                "findings",
+                "definitions",
+            )
+        }
+
     @app.get("/health/ready")
     def ready():
         try:
             with repo.session() as db:
                 db.execute(text("SELECT 1 FROM users LIMIT 1"))
+                db.execute(text("SELECT 1 FROM commerce_datasets LIMIT 1"))
         except Exception:
             raise HTTPException(503, "数据库或迁移未就绪") from None
         return {"status": "ready", "mode": settings.agent_mode}

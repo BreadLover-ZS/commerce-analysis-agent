@@ -53,6 +53,7 @@ async def structured_call(model, schema, messages, repo, ctx):
         "ResearchSynthesis": "研究归纳",
         "ResearchSemanticReview": "研究语义复核",
         "ResearchReport": "报告草稿",
+        "ReviewNarrative": "经营解读",
         "SemanticReview": "证据语义复核",
     }.get(schema.__name__, "结构化分析")
     method = "function_calling"

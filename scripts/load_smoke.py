@@ -70,13 +70,16 @@ def _response(response, expected=200):
     return response.json()
 
 
-async def run_benchmark(requests=20, concurrency=4, workers=2, backend="sqlite", task_timeout=90):
+async def run_benchmark(
+    requests=20, concurrency=4, workers=2, backend="sqlite", task_timeout=90, profile="research"
+):
     if (
         not 1 <= requests <= 200
         or not 1 <= concurrency <= 16
         or not 1 <= workers <= 4
         or not 5 <= task_timeout <= 180
         or backend not in {"sqlite", "postgres"}
+        or profile not in {"research", "commerce_review"}
     ):
         raise ValueError("参数超出隔离演练范围")
     if os.name != "posix":
@@ -180,6 +183,15 @@ async def run_benchmark(requests=20, concurrency=4, workers=2, backend="sqlite",
                 )
                 client.headers["X-CSRF-Token"] = login["csrf_token"]
                 conversation = _response(await client.post("/api/conversations"), 201)["id"]
+                dataset_id = None
+                if profile == "commerce_review":
+                    staged = _response(
+                        await client.post("/api/commerce/scenarios", json={"scenario": "normal"})
+                    )
+                    confirmed = _response(
+                        await client.post(f"/api/commerce/datasets/{staged['id']}/commit")
+                    )
+                    dataset_id = confirmed["id"]
                 semaphore = asyncio.Semaphore(concurrency)
                 outcomes = []
                 started = time.monotonic()
@@ -194,6 +206,13 @@ async def run_benchmark(requests=20, concurrency=4, workers=2, backend="sqlite",
                                 "sources": ["sales", "inventory"],
                                 "public_queries": [],
                             }
+                            if profile == "commerce_review":
+                                payload.update(
+                                    profile=profile,
+                                    dataset_id=dataset_id,
+                                    sources=["sales"],
+                                    strategy="workflow",
+                                )
                             headers = {"Idempotency-Key": str(uuid4())}
                             task = _response(
                                 await client.post("/api/tasks", json=payload, headers=headers), 202
@@ -273,6 +292,7 @@ async def run_benchmark(requests=20, concurrency=4, workers=2, backend="sqlite",
                     "worker_processes": workers,
                     "worker_concurrency": 1,
                     "mode": "demo",
+                    "profile": profile,
                     "model_calls": model_calls,
                     "completed": len(success),
                     "failures": failures,
@@ -311,6 +331,7 @@ async def run_benchmark(requests=20, concurrency=4, workers=2, backend="sqlite",
 def main():
     parser = argparse.ArgumentParser(description="仅启动隔离demo，不能指定外部URL/数据库")
     parser.add_argument("--backend", choices=["sqlite", "postgres"], default="sqlite")
+    parser.add_argument("--profile", choices=["research", "commerce_review"], default="research")
     parser.add_argument("--requests", type=int, default=20)
     parser.add_argument("--concurrency", type=int, default=4)
     parser.add_argument("--workers", type=int, default=2)
@@ -320,7 +341,9 @@ def main():
         raise SystemExit("结果文件已存在；请使用新文件名保留历史结果")
     try:
         result = asyncio.run(
-            run_benchmark(args.requests, args.concurrency, args.workers, args.backend)
+            run_benchmark(
+                args.requests, args.concurrency, args.workers, args.backend, profile=args.profile
+            )
         )
     except Exception as exc:
         result = {"passed": False, "phase": "startup-or-cleanup", "error_type": type(exc).__name__}

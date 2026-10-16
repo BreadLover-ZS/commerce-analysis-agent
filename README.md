@@ -8,7 +8,14 @@
 关键结论关联原文或确定性指标；长任务可以复核、取消、恢复，并交付 Markdown/PDF。
 
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
-来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
+来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及逐步走向小规模试用。
+当前默认主入口为**经营复盘（固定流程）**：生成模拟场景或导入CSV，确认不可变数据版本，
+检查质量并生成可核对报告。程序计算事实与变化观察，AI选择受控假设并提出核对建议。
+使用、数据契约、开发与验收边界见[经营复盘开发与验证](docs/21-commerce-review-development-validation.md)。
+本轮251条后端、9条新离线、原32条离线和11条Chrome检查通过；
+真实模型九场景及两个场景各两次重复经过自动检查与逐条证据核对。
+模拟数据结果不代表真实业务效果，Docker/目标HTTPS仍待验；详见21号文档。
+以下214条等是此前审计批次记录。
 2026-10-16已修复恢复快照、库存精度、附件检索、文档配额、代理信任配置及前端证据读取竞态，
 本地214条后端、32条离线评估与9条Chrome浏览器检查通过，范围见[审计修复与验证](docs/20-audit-fixes-validation.md)。
 此前纯Python交付与负载见[历史交付验收](docs/18-python-delivery-validation.md)。
@@ -55,7 +62,8 @@ pnpm dev
 
 打开 [本地工作台](http://localhost:5173)，登录 `demo@example.com` / `demo-commerce-2026`。
 默认业务数据覆盖2026-08-02至09-30，库存快照为09-30；竞品是模拟资料。
-选择月度经营/库存/综合研究，点击“依据”核对数字，勾选草稿复核可体验暂停与恢复。
+默认先选择模拟场景，生成预览并“确认使用此数据版本”，查看质量检查后开始复盘。
+点击“依据”核对数字，勾选草稿复核可体验暂停与恢复。库存和竞品在“库存与竞品研究（高级）”。
 
 **demo 未调用模型或真实搜索；live 需要自己配置兼容模型与外部服务。**
 真实联调及评估步骤见 [评估文档](docs/04-evaluation.md)。
@@ -73,14 +81,14 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 
 ## 阅读顺序
 
-1. [循序学习：从总览开始](docs/learning/01-总览.md)：面向 Java 后端背景与 Python/Agent 初学者，按“基础 → 模块 → 链路自测 → 动手调试与修改 → 面试表达”逐步阅读，共14篇。
-2. [架构与边界](docs/01-architecture.md)：流程/Agent、状态/检查点、预算与取舍。
-3. [源码调用链速查](docs/02-code-walkthrough.md)：一条请求经过哪些模块，每层保证什么。
-4. [六周学习路线](docs/03-learning-roadmap.md)：较长期的学习与复现安排，具体入口和成果测试见循序学习系列。
-5. [评估与真实联调](docs/04-evaluation.md)：固定用例、人工核验、三种策略比较。
-6. [启动和部署](docs/05-deployment.md)、[最新修复验证](docs/20-audit-fixes-validation.md)、[历史交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。
-7. [上传 GitHub 与成果整理](docs/07-publishing.md)：来源、凭据检查和简历边界。
-8. [第二轮开发文档](docs/08-development-plan.md)：问题根因、实现约束与逐项验收标准。
+学习只需从 [学习总览](docs/learning/01-总览.md) 开始，依次阅读 **总览 → 后端主链 → Agent与证据 → 实践与自测**，共 4 篇。六周安排和面试题已合入，不需要另外走一套路线。
+
+其他文档按需查阅：
+
+- **查设计和源码：** [架构与边界](docs/01-architecture.md)、[源码调用链速查](docs/02-code-walkthrough.md)。
+- **使用和部署：** [经营复盘数据与验证](docs/21-commerce-review-development-validation.md)、[评估与真实联调](docs/04-evaluation.md)、[启动和部署](docs/05-deployment.md)。
+- **核对历史证据：** [审计修复验证](docs/20-audit-fixes-validation.md)、[历史交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。这些记录不需要逐篇学习。
+- **开发与发布：** [第二轮开发文档](docs/08-development-plan.md)、[上传 GitHub 与成果整理](docs/07-publishing.md)。
 
 ## 项目结构
 
@@ -111,6 +119,7 @@ docs/           架构、学习、部署、评估与验收
 uv run ruff check app tests migrations evaluations scripts
 uv run ruff format --check app tests migrations evaluations scripts
 uv run pytest -q
+uv run python -m evaluations.commerce_review --mode demo --output evaluations/results/my-review-demo
 uv run python -m evaluations.run --mode demo
 uv run --with pgserver==0.1.4 python scripts/test_embedded_postgres.py tests
 cd frontend

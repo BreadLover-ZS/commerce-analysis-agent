@@ -13,6 +13,10 @@ test("login, review, evidence, PDF, refresh and mobile layout", async ({
   await expect(
     page.getByRole("heading", { name: "从数据到有依据的建议" }),
   ).toBeVisible();
+  await page.getByLabel("任务类型", { exact: true }).selectOption("research");
+  await page
+    .getByRole("button", { name: "竞品与库存综合研究", exact: true })
+    .click();
   await page.getByLabel("导出前由我复核草稿").check();
   await page.getByRole("button", { name: "开始分析" }).click();
   await expect(page.getByRole("button", { name: "确认并导出" })).toBeVisible({
