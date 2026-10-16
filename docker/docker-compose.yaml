@@ -36,6 +36,9 @@ services:
     restart: "no"
   api:
     <<: *app
+    environment:
+      <<: *environment
+      FORWARDED_ALLOW_IPS: ${COMMERCE_FRONTEND_IP:-172.30.0.10}
     depends_on:
       init: {condition: service_completed_successfully}
     healthcheck:
@@ -55,9 +58,27 @@ services:
       context: ..
       dockerfile: docker/frontend.Dockerfile
     ports: ["127.0.0.1:${WEB_PORT:-8080}:8080"]
+    environment:
+      TRUSTED_INGRESS_IP: ${COMMERCE_INGRESS_IP:-172.30.0.11}
+    networks:
+      default:
+        ipv4_address: ${COMMERCE_FRONTEND_IP:-172.30.0.10}
     depends_on:
       api: {condition: service_healthy}
     restart: unless-stopped
+  proxy-smoke:
+    <<: *app
+    profiles: [verification]
+    command: ["python", "-m", "scripts.proxy_smoke", "--confirm-isolated-compose", "--mode", "trusted"]
+    networks:
+      default:
+        ipv4_address: ${COMMERCE_INGRESS_IP:-172.30.0.11}
+    restart: "no"
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${COMMERCE_NETWORK_SUBNET:-172.30.0.0/24}
 volumes:
   runtime_data:
   pg_data:

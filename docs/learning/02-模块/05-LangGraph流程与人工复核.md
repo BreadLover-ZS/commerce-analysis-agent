@@ -65,6 +65,8 @@ model 存在
 
 草稿生成异常会使用确定性草稿并标记 `draft_fallback_used`。两版草稿都未通过程序/业务校验时，validate 使用确定性模板并标记 `fallback_used`。研究拒绝后则保留原文摘录并保留研究失败标志。这些路径应分别看待。
 
+确定性模板也要校验。如果仍不通过，记录 `report_validation_failed` 事件并抛出专用异常，Worker 以同名错误码终止；不能再反复回到 draft，最终以图递归耗尽掩盖真正原因。
+
 报告模型语义评审异常时，代码记录 `semantic_status=unavailable`；若程序校验仍通过，可带限制继续交付。评估器对此还有更严格的真实执行门槛，不能只看文件存在。
 
 ## Part E：人工复核不是挂着 HTTP 等待

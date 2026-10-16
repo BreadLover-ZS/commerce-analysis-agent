@@ -75,6 +75,10 @@ jobs:
           docker compose --env-file .env -f docker/docker-compose.yaml logs
           exit 1
       - run: uv run python scripts/container_smoke.py
+      - name: Reject forged client forwarding headers
+        run: uv run python -m scripts.proxy_smoke --confirm-isolated-compose --mode untrusted
+      - name: Trusted ingress to Nginx to API login isolation
+        run: docker compose --env-file .env -f docker/docker-compose.yaml --profile verification run --rm --no-deps proxy-smoke
       - name: Isolated container PostgreSQL backup and restore
         run: |
           docker compose --env-file .env -f docker/docker-compose.yaml exec -T postgres psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE commerce_restore OWNER commerce'

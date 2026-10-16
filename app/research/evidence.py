@@ -3,6 +3,7 @@ import re
 from decimal import Decimal, InvalidOperation
 
 from app.research.schemas import Claim, MetricReference, ReportSection, ResearchReport
+from app.storage.evidence import authoritative_evidence
 
 SECTION_NAMES = ["经营表现", "库存风险", "竞品观察", "行动建议"]
 
@@ -81,6 +82,7 @@ def render_metric_claim(refs, by_id):
 
 def render_bound_metrics(report, evidence):
     """Render only valid metric tuples; invalid references remain visible to validation."""
+    evidence, _ = authoritative_evidence(evidence)
     by_id = {e["id"]: e for e in evidence}
     for section in report.sections:
         for claim in section.claims:
@@ -98,6 +100,7 @@ def render_bound_metrics(report, evidence):
 
 
 def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
+    evidence, _ = authoritative_evidence(evidence)
     by_id = {e["id"]: e for e in evidence}
     issues, seen = [], set()
     if [s.name for s in report.sections] != SECTION_NAMES:
@@ -156,6 +159,7 @@ def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
 
 
 def deterministic_report(evidence: list[dict], gaps: list[str]) -> ResearchReport:
+    evidence, _ = authoritative_evidence(evidence)
     sections = {name: [] for name in SECTION_NAMES}
     for source in evidence:
         payload, eid = source["payload"], source["id"]

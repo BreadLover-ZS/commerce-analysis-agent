@@ -57,6 +57,11 @@ RAGFLOW_API_KEY=your-local-secret
 RAGFLOW_DATASETS={"demo":["allowed-dataset-id"]}
 ```
 
+RAGFlow负责组织资料，本地仍检索当前用户/会话附件；远端空结果、未配置或服务故障不会抹掉已有附件。
+组织资料不混入另一provider的本地样例；数据集越权或文档/片段身份缺失仍拒绝。
+本地协议替身回归只证明组合与权限契约，不证明真实RAGFlow接口兼容、召回或质量。
+2026-10-16的实现指纹与回归结果见[最新修复验证](20-audit-fixes-validation.md)；此前真实模型结果保留原版本归属。
+
 这里的组织键必须与实际账户组织一致，production 初始账户为 primary。禁止使用
 不受组织范围限制的“查询所有知识库”。适配器检查 dataset_id/kb_id，保留内容与
 定位；RAGFlow 未返回页码时不伪造页码。需在实际服务版本上验证字段与引用位置。

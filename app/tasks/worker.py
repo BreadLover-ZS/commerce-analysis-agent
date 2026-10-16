@@ -9,6 +9,7 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
 
 from app.core.config import get_settings
+from app.core.errors import ReportValidationFailed
 from app.research.graph import build_workflow
 from app.storage.repository import BudgetExceeded, Repository, StaleLease, TaskCancelled
 from app.tasks.checkpoints import LeaseFencedSaver
@@ -119,6 +120,8 @@ class Worker:
             error_code = "runtime_budget"
         except BudgetExceeded:
             error_code = "model_or_tool_budget"
+        except ReportValidationFailed:
+            error_code = "report_validation_failed"
         except Exception as exc:
             # Exception type is logged; request bodies/keys/provider errors are not.
             error_code = type(exc).__name__

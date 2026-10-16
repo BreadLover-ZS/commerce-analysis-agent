@@ -9,10 +9,11 @@
 
 基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
 来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及小规模试用。
-最新纯Python交付与负载证据见[交付验收](docs/18-python-delivery-validation.md)，真实模型验证
-见[用量回执与服务核对](docs/16-usage-receipts-and-provider-check.md)。本地回归
-通过；f3a12de同一实现的库存、内部规则、综合补货三个教学单例均通过真实模型自动检查
-及逐项核对，无模板回退。单例结果不代表稳定通过率或生产验收，不将模拟结果当作模型效果。
+2026-10-16已修复恢复快照、库存精度、附件检索、文档配额、代理信任配置及前端证据读取竞态，
+本地214条后端、32条离线评估与9条Chrome浏览器检查通过，范围见[审计修复与验证](docs/20-audit-fixes-validation.md)。
+此前纯Python交付与负载见[历史交付验收](docs/18-python-delivery-validation.md)。
+f3a12de的库存、内部规则、综合补货三个真实教学单例见[模型记录](docs/16-usage-receipts-and-provider-check.md)，
+它们是原实现的历史证据，本轮没有新增真实模型复测；不代表新实现模型效果、稳定通过率或生产验收。
 
 ![电商运营分析助手工作台](docs/images/commerce-analysis-desktop.png)
 
@@ -23,6 +24,7 @@
 - 经营指标由受限业务工具计算，身份来自服务端，模型不能执行任意 SQL。
 - Skills、结构化输出、上下文隔离、持久化检查点与人工 interrupt/resume。
 - 商品/单位/周期/快照与指标绑定，关键事实句由程序渲染；研究发现保留逐字引用与冲突。
+- 同任务、同工具与周期复用首次可用指标快照；来源使用结构化文档/片段身份与显式排除原因。
 - 来源/片段/指标/内容哈希独立保存，证据选择清单、失败修正与明确降级。
 - PostgreSQL 任务队列、租约与晚到结果校验、幂等提交、取消、事件游标重放。
 - Cookie 登录、CSRF、资源归属、公开关键词边界、受限附件解析。
@@ -76,7 +78,7 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 3. [源码调用链速查](docs/02-code-walkthrough.md)：一条请求经过哪些模块，每层保证什么。
 4. [六周学习路线](docs/03-learning-roadmap.md)：较长期的学习与复现安排，具体入口和成果测试见循序学习系列。
 5. [评估与真实联调](docs/04-evaluation.md)：固定用例、人工核验、三种策略比较。
-6. [启动和部署](docs/05-deployment.md)、[交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。
+6. [启动和部署](docs/05-deployment.md)、[最新修复验证](docs/20-audit-fixes-validation.md)、[历史交付验收](docs/18-python-delivery-validation.md)、[模型验证](docs/16-usage-receipts-and-provider-check.md)。
 7. [上传 GitHub 与成果整理](docs/07-publishing.md)：来源、凭据检查和简历边界。
 8. [第二轮开发文档](docs/08-development-plan.md)：问题根因、实现约束与逐项验收标准。
 

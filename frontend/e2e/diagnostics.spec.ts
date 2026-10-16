@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import type { Task, TaskEvent } from "../src/types";
+import type { Evidence, Task, TaskEvent } from "../src/types";
 
 // Sanitized contract fixture based on the real 120.477s planning timeout.
 // Browser responses are mocked; these tests do not call or evaluate an LLM.
@@ -41,9 +41,16 @@ const modelError: TaskEvent = {
   },
 };
 
-async function openFixture(page: Page, task: Task, events: TaskEvent[]) {
+async function openFixture(
+  page: Page,
+  task: Task,
+  events: TaskEvent[],
+  evidence: Evidence[] = [],
+  delayDetail = false,
+) {
   const writes: string[] = [];
   const browserErrors: string[] = [];
+  let detailRead = false;
   page.on("pageerror", (error) => browserErrors.push(error.message));
   await page.route("**/api/tasks**", async (route) => {
     if (route.request().method() !== "GET") {
@@ -61,8 +68,14 @@ async function openFixture(page: Page, task: Task, events: TaskEvent[]) {
         json: { events: selected, cursor: selected.at(-1)?.id || after },
       });
     } else if (path.endsWith("/evidence"))
-      await route.fulfill({ json: { evidence: [] } });
-    else await route.fulfill({ json: task });
+      await route.fulfill({ json: { evidence: detailRead ? evidence : [] } });
+    else {
+      detailRead = false;
+      // Model a report committed while a parallel evidence read still sees the old ledger.
+      if (delayDetail) await new Promise((resolve) => setTimeout(resolve, 150));
+      detailRead = true;
+      await route.fulfill({ json: task });
+    }
   });
   await page.goto("/");
   await page.getByLabel("邮箱", { exact: true }).fill("demo@example.com");
@@ -71,6 +84,48 @@ async function openFixture(page: Page, task: Task, events: TaskEvent[]) {
   await page.getByRole("button", { name: task.query }).click();
   return { writes, browserErrors };
 }
+
+test("new report citations open even when a parallel ledger read would be stale", async ({
+  page,
+}) => {
+  const source: Evidence = {
+    id: "E-new-snapshot",
+    kind: "metrics",
+    title: "销售汇总",
+    locator: "commerce://sales/2026-09-01/2026-09-30",
+    excerpt: "净销售额 83766.00 元",
+    content_hash: "fixture-hash",
+    retrieved_at: failed.created_at,
+    payload: { sample: true },
+  };
+  const task: Task = {
+    ...failed,
+    status: "waiting_review",
+    error_code: null,
+    report: {
+      title: "已提交的报告",
+      sections: [
+        {
+          name: "经营表现",
+          claims: [
+            {
+              id: "sales",
+              kind: "fact",
+              text: "净销售额 83766.00 元",
+              evidence_ids: [source.id],
+            },
+          ],
+        },
+      ],
+      limitations: [],
+    },
+  };
+  const observed = await openFixture(page, task, [], [source], true);
+  await page.locator(".citations button").click();
+  await expect(page.locator(".evidence-detail pre")).toContainText("83766.00");
+  expect(observed.writes).toEqual([]);
+  expect(observed.browserErrors).toEqual([]);
+});
 
 test("read timeout survives refresh, shows unknown usage, and never retries", async ({
   page,

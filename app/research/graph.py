@@ -5,7 +5,7 @@ from typing import TypedDict
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
 
-from app.core.errors import provider_error_data
+from app.core.errors import ReportValidationFailed, provider_error_data
 from app.core.files import safe_path
 from app.research.agents import (
     create_researcher,
@@ -387,6 +387,13 @@ period给出本次明确的分析周期，指标事实目录也含销量周期�
             result = validate_report(report, evidence)
             result["fallback_used"], result["prior_issues"] = True, prior
             result["research_validation"] = state.get("research_validation", {})
+            if not result["passed"]:
+                await emit(
+                    "report_validation_failed",
+                    "确定性报告仍未通过校验，已停止并保留诊断",
+                    {"report": report.model_dump(), "validation": result},
+                )
+                raise ReportValidationFailed()
         if result["passed"]:
             result["evidence_selection"] = state["evidence_context"]["manifest"]
             await asyncio.to_thread(repo.save_report, ctx, report.model_dump(), result)

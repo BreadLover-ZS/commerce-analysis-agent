@@ -79,10 +79,12 @@ Worker A 外部请求晚到
 
 | 已发生的动作 | 当前防护 | 仍存在的边界 |
 | --- | --- | --- |
-| 读取与登记证据 | 同任务按定位、内容等生成稳定键去重 | 外部读取仍可能重复 |
+| 读取与登记证据 | 指标按任务/工具/周期固定首次快照；文本按稳定键去重 | 空读取、外部请求仍可能重复 |
 | 保存报告 | 写前租约检查、图检查点 | 两次提交之间仍可能崩溃 |
 | 文件写入与登记 | 每个租约独立目录；任务+名称登记 | 文件写入与数据库登记非原子 |
 | 模型已请求、用量未回执 | 恢复时标记未知，阻止新模型调用 | 无法反推提供方真实消耗 |
+
+指标快照复用解决“证据已提交、节点检查点未提交、业务数据又变化”的窗口。Repository 在受租约保护的事务中再次检查首次快照，避免并发写入两个版本。旧账本若已有多个版本，完整保留，但上下文与报告只认最早版本。没有登记证据的空读取可以重放；销售与库存也未合成一个跨工具数据库快照。要分析最新数据，应新建任务。
 
 ## 验证入口
 
@@ -92,6 +94,7 @@ Worker A 外部请求晚到
 uv run pytest -q tests/test_contracts.py::test_budget_is_atomic_and_old_lease_cannot_write
 uv run pytest -q tests/test_checkpoint_fencing.py
 uv run pytest -q tests/test_recovery.py
+uv run pytest -q tests/test_audit_fixes.py -k 'recovery or sigkill or legacy_metric'
 ```
 
 恢复测试包含 SIGKILL 和子进程，使用临时测试数据，不要将其改成指向个人运行库。真实 PG 的锁/接管验证另在 `tests/test_postgres.py`，运行条件见[评估部署篇](09-评估部署与备份.md)。

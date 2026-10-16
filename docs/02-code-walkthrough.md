@@ -15,8 +15,10 @@ demo 不调用模型，不执行 Deep Agents 工具循环；它复用业务工�
 6. `app/tasks/checkpoints.py` 将检查点/pending writes纳入租约保护，原始Saver负责存储；
    `app/research/graph.py` 从已保存状态启动或恢复 LangGraph。
 7. `ToolGateway` 使用不可由模型填写的 RunContext 绑定用户、组织、会话和租约。
-8. 经营工具调用 `app/commerce/service.py`：静态 SQL、只读事务、Decimal/cents 计算。
-9. 检索工具保存原始依据，再返回 evidence_id。RAGFlow 使用片段检索而非嵌套问答。
+8. 经营工具通过`Repository.metric_snapshot`查首份可用结果；没有时调用`commerce/service.py`。
+   静态SQL、只读事务、Decimal/cents计算，登记时在任务锁内再次确认首写，避免并发版本混用。
+9. 检索工具保存原始依据，再返回evidence_id。RAGFlow检索组织知识库片段，同时保留本地私有附件；
+   不做嵌套问答，provider/document_id/chunk_id明确记录在payload中。
 10. `app/research/agents.py` 创建受限 Deep Agent：可信 Skills、只读文件工具、预算中间件。
     `research/meter.py` 的模型回调负责请求准入/用量/延迟，覆盖 SDK 内部摘要；
     agents.py 中间件单独记录委派。
@@ -52,6 +54,7 @@ LangGraph 管理自己的 checkpoint 表。Alembic 管理业务表，两者不�
 - 无记录、部分日期、有完整记录但零销量分开；缺日期或没有正净销量时不估计覆盖天数。
 - 前期比较使用相同长度窗口，仅在两期完整且前期金额为正时计算变化率。
 - 库存按缺数、缺货、积压、正常排序，风险排序发生在100个商品展示上限之前。
+- `inventory_risk_comparisons`以未舍入的交叉乘积同时驱动SQL排序与Python分类；覆盖天数最后格式化，临界差异有说明。
 - 每个业务工具使用独立只读事务；未承诺跨工具共享同一数据库快照。
 
 固定九月样例：支付660件、退款6件、净销售额83766.00元、退款件数比例0.91%。
@@ -62,6 +65,8 @@ LangGraph 管理自己的 checkpoint 表。Alembic 管理业务表，两者不�
 原始资料 → Gateway → evidence表 → 报告 claims → 校验 → 前端依据按钮/文件。
 同任务、同定位、同内容的公开证据去重，同时保留命中的公开关键词。
 内容哈希对应实际保存的片段；经营 evidence 还保存完整结构化指标数据。
+`storage/evidence.py`提供`authoritative_evidence/document_identity`：保留历史账本，报告只采用首份同工具同周期指标；
+新文档用结构化身份计配额，旧URI推导与无法识别的身份均显式披露。manifest记录每项排除原因。
 
 规则能够证明：引用来自当前任务、必需章节存在、经营指标的商品/单位/周期/快照与
 数值匹配，指标句按程序渲染。原文数字检查仍只提供基础防线，不能证明文本语义对应。

@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from app.core.auth import password_hash
+from app.storage.evidence import metric_scope
 from app.storage.models import Artifact, Conversation, Event, Evidence, Task, User, utcnow
 
 TERMINAL = {"succeeded", "degraded", "failed", "cancelled", "rejected"}
@@ -388,6 +389,22 @@ class Repository:
                 task.usage_complete = False
             db.commit()
 
+    def _metric_snapshot(self, db, task_id, scope):
+        if scope is None:
+            return None
+        rows = db.scalars(
+            select(Evidence)
+            .where(Evidence.task_id == task_id, Evidence.kind == "metrics")
+            .order_by(Evidence.created_at, Evidence.id)
+        )
+        return next((item for item in rows if metric_scope(item.payload) == scope), None)
+
+    def metric_snapshot(self, ctx, name, start, end):
+        with self.session() as db:
+            self._fenced(db, ctx)
+            item = self._metric_snapshot(db, ctx.task_id, (name, start, end))
+            return evidence_dict(item) if item else None
+
     def add_evidence(self, ctx, kind, title, locator, excerpt, payload=None):
         excerpt = excerpt[:8000]
         payload = dict(payload or {})
@@ -400,6 +417,11 @@ class Repository:
         key = hashlib.sha256(content.encode()).hexdigest()
         with self.session() as db:
             self._fenced(db, ctx)
+            # The task row lock serializes first writers, including concurrent replay.
+            if kind == "metrics":
+                snapshot = self._metric_snapshot(db, ctx.task_id, metric_scope(payload))
+                if snapshot:
+                    return evidence_dict(snapshot)
             prior = db.scalar(
                 select(Evidence).where(Evidence.task_id == ctx.task_id, Evidence.source_key == key)
             )

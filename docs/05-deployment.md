@@ -43,6 +43,34 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 前端代理。数据库不发布宿主机端口，应用角色不具有超级用户/创建数据库/创建角色权限。
 运行数据在 pg_data 和 runtime_data 卷中。RAGFlow 是可选外部服务，不在这个 Compose 中。
 
+### 代理地址与登录限流
+
+Compose 使用固定的内部代理地址：`COMMERCE_NETWORK_SUBNET=172.30.0.0/24`、
+`COMMERCE_FRONTEND_IP=172.30.0.10`、`COMMERCE_INGRESS_IP=172.30.0.11`。
+如与宿主机网络冲突，应同时调整网段和两个地址，保持地址位于该网段且互不相同。
+API 的 `FORWARDED_ALLOW_IPS` 仅信任前端地址；前端 Nginx 仅信任入口地址。
+Nginx 将识别出的客户端地址覆盖写入 `X-Forwarded-For`，直接访问前端时伪造的头不会进入限流身份。
+生产链路为客户端 → Caddy → Nginx → API，API 不发布宿主机端口；不要把信任范围改成 `*`。
+
+Nginx 配置由镜像的模板入口生成；`NGINX_ENVSUBST_FILTER` 只替换入口地址，
+保留 `$remote_addr` 等 Nginx 运行变量。客户端真实地址、HTTPS 协议与 Cookie 行为仍须在目标环境验证。
+本次本地没有 Docker，容器实际链路尚未验收，详见[修复验证记录](20-audit-fixes-validation.md)。
+
+已有 Compose 网络升级前，应先完成或取消活动任务，并按下文停服备份；
+再执行 `down`（不加 `-v`）和 `up -d --build`，让新 IPAM 与代理地址生效。
+仅重建某一个容器不能可靠替换旧网络。该操作保留数据卷，但会中断服务，应在维护窗口执行。
+
+下面的代理探针会消耗登录失败限流额度，只用于可丢弃的 demo Compose，不能对正在使用的环境运行：
+
+```bash
+uv run python -m scripts.proxy_smoke --confirm-isolated-compose --mode untrusted
+docker compose --env-file .env -f docker/docker-compose.yaml --profile verification run --rm --no-deps proxy-smoke
+```
+
+第一条从宿主机伪造转发头，验证不能绕过同一客户端桶；第二条占用保留入口地址，
+验证不同客户端分桶及同账户跨 IP 限流。`proxy-smoke` 与生产 Caddy 使用同一入口地址，
+不得同时运行，也不要给该探针命令叠加 production 配置。这两项不替代公网 HTTPS 验收。
+
 ```bash
 docker compose --env-file .env -f docker/docker-compose.yaml logs -f api worker
 uv run python scripts/container_smoke.py

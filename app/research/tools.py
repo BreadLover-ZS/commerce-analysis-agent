@@ -7,6 +7,7 @@ import httpx
 from langchain_core.tools import tool
 
 from app.commerce.service import DATA_ROOT, inventory_risks, sales_summary, search_documents
+from app.core.errors import provider_error_data
 
 MAX_TOOL_RESPONSE_BYTES = 2 * 1024 * 1024
 
@@ -40,6 +41,22 @@ class ToolGateway:
             date.fromisoformat(self.parameters["end_date"]),
         )
         await self._begin(name, {"start": start.isoformat(), "end": end.isoformat()})
+        snapshot = await asyncio.to_thread(
+            self.repo.metric_snapshot, self.ctx, name, start.isoformat(), end.isoformat()
+        )
+        if snapshot:
+            await asyncio.to_thread(
+                self.repo.emit,
+                self.ctx,
+                "tool_end",
+                "复用本任务已保存的业务指标快照",
+                {"tool": name, "evidence_ids": [snapshot["id"]], "snapshot_reused": True},
+            )
+            return {
+                "status": "ok",
+                "evidence": [snapshot],
+                "limitations": snapshot["payload"].get("limitations", []),
+            }
         function = sales_summary if name == "sales" else inventory_risks
         result = await asyncio.to_thread(function, self.repo, self.ctx.tenant_id, start, end)
         if (
@@ -70,7 +87,7 @@ class ToolGateway:
         return {
             "status": "ok",
             "evidence": [evidence],
-            "limitations": result.get("limitations", []),
+            "limitations": evidence["payload"].get("limitations", []),
         }
 
     async def _post(self, url, body, headers=None):
@@ -103,34 +120,69 @@ class ToolGateway:
         if "documents" not in self.parameters["sources"] or not 1 <= len(query) <= 300:
             raise ValueError("文档查询未授权或超长")
         await self._begin("documents", {"query_length": len(query)})
-        if self.settings.knowledge_provider == "local":
-            chunks = await asyncio.to_thread(search_documents, self.repo, self.ctx, query)
-        else:
+        local = self.settings.knowledge_provider == "local"
+        chunks = await asyncio.to_thread(
+            search_documents,
+            self.repo,
+            self.ctx,
+            query,
+            scope="all" if local else "attachments",
+        )
+        limitations, unavailable, remote = [], False, []
+        if not local:
             datasets = self.settings.ragflow_datasets.get(self.ctx.tenant_id, [])
             if (
                 not datasets
                 or not self.settings.ragflow_api_key.get_secret_value()
                 or not self.settings.ragflow_api_url
             ):
-                return {
-                    "status": "unavailable",
-                    "evidence": [],
-                    "limitations": ["当前组织未配置可访问的 RAGFlow 知识库"],
-                }
-            response = await self._post(
-                self.settings.ragflow_api_url.rstrip("/") + "/api/v1/retrieval",
-                {"question": query, "dataset_ids": datasets, "page_size": 5, "top_k": 30},
-                {"Authorization": "Bearer " + self.settings.ragflow_api_key.get_secret_value()},
-            )
-            if response.get("code") != 0:
-                raise ValueError("RAGFlow 返回失败状态")
-            chunks = []
-            for c in response.get("data", {}).get("chunks", [])[:5]:
+                unavailable = True
+                limitations.append("当前组织未配置可访问的 RAGFlow 知识库；仍检索当前会话附件")
+            else:
+                try:
+                    response = await self._post(
+                        self.settings.ragflow_api_url.rstrip("/") + "/api/v1/retrieval",
+                        {"question": query, "dataset_ids": datasets, "page_size": 5, "top_k": 30},
+                        {
+                            "Authorization": "Bearer "
+                            + self.settings.ragflow_api_key.get_secret_value()
+                        },
+                    )
+                    if not isinstance(response, dict) or response.get("code") != 0:
+                        raise ValueError("RAGFlow 返回失败状态")
+                    data = response.get("data")
+                    if not isinstance(data, dict) or not isinstance(data.get("chunks"), list):
+                        raise ValueError("RAGFlow 片段列表无效")
+                    remote = data["chunks"][:5]
+                    if any(not isinstance(chunk, dict) for chunk in remote):
+                        raise ValueError("RAGFlow 片段格式无效")
+                except (httpx.HTTPError, ValueError) as exc:
+                    unavailable, remote = True, []
+                    limitations.append("RAGFlow 组织知识库检索未完成；保留当前会话附件依据")
+                    await asyncio.to_thread(
+                        self.repo.emit,
+                        self.ctx,
+                        "tool_error",
+                        "组织知识库检索未完成，继续保留本地附件",
+                        provider_error_data(exc),
+                    )
+                if not remote and not unavailable:
+                    limitations.append("RAGFlow 未检索到相关组织依据；本次仍保留可用会话附件")
+            for c in remote:
                 dataset = c.get("dataset_id") or c.get("kb_id")
                 if dataset not in datasets:
                     raise ValueError("RAGFlow 返回未授权数据集的片段")
+                if any(
+                    not isinstance(c.get(key), str) or not c[key].strip()
+                    for key in ("document_id", "id")
+                ):
+                    raise ValueError("RAGFlow 片段缺少文档或片段身份")
                 chunks.append(
                     {
+                        "provider": "ragflow",
+                        "dataset_id": dataset,
+                        "document_id": c["document_id"],
+                        "chunk_id": c["id"],
                         "title": c.get("document_keyword")
                         or c.get("document_name")
                         or "知识库片段",
@@ -151,7 +203,12 @@ class ToolGateway:
                         chunk["excerpt"][:6000],
                         {
                             "sample": chunk["sample"],
-                            "retriever": self.settings.knowledge_provider,
+                            "retriever": chunk["provider"],
+                            **{
+                                key: chunk[key]
+                                for key in ("provider", "dataset_id", "document_id", "chunk_id")
+                                if key in chunk
+                            },
                             "positions": chunk.get("positions", []),
                             "retrieval_score": chunk.get("score", 0),
                             "query": query,
@@ -166,9 +223,10 @@ class ToolGateway:
             {"tool": "documents", "evidence_count": len(evidence)},
         )
         return {
-            "status": "ok" if evidence else "empty",
+            "status": "ok" if evidence else "unavailable" if unavailable else "empty",
             "evidence": evidence,
-            "limitations": [] if evidence else ["内部材料未检索到相关依据；本地检索为词法基线"],
+            "limitations": limitations
+            or ([] if evidence else ["内部材料未检索到相关依据；本地检索为词法基线"]),
         }
 
     async def web(self, query):

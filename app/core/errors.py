@@ -3,6 +3,10 @@
 import httpx
 
 
+class ReportValidationFailed(Exception):
+    """The deterministic fallback is invalid; do not loop through model drafts again."""
+
+
 def _timeout_phase(error):
     seen = set()
     while error is not None and id(error) not in seen and len(seen) < 6:

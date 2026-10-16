@@ -22,6 +22,9 @@ services:
     environment:
       DOMAIN: ${DOMAIN:?Set a real domain}
     ports: ["80:80", "443:443"]
+    networks:
+      default:
+        ipv4_address: ${COMMERCE_INGRESS_IP:-172.30.0.11}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

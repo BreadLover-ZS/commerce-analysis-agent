@@ -154,6 +154,11 @@ def sales_summary(repo, tenant_id, start, end):
     }
 
 
+def inventory_risk_comparisons(stock, days, units, lead_days):
+    """Exact cross-products, shared by SQL ordering and Python classification."""
+    return stock * days < units * lead_days, stock * days > units * OVERSTOCK_THRESHOLD_DAYS
+
+
 def inventory_risks(repo, tenant_id, start, end):
     days = (end - start).days + 1
     with repo.session() as db:
@@ -169,18 +174,21 @@ def inventory_risks(repo, tenant_id, start, end):
             .subquery()
         )
         coverage = cast(Product.stock, Numeric) * days / func.nullif(sales.c.units, 0)
+        stockout, overstock = inventory_risk_comparisons(
+            cast(Product.stock, Numeric), days, cast(sales.c.units, Numeric), Product.lead_days
+        )
         unavailable = (func.coalesce(sales.c.observed_days, 0) < days) | (
             func.coalesce(sales.c.units, 0) <= 0
         )
         priority = case(
             (unavailable, 0),
-            (coverage < Product.lead_days, 1),
-            (coverage > OVERSTOCK_THRESHOLD_DAYS, 2),
+            (stockout, 1),
+            (overstock, 2),
             else_=3,
         )
         severity = case(
-            (coverage < Product.lead_days, coverage / Product.lead_days),
-            (coverage > OVERSTOCK_THRESHOLD_DAYS, -coverage),
+            (stockout, coverage / Product.lead_days),
+            (overstock, -coverage),
             else_=coverage,
         )
         rows = db.execute(
@@ -203,18 +211,26 @@ def inventory_risks(repo, tenant_id, start, end):
             if complete and units and units > 0
             else None
         )
+        stockout, overstock = inventory_risk_comparisons(
+            product.stock, days, units or 0, product.lead_days
+        )
         risk = (
             "incomplete"
             if not complete
             else "no_sales"
             if value is None
             else "stockout"
-            if Decimal(value) < product.lead_days
+            if stockout
             else "overstock"
-            if Decimal(value) > OVERSTOCK_THRESHOLD_DAYS
+            if overstock
             else "normal"
         )
         age = (end - product.stock_as_of).days
+        if value is not None and (
+            (Decimal(value) < product.lead_days) != stockout
+            or (Decimal(value) > OVERSTOCK_THRESHOLD_DAYS) != overstock
+        ):
+            gaps.append("存在临界商品：覆盖天数展示为两位小数，风险按未舍入比值判定")
         if not complete:
             gaps.append("存在销售日期不完整的商品，未将缺失天数补零，不能估计其库存覆盖")
         if age > 14 or age < 0:
@@ -277,8 +293,8 @@ def inventory_risks(repo, tenant_id, start, end):
         "period": {"start": start.isoformat(), "end": end.isoformat()},
         "definitions": {
             "coverage_days": "完整日期记录的库存快照 / 所选周期日均净销量；不代表未来销量预测",
-            "stockout": "覆盖天数小于补货提前期",
-            "overstock": f"覆盖天数大于{OVERSTOCK_THRESHOLD_DAYS}天；这是本工具算法阈值，非企业规则",
+            "stockout": "未舍入的覆盖天数小于补货提前期；展示值保留两位小数",
+            "overstock": f"未舍入的覆盖天数大于{OVERSTOCK_THRESHOLD_DAYS}天；这是本工具算法阈值，非企业规则",
             "lead_days": "当前商品配置值，不证明该提前期在历史销量周期内有效；下单前须确认实际交期",
         },
         "limitations": list(dict.fromkeys(gaps)),
@@ -291,19 +307,25 @@ def terms(value):
     return words + [chinese[i : i + 2] for i in range(len(chinese) - 1)]
 
 
-def search_documents(repo, ctx, query, limit=5):
+def search_documents(repo, ctx, query, limit=5, *, scope="all"):
     # Small reproducible lexical baseline; it is not a vector/reranker substitute.
+    attachment = (Document.user_id == ctx.user_id) & (
+        Document.conversation_id == ctx.conversation_id
+    )
+    scopes = {
+        "all": or_(Document.user_id.is_(None), attachment),
+        "organization": Document.user_id.is_(None),
+        "attachments": attachment,
+    }
+    if scope not in scopes:
+        raise ValueError("未知文档检索范围")
     with repo.session() as db:
         statement = (
             select(Document, Chunk)
             .join(Chunk, Document.id == Chunk.document_id)
             .where(
                 Document.tenant_id == ctx.tenant_id,
-                or_(
-                    Document.user_id.is_(None),
-                    (Document.user_id == ctx.user_id)
-                    & (Document.conversation_id == ctx.conversation_id),
-                ),
+                scopes[scope],
             )
         )
         count = db.scalar(select(func.count()).select_from(statement.subquery()))
@@ -333,6 +355,8 @@ def search_documents(repo, ctx, query, limit=5):
     return [
         {
             "document_id": d.id,
+            "chunk_id": c.id,
+            "provider": "local",
             "title": d.name,
             "locator": f"document://{d.id}/{c.locator}",
             "excerpt": c.text,

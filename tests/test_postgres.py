@@ -17,6 +17,7 @@ from app.commerce.service import inventory_risks, sales_summary, seed_commerce
 from app.core.auth import bootstrap_user
 from app.core.config import Settings
 from app.research.schemas import TaskRequest
+from app.research.tools import ToolGateway
 from app.storage.models import DailySale, Product, Task, User, utcnow
 from app.storage.repository import BudgetExceeded, Repository, StaleLease
 from app.tasks.checkpoints import LeaseFencedSaver
@@ -25,6 +26,89 @@ from app.tasks.worker import Worker, checkpoint_store
 pytestmark = pytest.mark.skipif(
     not os.getenv("TEST_POSTGRES_URL"), reason="未提供隔离 PostgreSQL 测试服务"
 )
+
+
+@pytest.mark.parametrize("source", ["sales", "inventory"])
+async def test_postgres_recovery_pins_metrics_despite_changed_business_data(postgres_setup, source):
+    settings, repo, user = postgres_setup
+    request = TaskRequest(
+        conversation_id=repo.create_conversation(user.id),
+        query="恢复期间指标快照",
+        sources=[source],
+    )
+    task = repo.create_task(user, request, str(uuid4()))
+    ctx = repo.claim()
+    first = (await ToolGateway(repo, settings, ctx, task["parameters"]).metrics(source))[
+        "evidence"
+    ][0]
+    with repo.session() as db:
+        if source == "sales":
+            sale = db.scalar(
+                select(DailySale).where(
+                    DailySale.tenant_id == "demo", DailySale.day == date(2026, 9, 1)
+                )
+            )
+            sale.revenue_cents += 100
+        else:
+            product = db.scalar(
+                select(Product).where(Product.tenant_id == "demo", Product.sku == "CUP-01")
+            )
+            product.stock += 10
+        db.commit()
+    repo.release(ctx)
+    async with checkpoint_store(settings) as saver:
+        await Worker(repo, settings, saver).run_once()
+    assert repo.get_task(task["id"])["status"] == "degraded"
+    assert [e["id"] for e in repo.evidence(task["id"])] == [first["id"]]
+
+
+async def test_postgres_first_metric_writer_wins_atomically(postgres_setup):
+    _, repo, user = postgres_setup
+    task = repo.create_task(
+        user,
+        TaskRequest(conversation_id=repo.create_conversation(user.id), query="并发指标登记"),
+        str(uuid4()),
+    )
+    ctx = repo.claim()
+
+    def store(value):
+        return repo.add_evidence(
+            ctx,
+            "metrics",
+            "sales",
+            "commerce://sales",
+            str(value),
+            {
+                "tool": "sales",
+                "period": {"start": "2026-09-01", "end": "2026-09-30"},
+                "value": value,
+            },
+        )
+
+    results = await asyncio.gather(asyncio.to_thread(store, 1), asyncio.to_thread(store, 2))
+    assert results[0]["id"] == results[1]["id"]
+    assert results[0]["payload"] == results[1]["payload"]
+    assert len(repo.evidence(task["id"])) == 1
+
+
+@pytest.mark.parametrize("stock,risk", [(999, "stockout"), (60001, "overstock")])
+def test_postgres_inventory_uses_exact_threshold_comparisons(postgres_setup, stock, risk):
+    _, repo, _ = postgres_setup
+    day = date(2026, 9, 30)
+    with repo.session() as db:
+        product = db.scalar(
+            select(Product).where(Product.tenant_id == "demo", Product.sku == "CUP-01")
+        )
+        product.stock, product.lead_days = stock, 1
+        sale = db.scalar(
+            select(DailySale).where(DailySale.product_id == product.id, DailySale.day == day)
+        )
+        sale.paid_units, sale.refunded_units = 1000, 0
+        db.commit()
+    result = inventory_risks(repo, "demo", day, day)
+    cup = next(item for item in result["items"] if item["sku"] == "CUP-01")
+    assert cup["risk"] == risk
+    assert any("未舍入" in note for note in result["limitations"])
 
 
 @pytest.fixture

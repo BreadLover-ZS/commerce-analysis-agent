@@ -149,13 +149,17 @@ export default function App() {
       if (fetching) return;
       fetching = true;
       try {
-        const [detail, history, sourcesResult] = await Promise.all([
+        const [detail, history] = await Promise.all([
           api<Task>(`/api/tasks/${selectedId}`),
           api<{ events: TaskEvent[]; cursor: number }>(
             `/api/tasks/${selectedId}/events?after=${cursor.current}`,
           ),
-          api<{ evidence: Evidence[] }>(`/api/tasks/${selectedId}/evidence`),
         ]);
+        // Reports only reference committed, append-only evidence. Read that ledger
+        // after the report so a new report cannot be paired with an earlier snapshot.
+        const sourcesResult = await api<{ evidence: Evidence[] }>(
+          `/api/tasks/${selectedId}/evidence`,
+        );
         if (!disposed) {
           setTask(detail);
           setEvidence(sourcesResult.evidence);

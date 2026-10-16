@@ -4,6 +4,7 @@ import json
 from collections import deque
 
 from app.commerce.service import terms
+from app.storage.evidence import authoritative_evidence, document_identity
 
 
 def _window(text, query, length=1800):
@@ -17,7 +18,11 @@ def _window(text, query, length=1800):
 
 
 def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
+    evidence, superseded = authoritative_evidence(evidence)
     selected, excluded, truncations = [], [], []
+    excluded.extend(superseded)
+    reasons = {eid: "superseded_metrics" for eid in superseded}
+    inferred_ids, unknown_identity_ids = [], []
     metrics = [e for e in evidence if e["kind"] == "metrics"]
     groups = {}
     query_terms = set(terms(query))
@@ -36,6 +41,7 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
     for source in ordered:
         if len(selected) >= max_sources:
             excluded.append(source["id"])
+            reasons[source["id"]] = "max_sources"
             continue
         item = {
             key: source[key]
@@ -67,13 +73,27 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
             if omitted:
                 truncations.append({"id": source["id"], "omitted_inventory_items": omitted})
         else:
-            document = source["locator"].split("/chars=")[0].split("/lines=")[0]
-            if source["kind"] == "document" and by_document.get(document, 0) >= 2:
+            document, inferred = document_identity(source)
+            if source["kind"] == "document" and inferred:
+                inferred_ids.append(source["id"])
+            if source["kind"] == "document" and document is None:
+                unknown_identity_ids.append(source["id"])
+            if (
+                source["kind"] == "document"
+                and document is not None
+                and by_document.get(document, 0) >= 2
+            ):
                 excluded.append(source["id"])
+                reasons[source["id"]] = "document_quota"
                 continue
             excerpt, start, end = _window(source["excerpt"], query)
             item["excerpt"] = excerpt
             item["payload"] = {
+                **{
+                    key: payload[key]
+                    for key in ("provider", "dataset_id", "document_id", "chunk_id")
+                    if key in payload
+                },
                 "sample": payload.get("sample", False),
                 "support_scope": payload.get("support_scope", "引用窗口，不是完整文档"),
                 "excerpt_start": start,
@@ -89,15 +109,21 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                         "full_characters": len(source["excerpt"]),
                     }
                 )
-            by_document[document] = by_document.get(document, 0) + 1
         encoded = json.dumps([*selected, item], ensure_ascii=False)
         if len(encoded) > max_chars:
             excluded.append(source["id"])
+            reasons[source["id"]] = "character_budget"
             continue
         selected.append(item)
+        if source["kind"] == "document" and document is not None:
+            by_document[document] = by_document.get(document, 0) + 1
     manifest = {
         "selected_ids": [e["id"] for e in selected],
         "excluded_ids": excluded,
+        "exclusion_reasons": reasons,
+        "inferred_identity_ids": inferred_ids,
+        "unknown_document_identity_ids": unknown_identity_ids,
+        "metric_snapshot_policy": "first_success_per_tool_and_period",
         "truncations": truncations,
         "characters": len(json.dumps(selected, ensure_ascii=False)),
         "max_characters": max_chars,
