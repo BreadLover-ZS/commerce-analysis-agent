@@ -353,6 +353,15 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                         )
                         return {"current_step": step}
                 reason = "evidence_gap"
+            if (
+                reason == "evidence_gap"
+                and not missing
+                and not unsupported_fn(task["query"])
+                and task["graph_version"] == V9["graph_version"]
+            ):
+                # v9：没有必填缺口、也未超出可回答范围时，声明的缺口无法用授权证据补齐；
+                # 原文查阅不应因适用性未核验而被报成资料不足。
+                reason = "target_covered"
             step = await update(
                 sequence,
                 status="SUCCEEDED",
