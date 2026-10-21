@@ -228,7 +228,9 @@ class Repository:
                         conversation_id=request.conversation_id,
                         enforce_conversation=True,
                     )
-                versions = accepted_versions(request.query, request.sources, self.settings.diagnosis_runtime)
+                versions = accepted_versions(
+                    request.query, request.sources, self.settings.diagnosis_runtime
+                )
                 payload.update(
                     start_date=period["start"],
                     end_date=period["end"],
