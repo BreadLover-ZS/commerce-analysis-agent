@@ -18,28 +18,54 @@ class TaskRequest(BaseModel):
         min_length=1,
         max_length=4,
     )
-    strategy: Literal["workflow", "single", "multi"] = "single"
+    strategy: Literal["workflow", "single", "multi", "diagnostic"] = "single"
     public_queries: list[str] = Field(default_factory=list, max_length=3)
     require_review: bool = False
-    profile: Literal["research", "commerce_review"] = "research"
+    profile: Literal["research", "commerce_review", "commerce_diagnosis"] = "research"
     dataset_id: str | None = Field(default=None, min_length=36, max_length=36)
+    bundle_id: str | None = Field(default=None, min_length=36, max_length=36)
+    parent_task_id: str | None = Field(default=None, min_length=36, max_length=36)
 
     @model_validator(mode="after")
     def check_period(self):
+        if self.profile == "commerce_diagnosis":
+            if "sources" not in self.model_fields_set:
+                self.sources = ["sales"]
+            if "strategy" not in self.model_fields_set:
+                self.strategy = "diagnostic"
+            if (
+                not (self.bundle_id or self.parent_task_id)
+                or self.strategy != "diagnostic"
+                or "sales" not in self.sources
+                or "web" in self.sources
+                or self.public_queries
+                or self.dataset_id
+            ):
+                raise ValueError("经营诊断须绑定输入包、sales授权与diagnostic策略，不接受公开搜索")
+        elif (
+            self.parent_task_id
+            or self.strategy == "diagnostic"
+            or (self.bundle_id and self.profile != "commerce_review")
+        ):
+            raise ValueError("输入组合仅用于经营诊断或固定复盘；追问与diagnostic策略仅用于经营诊断")
         if self.profile == "commerce_review":
             if (
-                not self.dataset_id
+                not (self.dataset_id or self.bundle_id)
                 or self.sources != ["sales"]
                 or self.strategy != "workflow"
                 or self.public_queries
             ):
-                raise ValueError("经营复盘须绑定数据集，仅允许sales来源与workflow策略")
+                raise ValueError("经营复盘须绑定数据集或输入组合，仅允许sales来源与workflow策略")
         elif self.dataset_id is not None:
             raise ValueError("数据集仅用于经营复盘")
         self.query = self.query.strip()
         if len(self.query) < 2:
             raise ValueError("请输入具体分析任务")
-        if not 0 <= (self.end_date - self.start_date).days <= 89:
+        if (
+            self.profile != "commerce_diagnosis"
+            and not self.bundle_id
+            and not 0 <= (self.end_date - self.start_date).days <= 89
+        ):
             raise ValueError("分析周期必须为 1–90 天")
         if len(set(self.sources)) != len(self.sources):
             raise ValueError("信息来源不能重复")

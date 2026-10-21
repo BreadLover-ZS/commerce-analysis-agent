@@ -10,6 +10,7 @@ import tempfile
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
+from uuid import uuid4
 
 import psycopg
 from psycopg.conninfo import make_conninfo
@@ -18,7 +19,7 @@ from sqlalchemy.engine import make_url
 
 from app.core.config import Settings
 from app.core.files import safe_path
-from scripts.backup_common import file_hash, stage_directory
+from scripts.backup_common import diagnosis_audit, file_hash, stage_directory
 
 RESTORE_LOCK = 742309165081
 QUERY_ENV = {
@@ -148,6 +149,7 @@ def create_backup(settings, target, services_stopped=False, pg_bin=None):
         _check_stopped(db, services_stopped)
         _check_artifacts(db, root / "artifacts")
         version = db.execute("SHOW server_version_num").fetchone()["server_version_num"]
+    recovery_state = diagnosis_audit(settings)
     stage = stage_directory(target)
     try:
         _run_client(
@@ -175,8 +177,12 @@ def create_backup(settings, target, services_stopped=False, pg_bin=None):
         with _connect(settings) as db:
             _check_stopped(db, services_stopped)
             _check_artifacts(db, runtime / "artifacts")
+        if diagnosis_audit(settings).get("state_sha256") != recovery_state.get("state_sha256"):
+            raise BackupError("诊断状态在备份窗口内变化；保持停服并重新备份")
         manifest = {
             "format": 2,
+            "backup_id": str(uuid4()),
+            "diagnosis_recovery": recovery_state,
             "backend": "postgresql",
             "created_at": datetime.now(UTC).isoformat(),
             "server_major": int(version) // 10000,
@@ -298,6 +304,12 @@ def restore_backup(settings, source, target, services_stopped=False, pg_bin=None
             )
             database_restored = True
             _check_artifacts(db, stage / "artifacts")
+            if manifest.get("diagnosis_recovery"):
+                recovered = diagnosis_audit(settings.model_copy(update={"data_dir": stage}))
+                if recovered.get("state_sha256") != manifest["diagnosis_recovery"].get(
+                    "state_sha256"
+                ):
+                    raise BackupError("恢复诊断状态与同批备份不一致")
             if target.exists():
                 raise BackupError("恢复目录已存在，禁止覆盖")
             stage.rename(target)

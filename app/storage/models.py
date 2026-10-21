@@ -87,6 +87,27 @@ class Task(Base):
     report: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     validation: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    bundle_id: Mapped[str | None] = mapped_column(
+        ForeignKey("analysis_input_bundles.id"), nullable=True
+    )
+    parent_task_id: Mapped[str | None] = mapped_column(ForeignKey("tasks.id"), nullable=True)
+    graph_version: Mapped[str] = mapped_column(
+        String(40), default="research-v1", server_default="research-v1"
+    )
+    schema_version: Mapped[str] = mapped_column(String(40), default="1", server_default="1")
+    prompt_version: Mapped[str] = mapped_column(
+        String(40), default="legacy-v1", server_default="legacy-v1"
+    )
+    tool_registry_version: Mapped[str] = mapped_column(
+        String(40), default="legacy-v1", server_default="legacy-v1"
+    )
+    state_version: Mapped[int] = mapped_column(default=0, server_default="0")
+    report_version: Mapped[int] = mapped_column(default=0, server_default="0")
+    report_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    pending_interrupt_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    waiting_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    execution_started_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    recovery_attempts: Mapped[int] = mapped_column(default=0, server_default="0")
 
 
 class Event(Base):
@@ -123,6 +144,8 @@ class Artifact(Base):
     storage_key: Mapped[str] = mapped_column(String(200))
     size: Mapped[int] = mapped_column()
     sha256: Mapped[str] = mapped_column(String(64))
+    report_version: Mapped[int | None] = mapped_column(nullable=True)
+    report_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
 
 class Product(Base):
@@ -197,3 +220,179 @@ class Chunk(Base):
     )
     locator: Mapped[str] = mapped_column(String(200))
     text: Mapped[str] = mapped_column(Text)
+
+
+class AnalysisInputBundle(Base):
+    """Immutable selection of source versions, periods and maximum permissions."""
+
+    __tablename__ = "analysis_input_bundles"
+    __table_args__ = (
+        UniqueConstraint("user_id", "bundle_hash", name="uq_analysis_bundle_content"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String(36))
+    sales_dataset_id: Mapped[str] = mapped_column(ForeignKey("commerce_datasets.id"))
+    inventory_dataset_id: Mapped[str | None] = mapped_column(
+        ForeignKey("inventory_datasets.id"), nullable=True
+    )
+    document_manifest_id: Mapped[str | None] = mapped_column(
+        ForeignKey("document_manifests.id"), nullable=True
+    )
+    bundle_hash: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class ToolQueryResult(Base):
+    __tablename__ = "tool_query_results"
+    __table_args__ = (UniqueConstraint("task_id", "spec_hash", name="uq_tool_query_spec"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    spec_hash: Mapped[str] = mapped_column(String(64))
+    tool_name: Mapped[str] = mapped_column(String(40))
+    status: Mapped[str] = mapped_column(String(16), default="PLANNED")
+    query_spec: Mapped[dict[str, Any]] = mapped_column(JSON)
+    result: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    result_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class ToolInvocation(Base):
+    __tablename__ = "tool_invocations"
+    __table_args__ = (
+        UniqueConstraint("task_id", "spec_hash", "attempt", name="uq_tool_invocation_attempt"),
+    )
+    call_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    query_result_id: Mapped[str] = mapped_column(ForeignKey("tool_query_results.id"))
+    step_id: Mapped[str] = mapped_column(String(80))
+    spec_hash: Mapped[str] = mapped_column(String(64))
+    attempt: Mapped[int] = mapped_column()
+    status: Mapped[str] = mapped_column(String(16))
+    lease_token: Mapped[str] = mapped_column(String(36))
+    error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    elapsed_ms: Mapped[int | None] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class ModelInvocation(Base):
+    __tablename__ = "model_invocations"
+    __table_args__ = (
+        UniqueConstraint(
+            "task_id", "step_id", "phase", "attempt", name="uq_model_invocation_identity"
+        ),
+    )
+    call_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    step_id: Mapped[str] = mapped_column(String(80))
+    phase: Mapped[str] = mapped_column(String(40))
+    attempt: Mapped[int] = mapped_column()
+    prompt_hash: Mapped[str] = mapped_column(String(64))
+    schema_hash: Mapped[str] = mapped_column(String(64))
+    model_version: Mapped[str] = mapped_column(String(120))
+    lease_token: Mapped[str] = mapped_column(String(36))
+    status: Mapped[str] = mapped_column(String(16))
+    request_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    validated_output: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    response_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    usage: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    usage_complete: Mapped[bool] = mapped_column(default=False)
+    error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    elapsed_ms: Mapped[int | None] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class DiagnosisStep(Base):
+    __tablename__ = "diagnosis_steps"
+    __table_args__ = (
+        UniqueConstraint("task_id", "step_id", name="uq_diagnosis_step"),
+        UniqueConstraint("task_id", "sequence", name="uq_diagnosis_sequence"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    step_id: Mapped[str] = mapped_column(String(80))
+    sequence: Mapped[int] = mapped_column()
+    plan_version: Mapped[int] = mapped_column(default=1)
+    proposal: Mapped[dict[str, Any]] = mapped_column(JSON)
+    validated_args: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    status: Mapped[str] = mapped_column(String(16))
+    model_call_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    call_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    evidence_ids: Mapped[list[str]] = mapped_column(JSON, default=list)
+    assessment: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class DiagnosticFinding(Base):
+    __tablename__ = "diagnostic_findings"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    hypothesis_code: Mapped[str] = mapped_column(String(40))
+    status: Mapped[str] = mapped_column(String(32))
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON)
+    report_version: Mapped[int] = mapped_column(default=0)
+
+
+class InputRequest(Base):
+    __tablename__ = "input_requests"
+    __table_args__ = (UniqueConstraint("task_id", "interrupt_key", name="uq_input_request_key"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    interrupt_key: Mapped[str] = mapped_column(String(80))
+    interrupt_type: Mapped[str] = mapped_column(String(24))
+    expected_version: Mapped[int] = mapped_column()
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON)
+    decision: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    waiting_until: Mapped[datetime] = mapped_column(DateTime)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class TaskFeedback(Base):
+    __tablename__ = "task_feedback"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey("tasks.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    finding_id: Mapped[str | None] = mapped_column(
+        ForeignKey("diagnostic_findings.id"), nullable=True
+    )
+    category: Mapped[str] = mapped_column(String(32))
+    comment: Mapped[str] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class InventoryDataset(Base):
+    __tablename__ = "inventory_datasets"
+    __table_args__ = (
+        UniqueConstraint("user_id", "content_hash", "sample", name="uq_inventory_dataset_content"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String(36))
+    name: Mapped[str] = mapped_column(String(120))
+    content_hash: Mapped[str] = mapped_column(String(64))
+    file_hash: Mapped[str] = mapped_column(String(64))
+    sample: Mapped[bool] = mapped_column()
+    committed: Mapped[bool] = mapped_column(default=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class DocumentManifest(Base):
+    __tablename__ = "document_manifests"
+    __table_args__ = (
+        UniqueConstraint("user_id", "content_hash", name="uq_document_manifest_content"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String(36))
+    conversation_id: Mapped[str | None] = mapped_column(
+        ForeignKey("conversations.id"), nullable=True
+    )
+    content_hash: Mapped[str] = mapped_column(String(64))
+    sample: Mapped[bool] = mapped_column()
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)

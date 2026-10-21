@@ -442,6 +442,14 @@ def render_markdown(
                 f"数据版本：{source['payload']['dataset_id']}；内容SHA-256：{source['payload']['dataset_hash']}。",
                 "",
             ]
+            if source["payload"].get("bundle_id"):
+                payload = source["payload"]
+                prior = payload["previous_period"]
+                lines += [
+                    f"固定输入：{payload['bundle_id']}；组合SHA-256：{payload['bundle_hash']}。",
+                    f"对比期：{prior['start']} 至 {prior['end']}；授权SKU：{','.join(payload['scope']['skus'])}。",
+                    "",
+                ]
     for section in report.sections:
         lines += ["## " + section.name, ""]
         if not section.claims:

@@ -14,10 +14,17 @@ import TaskReport from "./TaskReport";
 import WorkspaceSidebar from "./WorkspaceSidebar";
 import Icon from "./Icon";
 import CommerceDataPanel from "./CommerceDataPanel";
+import DiagnosisPreflight from "./DiagnosisPreflight";
+import type { InputQuality } from "./DiagnosisPreflight";
+import DiagnosisInputPanel, {
+  emptyDiagnosisInput,
+} from "./DiagnosisInputPanel";
+import type { DiagnosisInput } from "./DiagnosisInputPanel";
 import type { Dataset } from "./CommerceDataPanel";
 import type {
   AppConfig,
   Evidence,
+  DiagnosisProjection,
   Source,
   Task,
   TaskEvent,
@@ -63,10 +70,23 @@ export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<Task | null>(null);
+  const [projection, setProjection] = useState<DiagnosisProjection | null>(
+    null,
+  );
+  const [diagnosisInput, setDiagnosisInput] =
+    useState<DiagnosisInput>(emptyDiagnosisInput);
+  const [inputBusy, setInputBusy] = useState(false);
+  const [diagnosisPreflight, setDiagnosisPreflight] = useState<{
+    signature: string;
+    quality: InputQuality;
+    confirmed: boolean;
+  } | null>(null);
+  const selectedRef = useRef<string | null>(null);
+  selectedRef.current = selectedId;
   const [events, setEvents] = useState<TaskEvent[]>([]);
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [openedEvidence, setOpenedEvidence] = useState<Evidence | null>(null);
-  const [conversation, setConversation] = useState<string | null>(null);
+  const conversation = useRef<Promise<string> | null>(null);
   const [profile, setProfile] = useState("commerce_review");
   const [datasetId, setDatasetId] = useState<string | null>(null);
   const [checkedDataset, setCheckedDataset] = useState<string | null>(null);
@@ -82,6 +102,16 @@ export default function App() {
   const [strategy, setStrategy] = useState("single");
   const [requireReview, setRequireReview] = useState(false);
   const [uploads, setUploads] = useState<string[]>([]);
+  const diagnosisSignature = JSON.stringify([
+    datasetId,
+    startDate,
+    endDate,
+    diagnosisInput,
+  ]);
+  const checkedDiagnosis =
+    diagnosisPreflight?.signature === diagnosisSignature
+      ? diagnosisPreflight
+      : null;
   const cursor = useRef(0);
   const pendingSubmission = useRef<{ fingerprint: string; key: string } | null>(
     null,
@@ -92,12 +122,15 @@ export default function App() {
       setAuth(null);
       setUser(null);
       setTask(null);
+      setProjection(null);
+      setDiagnosisInput(emptyDiagnosisInput);
+      setDiagnosisPreflight(null);
       setSelectedId(null);
       setTasks([]);
       setEvidence([]);
       setOpenedEvidence(null);
       setEvents([]);
-      setConversation(null);
+      conversation.current = null;
       setUploads([]);
       setDatasetId(null);
       setCheckedDataset(null);
@@ -145,6 +178,7 @@ export default function App() {
     cursor.current = 0;
     setEvents([]);
     setTask(null);
+    setProjection(null);
     setEvidence([]);
     const refresh = async () => {
       if (fetching) return;
@@ -161,8 +195,15 @@ export default function App() {
         const sourcesResult = await api<{ evidence: Evidence[] }>(
           `/api/tasks/${selectedId}/evidence`,
         );
+        const diagnosis =
+          detail.parameters.profile === "commerce_diagnosis"
+            ? await api<DiagnosisProjection>(
+                `/api/tasks/${selectedId}/diagnosis`,
+              )
+            : null;
         if (!disposed) {
           setTask(detail);
+          setProjection(diagnosis);
           setEvidence(sourcesResult.evidence);
           cursor.current = history.cursor;
           setEvents((prev) => [
@@ -202,14 +243,17 @@ export default function App() {
   function openTask(id: string | null) {
     if (id !== null && id === selectedId) return;
     setTask(null);
+    setProjection(null);
     setEvents([]);
     setEvidence([]);
     setOpenedEvidence(null);
     setError("");
     setSelectedId(id);
     if (!id) {
-      setConversation(null);
+      conversation.current = null;
       setUploads([]);
+      setDiagnosisPreflight(null);
+      setDiagnosisInput((prev) => ({ ...prev, documentIds: [] }));
     }
     window.scrollTo({ top: 0 });
     contentRef.current?.focus({ preventScroll: true });
@@ -234,12 +278,16 @@ export default function App() {
   }
 
   async function ensureConversation() {
-    if (conversation) return conversation;
-    const result = await api<{ id: string }>("/api/conversations", {
-      method: "POST",
-    });
-    setConversation(result.id);
-    return result.id;
+    if (!conversation.current) {
+      const pending = api<{ id: string }>("/api/conversations", {
+        method: "POST",
+      }).then((result) => result.id);
+      conversation.current = pending;
+      pending.catch(() => {
+        if (conversation.current === pending) conversation.current = null;
+      });
+    }
+    return conversation.current;
   }
 
   function selectDataset(dataset: Dataset) {
@@ -248,8 +296,58 @@ export default function App() {
     setEndDate(dataset.period_end);
   }
 
+  async function checkDiagnosisInput() {
+    const signature = diagnosisSignature;
+    setBusy(true);
+    setError("");
+    try {
+      const conversationId = await ensureConversation();
+      if (!datasetId) throw new Error("请先确认销售数据版本");
+      if (!!diagnosisInput.comparisonStart !== !!diagnosisInput.comparisonEnd)
+        throw new Error("请同时填写对比期开始和结束，或两项都留空");
+      if (diagnosisInput.documentIds.length > 10)
+        throw new Error("规则资料最多选择10份");
+      let manifestId: string | null = null;
+      if (diagnosisInput.documentIds.length) {
+        const manifest = await api<{ id: string }>("/api/document-manifests", {
+          method: "POST",
+          body: JSON.stringify({
+            conversation_id: conversationId,
+            document_ids: diagnosisInput.documentIds,
+          }),
+        });
+        manifestId = manifest.id;
+      }
+      const bundle = await api<{ bundle_id: string }>("/api/analysis-inputs", {
+        method: "POST",
+        body: JSON.stringify({
+          sales_dataset_id: datasetId,
+          inventory_dataset_id: diagnosisInput.inventoryId,
+          document_manifest_id: manifestId,
+          period: { start: startDate, end: endDate },
+          comparison_period: diagnosisInput.comparisonStart
+            ? {
+                start: diagnosisInput.comparisonStart,
+                end: diagnosisInput.comparisonEnd,
+              }
+            : null,
+          allowed_skus: diagnosisInput.skus.split(/[,，\s]+/).filter(Boolean),
+        }),
+      });
+      const quality = await api<InputQuality>(
+        `/api/analysis-inputs/${bundle.bundle_id}/quality`,
+      );
+      setDiagnosisPreflight({ signature, quality, confirmed: false });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function submit() {
-    if (!query.trim() || sources.length === 0) return;
+    if (!query.trim() || (profile === "research" && sources.length === 0))
+      return;
     if (
       profile === "commerce_review" &&
       checkedDataset !== `${datasetId}:${startDate}:${endDate}`
@@ -259,6 +357,10 @@ export default function App() {
     setError("");
     try {
       const conversationId = await ensureConversation();
+      const isDiagnosis = profile === "commerce_diagnosis";
+      if (isDiagnosis && !checkedDiagnosis?.confirmed)
+        throw new Error("请先核对并确认当前固定输入");
+      const bundleId = isDiagnosis ? checkedDiagnosis?.quality.bundle_id : null;
       const payload = {
         conversation_id: conversationId,
         query,
@@ -266,11 +368,26 @@ export default function App() {
         end_date: endDate,
         profile,
         dataset_id: profile === "commerce_review" ? datasetId : null,
-        sources: profile === "commerce_review" ? ["sales"] : sources,
-        strategy: profile === "commerce_review" ? "workflow" : strategy,
+        ...(isDiagnosis ? { bundle_id: bundleId } : {}),
+        sources:
+          profile === "commerce_review"
+            ? ["sales"]
+            : isDiagnosis
+              ? [
+                  "sales",
+                  ...(diagnosisInput.inventoryId ? ["inventory"] : []),
+                  ...(diagnosisInput.documentIds.length ? ["documents"] : []),
+                ]
+              : sources,
+        strategy:
+          profile === "commerce_review"
+            ? "workflow"
+            : isDiagnosis
+              ? "diagnostic"
+              : strategy,
         require_review: requireReview,
         public_queries:
-          profile !== "commerce_review" && sources.includes("web")
+          profile === "research" && sources.includes("web")
             ? publicQuery
                 .split("\n")
                 .map((s) => s.trim())
@@ -300,11 +417,96 @@ export default function App() {
     setBusy(true);
     setError("");
     try {
-      const result = await api<Task>(path, {
+      const id = selectedId;
+      await api(path, {
         method: "POST",
         body: body ? JSON.stringify(body) : undefined,
       });
-      setTask(result);
+      if (id && selectedRef.current === id) {
+        const detail = await api<Task>(`/api/tasks/${id}`);
+        const latest =
+          detail.parameters.profile === "commerce_diagnosis"
+            ? await api<DiagnosisProjection>(`/api/tasks/${id}/diagnosis`)
+            : null;
+        if (selectedRef.current === id) {
+          setTask(detail);
+          setProjection(latest);
+        }
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function createFixedComparison(): Promise<Task | null> {
+    if (!task?.parameters.bundle_id) return null;
+    if (config?.mode !== task.mode) {
+      setError("当前运行模式与原任务不同，无法创建同模式对照。");
+      return null;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      const payload = {
+        conversation_id: task.conversation_id,
+        query: task.query,
+        profile: "commerce_review",
+        strategy: "workflow",
+        sources: ["sales"],
+        bundle_id: task.parameters.bundle_id,
+        require_review: task.parameters.require_review || false,
+      };
+      const fingerprint = JSON.stringify(payload);
+      if (pendingSubmission.current?.fingerprint !== fingerprint)
+        pendingSubmission.current = { fingerprint, key: crypto.randomUUID() };
+      const result = await api<Task>("/api/tasks", {
+        method: "POST",
+        headers: { "Idempotency-Key": pendingSubmission.current.key },
+        body: fingerprint,
+      });
+      pendingSubmission.current = null;
+      setTasks((prev) => [
+        result,
+        ...prev.filter((row) => row.id !== result.id),
+      ]);
+      return result;
+    } catch (e) {
+      setError((e as Error).message);
+      return null;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function followup(query: string) {
+    if (!task || query.trim().length < 2) return;
+    setBusy(true);
+    setError("");
+    try {
+      const payload = {
+        conversation_id: task.conversation_id,
+        query: query.trim(),
+        profile: "commerce_diagnosis",
+        parent_task_id: task.id,
+        sources: task.parameters.sources || ["sales"],
+        require_review: task.parameters.require_review || false,
+      };
+      const fingerprint = JSON.stringify(payload);
+      if (pendingSubmission.current?.fingerprint !== fingerprint)
+        pendingSubmission.current = { fingerprint, key: crypto.randomUUID() };
+      const result = await api<Task>("/api/tasks", {
+        method: "POST",
+        headers: { "Idempotency-Key": pendingSubmission.current.key },
+        body: fingerprint,
+      });
+      pendingSubmission.current = null;
+      openTask(result.id);
+      setTasks((prev) => [
+        result,
+        ...prev.filter((row) => row.id !== result.id),
+      ]);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -342,11 +544,14 @@ export default function App() {
       setUser(null);
       setTasks([]);
       setTask(null);
+      setProjection(null);
+      setDiagnosisInput(emptyDiagnosisInput);
+      setDiagnosisPreflight(null);
       setSelectedId(null);
       setEvidence([]);
       setOpenedEvidence(null);
       setEvents([]);
-      setConversation(null);
+      conversation.current = null;
       setUploads([]);
       setDatasetId(null);
       setCheckedDataset(null);
@@ -526,7 +731,11 @@ export default function App() {
                     <h2>本次要分析什么？</h2>
                   </div>
                   <span>
-                    {profile === "commerce_review" ? "01 / 03" : "01 / 02"}
+                    {profile === "commerce_review"
+                      ? "01 / 03"
+                      : profile === "commerce_diagnosis"
+                        ? "01 / 04"
+                        : "01 / 02"}
                   </span>
                 </div>
                 <label className="task-type-label">
@@ -539,23 +748,39 @@ export default function App() {
                     <option value="commerce_review">
                       经营复盘（固定流程）
                     </option>
+                    <option value="commerce_diagnosis">
+                      经营诊断（多步核查）
+                    </option>
                     <option value="research">库存与竞品研究（高级）</option>
                   </select>
                 </label>
                 <p className="field-hint">
                   {profile === "commerce_review"
                     ? "基于指定数据版本，复盘销售、商品贡献和退款变化。"
-                    : "结合销售、库存、内部附件与公开资料，开展专题研究。"}
+                    : profile === "commerce_diagnosis"
+                      ? "按问题与中间证据选择下钻，保留未证实解释与资料缺口。"
+                      : "结合销售、库存、内部附件与公开资料，开展专题研究。"}
                 </p>
               </section>
-              {profile === "commerce_review" && (
+              {profile !== "research" && (
                 <CommerceDataPanel
                   key={user.email}
+                  purpose={
+                    profile === "commerce_diagnosis" ? "diagnosis" : "review"
+                  }
                   selected={datasetId}
                   start={startDate}
                   end={endDate}
                   onSelect={selectDataset}
                   onChecked={setCheckedDataset}
+                />
+              )}
+              {profile === "commerce_diagnosis" && (
+                <DiagnosisInputPanel
+                  value={diagnosisInput}
+                  onChange={setDiagnosisInput}
+                  ensureConversation={ensureConversation}
+                  onBusy={setInputBusy}
                 />
               )}
               <section className="panel composer">
@@ -567,7 +792,11 @@ export default function App() {
                     <h2>定义分析任务</h2>
                   </div>
                   <span>
-                    {profile === "commerce_review" ? "03 / 03" : "02 / 02"}
+                    {profile === "commerce_review"
+                      ? "03 / 03"
+                      : profile === "commerce_diagnosis"
+                        ? "04 / 04"
+                        : "02 / 02"}
                   </span>
                 </div>
                 {profile === "research" && (
@@ -597,7 +826,7 @@ export default function App() {
                   />
                 </label>
                 <div
-                  className={`form-grid ${profile === "commerce_review" ? "date-grid" : ""}`}
+                  className={`form-grid ${profile !== "research" ? "date-grid" : ""}`}
                 >
                   <label>
                     开始日期
@@ -665,6 +894,42 @@ export default function App() {
                     </small>
                   </label>
                 )}
+                {profile === "commerce_diagnosis" && (
+                  <div className="diagnosis-preflight-actions">
+                    <Button
+                      aria-label="核对诊断输入"
+                      aria-busy={busy}
+                      loading={busy}
+                      disabled={
+                        busy ||
+                        inputBusy ||
+                        !datasetId ||
+                        !startDate ||
+                        !endDate
+                      }
+                      onClick={() => void checkDiagnosisInput()}
+                    >
+                      核对诊断输入
+                    </Button>
+                    {checkedDiagnosis ? (
+                      <DiagnosisPreflight
+                        quality={checkedDiagnosis.quality}
+                        confirmed={checkedDiagnosis.confirmed}
+                        onConfirm={(confirmed) =>
+                          setDiagnosisPreflight((previous) =>
+                            previous?.signature === diagnosisSignature
+                              ? { ...previous, confirmed }
+                              : previous,
+                          )
+                        }
+                      />
+                    ) : (
+                      <p className="field-hint">
+                        请核对实际两期与组合资料后再开始；更改数据、周期或范围后须重新核对。
+                      </p>
+                    )}
+                  </div>
+                )}
                 <div className="composer-actions">
                   {profile === "research" && (
                     <label className="upload-label">
@@ -693,7 +958,13 @@ export default function App() {
                     loading={busy}
                     disabled={
                       !query.trim() ||
-                      !sources.length ||
+                      (profile === "research" && !sources.length) ||
+                      inputBusy ||
+                      (profile === "commerce_diagnosis" &&
+                        (!datasetId ||
+                          !startDate ||
+                          !endDate ||
+                          !checkedDiagnosis?.confirmed)) ||
                       (profile === "commerce_review" &&
                         checkedDataset !==
                           `${datasetId}:${startDate}:${endDate}`)
@@ -716,19 +987,28 @@ export default function App() {
                 <small className="muted">
                   {profile === "commerce_review"
                     ? "经营CSV最多2 MiB、100个商品、10000条记录；日期跨度最多366天。缺失记录不会补零。"
-                    : "样例销售周期为2026-08-02至2026-09-30，库存快照为2026-09-30；内部附件每个最多5MB。"}
+                    : profile === "commerce_diagnosis"
+                      ? "本期和对比期各为1–90天。任务先检查数据覆盖；缺行不补零，资料不足时保留缺口。"
+                      : "样例销售周期为2026-08-02至2026-09-30，库存快照为2026-09-30；内部附件每个最多5MB。"}
                 </small>
               </section>
             </div>
           )}
           {selectedId && task && (
             <TaskReport
+              key={task.id}
               task={task}
               events={events}
               evidence={evidence}
               busy={busy}
               action={action}
               onOpenEvidence={setOpenedEvidence}
+              projection={projection}
+              onFollowup={followup}
+              tasks={tasks}
+              currentMode={config?.mode}
+              onCreateComparison={createFixedComparison}
+              onOpenTask={openTask}
             />
           )}
           {selectedId && !task && (
@@ -770,6 +1050,12 @@ export default function App() {
               )}
             </p>
             <pre>{openedEvidence.excerpt}</pre>
+            {openedEvidence.kind === "diagnosis_metrics" && (
+              <details>
+                <summary>查看完整结构化证据</summary>
+                <pre>{JSON.stringify(openedEvidence.payload, null, 2)}</pre>
+              </details>
+            )}
             <small>
               证据ID：{openedEvidence.id}
               <br />

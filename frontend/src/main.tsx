@@ -1,4 +1,5 @@
 import "antd/dist/reset.css";
+import "./antdReact19";
 import { App as AntApp, ConfigProvider, theme } from "antd";
 import React from "react";
 import ReactDOM from "react-dom/client";

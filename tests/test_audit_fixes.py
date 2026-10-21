@@ -24,9 +24,21 @@ from tests.conftest import expire_lease, new_task
 @pytest.mark.parametrize("source", ["sales", "inventory"])
 async def test_sigkill_after_metric_commit_recovers_original_snapshot(setup, source):
     settings, repo, *_ = setup
+    # This isolates snapshot identity. A suspended test host must not turn it
+    # into a runtime-expiry test; never reset the deadline when taking over.
+    settings.lease_seconds = 30
+    settings.max_runtime_seconds = 600
     task = new_task(setup, sources=[source])
     process = subprocess.Popen(
-        [sys.executable, "-m", "tests.fault_worker", str(settings.data_dir), "evidence-committed"],
+        [
+            sys.executable,
+            "-m",
+            "tests.fault_worker",
+            str(settings.data_dir),
+            "evidence-committed",
+            str(settings.max_runtime_seconds),
+            str(settings.lease_seconds),
+        ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
@@ -55,7 +67,8 @@ async def test_sigkill_after_metric_commit_recovers_original_snapshot(setup, sou
         expire_lease(repo, task["id"])
         async with checkpoint_store(settings) as saver:
             await Worker(repo, settings, saver).run_once()
-        assert repo.get_task(task["id"])["status"] == "degraded"
+        done = repo.get_task(task["id"])
+        assert done["status"] == "degraded", (done["status"], done["error_code"])
         assert [e["id"] for e in repo.evidence(task["id"])] == [before["id"]]
     finally:
         if process.poll() is None:

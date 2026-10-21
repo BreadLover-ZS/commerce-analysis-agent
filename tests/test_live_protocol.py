@@ -195,6 +195,9 @@ async def test_sdk_summarization_calls_are_metered_and_quota_blocks_generation(s
     from langchain_core.messages import AIMessage, HumanMessage
 
     settings, repo, _, _ = setup
+    # This checks quota callbacks, without a Worker's heartbeat loop. Lease
+    # expiry/fencing has separate explicit tests; host scheduling is not its oracle.
+    settings.lease_seconds = 60
     settings.max_model_calls = 1
     task = new_task(setup, sources=["sales"])
     ctx = repo.claim()

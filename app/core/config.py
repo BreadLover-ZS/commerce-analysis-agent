@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     lease_seconds: int = Field(30, ge=5, le=300)
     max_attempts: int = Field(3, ge=1, le=5)
     worker_concurrency: int = Field(2, ge=1, le=8)
+    diagnosis_wait_ttl_seconds: int = Field(86400, ge=60, le=604800)
+    diagnosis_inventory_max_age_days: int = Field(7, ge=0, le=365)
+    diagnosis_runtime: Literal["legacy", "v3", "v4", "v5", "v6", "v7", "v8", "v9"] = "v9"
 
     @model_validator(mode="after")
     def validate_deployment(self):

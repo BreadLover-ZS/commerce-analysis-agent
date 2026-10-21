@@ -1,9 +1,10 @@
 import { Button, Tag } from "antd";
 import { apiUrl } from "./lib/api";
 import TaskDiagnostics from "./TaskDiagnostics";
+import DiagnosisReportView from "./DiagnosisReportView";
+import type { DiagnosisViewProps } from "./DiagnosisReportView";
 import Icon from "./Icon";
 import { activeStatuses, statusLabels, statusColor } from "./presentation";
-import type { Evidence, Task, TaskEvent } from "./types";
 
 export default function TaskReport({
   task,
@@ -12,14 +13,33 @@ export default function TaskReport({
   busy,
   action,
   onOpenEvidence,
-}: {
-  task: Task;
-  events: TaskEvent[];
-  evidence: Evidence[];
-  busy: boolean;
-  action: (path: string, body?: object) => Promise<void>;
-  onOpenEvidence: (evidence: Evidence | null) => void;
-}) {
+  projection,
+  onFollowup,
+  tasks,
+  currentMode,
+  onCreateComparison,
+  onOpenTask,
+}: DiagnosisViewProps) {
+  if (task.parameters.profile === "commerce_diagnosis")
+    return (
+      <DiagnosisReportView
+        {...{
+          task,
+          events,
+          evidence,
+          busy,
+          action,
+          onOpenEvidence,
+          projection,
+          onFollowup,
+          tasks,
+          currentMode,
+          onCreateComparison,
+          onOpenTask,
+        }}
+      />
+    );
+  const report = task.report && "sections" in task.report ? task.report : null;
   const running =
     activeStatuses.has(task.status) && task.status !== "waiting_review";
   return (
@@ -28,7 +48,7 @@ export default function TaskReport({
         <div className="section-heading">
           <div>
             <span className="section-kicker">分析报告</span>
-            <h2>{task.report?.title || "研究进度"}</h2>
+            <h2>{report?.title || "研究进度"}</h2>
             <p className="muted">{task.query}</p>
             <small>
               统计周期：{task.parameters.start_date} 至{" "}
@@ -94,7 +114,7 @@ export default function TaskReport({
             </Button>
           </div>
         )}
-        {!task.report && (
+        {!report && (
           <div className="report-placeholder" role="status">
             <Icon name={running ? "activity" : "file"} size={28} />
             <h3>{running ? "分析正在进行" : "本次任务暂无报告"}</h3>
@@ -105,9 +125,9 @@ export default function TaskReport({
             </p>
           </div>
         )}
-        {!!task.report?.sections.length && (
+        {!!report?.sections.length && (
           <nav className="report-index" aria-label="报告目录">
-            {task.report.sections.map((section, index) => (
+            {report.sections.map((section, index) => (
               <a key={section.name} href={`#report-section-${index}`}>
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 {section.name}
@@ -115,7 +135,7 @@ export default function TaskReport({
             ))}
           </nav>
         )}
-        {task.report?.sections.map((section, sectionIndex) => (
+        {report?.sections.map((section, sectionIndex) => (
           <section
             className="report-section"
             id={`report-section-${sectionIndex}`}
@@ -156,11 +176,11 @@ export default function TaskReport({
             ))}
           </section>
         ))}
-        {!!task.report?.limitations.length && (
+        {!!report?.limitations.length && (
           <div className="limitations">
             <h4>信息缺口与适用边界</h4>
             <ul>
-              {task.report.limitations.map((text, i) => (
+              {report.limitations.map((text, i) => (
                 <li key={i}>{text}</li>
               ))}
             </ul>

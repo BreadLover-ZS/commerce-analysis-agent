@@ -60,3 +60,12 @@ async def test_real_http_isolation_and_process_cleanup(monkeypatch, inject_failu
     assert len(children) == 4
     assert all(child.returncode is not None for child in children)
     assert all(not directory.exists() for directory in directories)
+
+
+async def test_diagnosis_real_http_two_workers_preserve_bundle_and_versioned_pdf():
+    result = await load_smoke.run_benchmark(
+        requests=2, concurrency=2, workers=2, profile="commerce_diagnosis"
+    )
+    assert result["passed"] and result["completed"] == result["unique_tasks"] == 2
+    assert result["model_calls"] == 0 and result["worker_processes"] == 2
+    assert all(2 <= row["tool_calls"] <= 10 for row in result["outcomes"])

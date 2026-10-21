@@ -1,0 +1,38 @@
+{
+  "step_schema_hash": "dfacaa5e87045cb4da22b2de791e065d2189665d2096f00f86a5ec24c761a5dc",
+  "report_schema_hash": "70636be1291914d7759df599be7bfc019fbd4b9e7e05031668dd172697eb2e5e",
+  "catalog_hash": "6d00580c3b0faba630cfb20d90102f3c70dda7c0565449afbe7bebd05796f5fb",
+  "system_prompt_hash": "150e4f2fe69b0ea89d255d0caf0758c29f3852a42409a656db8da2cf403d2b84",
+  "queries": {
+    "核对库存与规则原文": {
+      "objectives": [
+        "inventory",
+        "rules"
+      ],
+      "unsupported": false,
+      "messages_hash": "6e73c77c660a0caf1df7082dcf923e464f2af043a7b522235c8680167c19d94e"
+    },
+    "只查退款规则原文": {
+      "objectives": [
+        "refunds",
+        "rules"
+      ],
+      "unsupported": false,
+      "messages_hash": "9880cd3c7dbae26035f13fe2eca4321239b1f2ce8bb4ccc67d0a03977e1fdbcb"
+    },
+    "不计算利润，核对退款": {
+      "objectives": [
+        "refunds"
+      ],
+      "unsupported": true,
+      "messages_hash": "91f33493c382cb3264b1ddba38fed782008fea18fca73223c430bf859b0e7ce0"
+    },
+    "商品 Q 的逐日变化": {
+      "objectives": [
+        "products"
+      ],
+      "unsupported": false,
+      "messages_hash": "590c212a7b09c9a4d33cbd1e6fae9c8c88dbe5a7e0348fce32abe96208a3f0bc"
+    }
+  }
+}

@@ -7,6 +7,10 @@ class ReportValidationFailed(Exception):
     """The deterministic fallback is invalid; do not loop through model drafts again."""
 
 
+class UnsupportedGraphVersion(Exception):
+    """A persisted task must never be resumed with a different graph contract."""
+
+
 def _timeout_phase(error):
     seen = set()
     while error is not None and id(error) not in seen and len(seen) < 6:

@@ -6,9 +6,11 @@ import shutil
 import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
+from uuid import uuid4
 
 from app.core.config import Settings
 from app.core.files import safe_path
+from scripts.backup_common import diagnosis_audit
 from scripts.backup_common import file_hash as _hash
 from scripts.backup_common import stage_directory as _stage
 
@@ -35,6 +37,7 @@ def create_backup(settings, target, services_stopped=False):
             "SELECT count(*) FROM tasks WHERE status IN ('running','cancelling')"
         ).fetchone()[0]:
             raise ValueError("存在运行中的任务；等待完成或取消后再备份")
+    recovery_state = diagnosis_audit(settings)
     stage = _stage(target)
     try:
         (stage / "runtime").mkdir()
@@ -46,6 +49,8 @@ def create_backup(settings, target, services_stopped=False):
                 not source.is_file()
                 or source.resolve() == database
                 or source.name.endswith(("-wal", "-shm"))
+                or source.name == ".env"
+                or source.name.startswith(".env.")
             ):
                 continue
             destination = stage / "runtime" / source.relative_to(root)
@@ -54,6 +59,8 @@ def create_backup(settings, target, services_stopped=False):
                 _sqlite_copy(source, destination)
             else:
                 shutil.copyfile(source, destination)
+        if diagnosis_audit(settings).get("state_sha256") != recovery_state.get("state_sha256"):
+            raise ValueError("诊断状态在备份窗口内变化；保持停服并重新备份")
         files = [
             {"path": p.relative_to(stage).as_posix(), "size": p.stat().st_size, "sha256": _hash(p)}
             for p in sorted(stage.rglob("*"))
@@ -61,6 +68,8 @@ def create_backup(settings, target, services_stopped=False):
         ]
         manifest = {
             "format": 1,
+            "backup_id": str(uuid4()),
+            "diagnosis_recovery": recovery_state,
             "created_at": datetime.now(UTC).isoformat(),
             "files": files,
             "sensitive": True,
@@ -112,6 +121,17 @@ def restore_backup(source, target):
                 or db.execute("PRAGMA foreign_key_check").fetchall()
             ):
                 raise ValueError("恢复数据库结构校验失败")
+        if manifest.get("diagnosis_recovery"):
+            restored_settings = Settings(
+                _env_file=None,
+                app_env="test",
+                agent_mode="demo",
+                database_url="sqlite:///" + str(stage / "database.sqlite"),
+                data_dir=stage / "runtime",
+            )
+            recovered = diagnosis_audit(restored_settings)
+            if recovered.get("state_sha256") != manifest["diagnosis_recovery"].get("state_sha256"):
+                raise ValueError("恢复诊断状态与同批备份不一致")
         stage.rename(target)
         return {"database": str(target / "database.sqlite"), "data_dir": str(target / "runtime")}
     finally:

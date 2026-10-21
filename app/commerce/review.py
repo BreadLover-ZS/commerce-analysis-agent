@@ -1,10 +1,10 @@
 """Deterministic review calculations over a single immutable dataset version."""
 
 from collections import defaultdict
-from datetime import timedelta
 from decimal import Decimal
 
-from app.commerce.datasets import DatasetInput, owned_dataset
+from app.commerce.calculations import SalesCube, comparison_dates
+from app.commerce.datasets import owned_dataset
 from app.commerce.service import decimal_string, fact, money
 
 DEFINITIONS = {
@@ -17,32 +17,33 @@ DEFINITIONS = {
 
 
 def calculate_review(payload, start, end, *, dataset_id, content_hash, sample):
-    payload = DatasetInput.model_validate(payload)
-    days = (end - start).days + 1
-    if not 1 <= days <= 90:
-        raise ValueError("分析周期必须为1–90天")
-    prior_start, prior_end = start - timedelta(days=days), start - timedelta(days=1)
-    products = {p.sku: p for p in payload.products}
-    rows = payload.daily_sales
+    return calculate_periods(
+        payload, start, end, dataset_id=dataset_id, content_hash=content_hash, sample=sample
+    )
 
-    def aggregate(skus, first, last):
-        chosen = [s for s in rows if s.sku in skus and first <= s.day <= last]
-        expected = sum(max(0, (last - max(first, products[k].active_from)).days + 1) for k in skus)
-        revenue = sum(s.revenue_cents for s in chosen)
-        refund = sum(s.refund_cents for s in chosen)
-        return {
-            "revenue": revenue,
-            "refund": refund,
-            "net": revenue - refund,
-            "paid": sum(s.paid_units for s in chosen),
-            "refunded": sum(s.refunded_units for s in chosen),
-            "coverage": {
-                "expected_records": expected,
-                "observed_records": len(chosen),
-                "missing_records": expected - len(chosen),
-                "complete": len(chosen) == expected,
-            },
-        }
+
+def calculate_periods(
+    payload,
+    start,
+    end,
+    *,
+    dataset_id,
+    content_hash,
+    sample,
+    comparison_start=None,
+    comparison_end=None,
+    allowed_skus=None,
+):
+    prior_start, prior_end = comparison_dates(start, end, comparison_start, comparison_end)
+    cube = SalesCube(payload)
+    products, rows, aggregate = cube.products, cube.rows, cube.aggregate
+    if allowed_skus is not None:
+        allowed = set(allowed_skus)
+        if not allowed or allowed - products.keys():
+            raise ValueError("复盘范围必须属于固定销售版本")
+        products = {sku: p for sku, p in products.items() if sku in allowed}
+        rows = [row for row in rows if row.sku in allowed]
+    adjacent = (start - prior_end).days == 1
 
     current, prior = aggregate(products, start, end), aggregate(products, prior_start, prior_end)
     complete = (
@@ -118,7 +119,9 @@ def calculate_review(payload, start, end, *, dataset_id, content_hash, sample):
                 "net_revenue_change_pct",
                 decimal_string(Decimal(current["net"] - prior["net"]) * 100 / prior["net"]),
                 "percent",
-                "相对前一同长度周期净销售额变化率",
+                "相对前一同长度周期净销售额变化率"
+                if adjacent
+                else "相对指定等长对比期净销售额变化率",
             )
         else:
             limitations.append("前期净销售额非正，变化率不可用；保留变化金额")
@@ -209,12 +212,56 @@ def calculate_review(payload, start, end, *, dataset_id, content_hash, sample):
         },
         "dimensions": dimensions,
         "findings": findings,
-        "definitions": DEFINITIONS,
+        "definitions": DEFINITIONS
+        if adjacent
+        else {
+            **DEFINITIONS,
+            "comparison": "用户指定的较早等长对比期；缺失记录不补零；未消除季节影响",
+        },
         "limitations": limitations,
     }
 
 
-def dataset_review(repo, user_id, tenant_id, dataset_id, start, end):
+def dataset_review(repo, user_id, tenant_id, dataset_id, start, end, *, bundle_ctx=None):
+    if bundle_ctx is not None:
+        from datetime import date
+
+        from app.commerce.review_inputs import bound_review
+        from app.storage.repository import Conflict
+
+        info, payload = bound_review(repo, bundle_ctx)
+        if (str(start), str(end), dataset_id) != (
+            info["period"]["start"],
+            info["period"]["end"],
+            info["sales_dataset_id"],
+        ):
+            raise Conflict("固定复盘工具请求与绑定输入不一致")
+        result = calculate_periods(
+            payload,
+            start,
+            end,
+            dataset_id=dataset_id,
+            content_hash=info["sales_content_hash"],
+            sample=info["sample"],
+            comparison_start=date.fromisoformat(info["comparison_period"]["start"]),
+            comparison_end=date.fromisoformat(info["comparison_period"]["end"]),
+            allowed_skus=info["allowed_skus"],
+        )
+        result.update(
+            bundle_id=info["bundle_id"],
+            bundle_hash=info["bundle_hash"],
+            scope={"skus": info["allowed_skus"]},
+            source_hashes={"sales": info["sales_content_hash"]},
+            input_binding_version="commerce-review-bundle-v1",
+            source_samples=info.get("source_samples", {"sales": info["sample"]}),
+        )
+        for fact in result["fact_catalog"].values():
+            if fact["entity_id"] == "all":
+                fact.update(entity_id=",".join(info["allowed_skus"]), entity_name="授权范围汇总")
+        result["limitations"].append(
+            f"本报告绑定输入组合 {info['bundle_id']}，只计算其中{len(info['allowed_skus'])}个授权SKU；完整范围见证据scope.skus。"
+        )
+        return result
     with repo.session() as db:
         item = owned_dataset(db, dataset_id, user_id, tenant_id)
         # Copy out of the short DB transaction; no model/network call holds a DB lock.

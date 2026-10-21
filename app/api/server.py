@@ -20,6 +20,8 @@ from fastapi import (
     Response,
     UploadFile,
 )
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
@@ -42,6 +44,24 @@ from app.commerce.service import add_document
 from app.core.auth import COOKIE, authenticate, check_origin, csrf_token, login, token_hash
 from app.core.config import Settings, get_settings
 from app.core.files import parse_upload, safe_path
+from app.diagnosis.inputs import bundle_quality, create_bundle, get_bundle
+from app.diagnosis.schemas import ClarificationAnswer, FeedbackRequest, InputBundleRequest
+from app.diagnosis.source_schemas import ManifestRequest
+from app.diagnosis.sources import (
+    INVENTORY_FIELDS,
+    MAX_SOURCE_BYTES,
+    commit_inventory,
+    create_manifest,
+    inventory_info,
+    list_documents,
+    list_inventory,
+    manifest_info,
+    owned_inventory,
+    owned_manifest,
+    parse_inventory_csv,
+    stage_inventory,
+)
+from app.diagnosis.store import DiagnosisStore
 from app.research.schemas import TaskRequest
 from app.storage.models import Artifact, AuthSession, User
 from app.storage.repository import TERMINAL, Conflict, NotFound, Repository
@@ -57,6 +77,9 @@ class LoginRequest(BaseModel):
 class ReviewRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     approved: StrictBool
+    interrupt_id: UUID | None = None
+    expected_version: int | None = Field(default=None, ge=1, strict=True)
+    report_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class ScenarioRequest(BaseModel):
@@ -99,6 +122,24 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
 
         return JSONResponse(status_code=409, content={"detail": str(exc)})
 
+    @app.exception_handler(RequestValidationError)
+    async def invalid_request(request, exc):
+        if (
+            request.url.path.startswith("/api/analysis-inputs")
+            or request.url.path.endswith(("/clarifications", "/feedback"))
+            or (
+                request.url.path == "/api/tasks"
+                and isinstance(exc.body, dict)
+                and exc.body.get("profile") == "commerce_diagnosis"
+            )
+        ):
+            from fastapi.responses import JSONResponse
+
+            return JSONResponse(
+                status_code=400, content={"detail": "输入包参数、日期或授权范围不合法"}
+            )
+        return await request_validation_exception_handler(request, exc)
+
     @app.middleware("http")
     async def response_headers(request, call_next):
         response = await call_next(request)
@@ -109,6 +150,80 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
     @app.get("/health/live")
     def live():
         return {"status": "ok"}
+
+    @app.post("/api/analysis-inputs", status_code=201)
+    def analysis_input(body: InputBundleRequest, user: CurrentUser):
+        try:
+            return create_bundle(repo, user, body)
+        except ValueError:
+            raise HTTPException(400, "输入包授权范围不合法") from None
+
+    @app.get("/api/analysis-inputs/{bundle_id}")
+    def analysis_input_detail(bundle_id: str, user: CurrentUser):
+        return get_bundle(repo, user, bundle_id)
+
+    @app.get("/api/analysis-inputs/{bundle_id}/quality")
+    def analysis_input_quality(bundle_id: str, user: CurrentUser):
+        return bundle_quality(repo, user, bundle_id)
+
+    @app.get("/api/inventory/template")
+    def inventory_template(user: CurrentUser):
+        return Response(
+            ",".join(INVENTORY_FIELDS) + "\n",
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="inventory-template.csv"'},
+        )
+
+    @app.post("/api/inventory/datasets/preview")
+    def inventory_preview(user: CurrentUser, file: UploadFile = File(), sample: bool = Form(True)):
+        try:
+            content = file.file.read(MAX_SOURCE_BYTES + 1)
+            payload = parse_inventory_csv(content)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from None
+        finally:
+            file.file.close()
+        info = stage_inventory(
+            repo,
+            user,
+            payload,
+            file.filename or "库存快照.csv",
+            sample,
+            hashlib.sha256(content).hexdigest(),
+        )
+        with repo.session() as db:
+            row = owned_inventory(db, info["id"], user.id, user.tenant_id, committed=False)
+            return {**info, "items": row.payload["items"]}
+
+    @app.post("/api/inventory/datasets/{dataset_id}/commit")
+    def inventory_confirm(dataset_id: str, user: CurrentUser):
+        return commit_inventory(repo, user, dataset_id)
+
+    @app.get("/api/inventory/datasets")
+    def inventory_datasets(user: CurrentUser):
+        return {"datasets": list_inventory(repo, user)}
+
+    @app.get("/api/inventory/datasets/{dataset_id}")
+    def inventory_detail(dataset_id: str, user: CurrentUser):
+        with repo.session() as db:
+            row = owned_inventory(db, dataset_id, user.id, user.tenant_id)
+            return {**inventory_info(row), "items": row.payload["items"]}
+
+    @app.get("/api/documents")
+    def visible_documents(user: CurrentUser, conversation_id: str):
+        return list_documents(repo, user, conversation_id)
+
+    @app.post("/api/document-manifests", status_code=201)
+    def document_manifest(body: ManifestRequest, user: CurrentUser):
+        try:
+            return create_manifest(repo, user, body)
+        except ValueError:
+            raise HTTPException(422, "文档清单范围或片段数量不合法") from None
+
+    @app.get("/api/document-manifests/{manifest_id}")
+    def document_manifest_detail(manifest_id: str, user: CurrentUser):
+        with repo.session() as db:
+            return manifest_info(owned_manifest(db, manifest_id, user.id, user.tenant_id))
 
     @app.get("/api/commerce/scenarios")
     def scenarios(user: CurrentUser):
@@ -229,6 +344,18 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
             with repo.session() as db:
                 db.execute(text("SELECT 1 FROM users LIMIT 1"))
                 db.execute(text("SELECT 1 FROM commerce_datasets LIMIT 1"))
+                db.execute(text("SELECT 1 FROM analysis_input_bundles LIMIT 1"))
+                db.execute(text("SELECT 1 FROM tool_query_results LIMIT 1"))
+                db.execute(text("SELECT 1 FROM model_invocations LIMIT 1"))
+                db.execute(text("SELECT 1 FROM input_requests LIMIT 1"))
+                db.execute(text("SELECT bundle_id,graph_version,state_version FROM tasks LIMIT 1"))
+                db.execute(
+                    text(
+                        "SELECT inventory_dataset_id,document_manifest_id FROM analysis_input_bundles LIMIT 1"
+                    )
+                )
+                db.execute(text("SELECT 1 FROM inventory_datasets LIMIT 1"))
+                db.execute(text("SELECT 1 FROM document_manifests LIMIT 1"))
         except Exception:
             raise HTTPException(503, "数据库或迁移未就绪") from None
         return {"status": "ready", "mode": settings.agent_mode}
@@ -298,11 +425,35 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
 
     @app.post("/api/tasks", status_code=202)
     def start(body: TaskRequest, user: CurrentUser, idempotency_key: Annotated[UUID, Header()]):
-        return repo.create_task(user, body, str(idempotency_key))
+        try:
+            return repo.create_task(user, body, str(idempotency_key))
+        except ValueError:
+            raise HTTPException(400, "诊断日期或来源与已绑定输入不一致") from None
+
+    @app.get("/api/tasks/{task_id}/diagnosis")
+    def diagnosis_detail(
+        task_id: str,
+        user: CurrentUser,
+        after: int = Query(0, ge=0, le=8),
+        after_version: int | None = Query(None, ge=0),
+    ):
+        return DiagnosisStore(repo).projection(
+            task_id, user, after if after_version is None else 0, after_version
+        )
+
+    @app.post("/api/tasks/{task_id}/clarifications")
+    def clarify(task_id: str, body: ClarificationAnswer, user: CurrentUser):
+        return DiagnosisStore(repo).answer(task_id, user, body)
+
+    @app.post("/api/tasks/{task_id}/feedback", status_code=201)
+    def feedback(task_id: str, body: FeedbackRequest, user: CurrentUser):
+        return DiagnosisStore(repo).feedback(task_id, user, body)
 
     @app.get("/api/tasks/{task_id}")
     def task_detail(task_id: str, user: CurrentUser):
         result = repo.get_task(task_id, user.id)
+        if result["parameters"].get("profile") == "commerce_diagnosis":
+            DiagnosisStore(repo).projection(task_id, user)
         result["artifacts"] = repo.artifacts(task_id)
         metrics = result["metrics"]
         if (
@@ -324,16 +475,22 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
 
     @app.post("/api/tasks/{task_id}/review")
     def review(task_id: str, body: ReviewRequest, user: CurrentUser):
+        if repo.get_task(task_id, user.id)["parameters"].get("profile") == "commerce_diagnosis":
+            return DiagnosisStore(repo).review(task_id, user, body)
         return repo.review(task_id, user.id, body.approved)
 
     @app.get("/api/tasks/{task_id}/evidence")
     def evidence(task_id: str, user: CurrentUser):
-        repo.get_task(task_id, user.id)
+        task = repo.get_task(task_id, user.id)
+        if task["parameters"].get("profile") == "commerce_diagnosis":
+            DiagnosisStore(repo).projection(task_id, user)
         return {"evidence": repo.evidence(task_id)}
 
     @app.get("/api/tasks/{task_id}/events")
     def events(task_id: str, user: CurrentUser, after: int = Query(0, ge=0)):
-        repo.get_task(task_id, user.id)
+        task = repo.get_task(task_id, user.id)
+        if task["parameters"].get("profile") == "commerce_diagnosis":
+            DiagnosisStore(repo).projection(task_id, user)
         items = repo.events(task_id, after)
         return {"events": items, "cursor": items[-1]["id"] if items else after}
 
@@ -341,7 +498,9 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
     async def stream(
         task_id: str, request: Request, user: CurrentUser, after: int = Query(0, ge=0)
     ):
-        repo.get_task(task_id, user.id)
+        task = repo.get_task(task_id, user.id)
+        if task["parameters"].get("profile") == "commerce_diagnosis":
+            await asyncio.to_thread(DiagnosisStore(repo).projection, task_id, user)
         try:
             cursor = max(after, int(request.headers.get("last-event-id", "0")))
         except ValueError:
@@ -355,12 +514,24 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
                     await asyncio.to_thread(authenticate, request)
                 except HTTPException:
                     return
+                if task["parameters"].get("profile") == "commerce_diagnosis":
+                    try:
+                        await asyncio.to_thread(DiagnosisStore(repo).projection, task_id, user)
+                    except (NotFound, Conflict):
+                        return
+                elif task["parameters"].get("bundle_id"):
+                    try:
+                        await asyncio.to_thread(repo.get_task, task_id, user.id)
+                    except (NotFound, Conflict):
+                        return
                 items = await asyncio.to_thread(repo.events, task_id, cursor)
                 for item in items:
                     cursor = item["id"]
                     yield f"id: {cursor}\ndata: {json.dumps(item, ensure_ascii=False)}\n\n"
                 status = (await asyncio.to_thread(repo.get_task, task_id, user.id))["status"]
-                if not items and (status in TERMINAL or status == "waiting_review"):
+                if not items and (
+                    status in TERMINAL or status in {"waiting_review", "waiting_input"}
+                ):
                     return
                 yield ": keepalive\n\n"
                 await asyncio.sleep(0.5)
@@ -406,7 +577,9 @@ def create_app(settings: Settings | None = None, repository: Repository | None =
             if not path.is_file():
                 raise NotFound()
             task_id = artifact.task_id
-        repo.get_task(task_id, user.id)
+        task = repo.get_task(task_id, user.id)
+        if task["parameters"].get("profile") == "commerce_diagnosis":
+            DiagnosisStore(repo).projection(task_id, user)
         return FileResponse(path, filename=artifact.name)
 
     return app

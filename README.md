@@ -24,6 +24,19 @@ f3a12de的库存、内部规则、综合补货三个真实教学单例见[模型
 
 浅色工作台的界面、交互与本地验证见[前端重构记录](docs/22-frontend-redesign.md)。
 
+2026-10-19 起按 [诊断 v1.1 契约](docs/commerce-diagnosis-spec-v1.1.md) 实施诊断开发；用户已于2026-10-20明确本轮G7不执行，当前范围为G0—G6：
+销售诊断、库存/规则工具、版本路由、同输入对照与维护工具已落地。新诊断使用v9图/Prompt、schema2/注册表3并保留v1—v8恢复契约。
+最新v9完整本机隔离 PostgreSQL/HTTP 后端回归652 PASS；诊断Chrome6 PASS，62次离线执行通过；v9多商品日序列开发题3次真实验证通过。
+40个开发/回归问题的59次离线执行及补充3题4次执行均通过，提供方请求0。
+另完成PG双Worker的20任务教学负载及新旧等待任务备份/恢复演练，三页样例PDF已渲染核验。
+当前进度与未完成事项见[2026-10-21进度整理](docs/31-development-progress-20261021.md)，历史过程见[诊断开发记录](docs/23-diagnosis-development.md)。
+新调用链与个人练习见[诊断源码路线](docs/24-diagnosis-source-map.md)。[评测入口](docs/26-diagnosis-evaluation.md)与[运行维护](docs/27-diagnosis-operations.md)已交付。
+本轮另补全轮token硬预算；完整保留集已累计执行99个Task、246次请求、1,495,690 token。独立自动证据复核诊断38/60，未达90%目标，继续保留固定Workflow。
+失败、续评与实现边界见[完整真实评测](docs/28-diagnosis-live-evaluation.md)；本轮不执行G7。
+本批迭代修复在本地验证后恢复真实开发测试，历史扣费继续计入累计预算。用户已将累计上限提高到500万token，新的96 Task正式复评已完成，随后按失败记录继续v8/v9修复；最新结果见[修复与复验](docs/29-diagnosis-v3-repair.md)。
+诊断界面见[规则与证据视图](docs/images/diagnosis-rules.png)、[移动端报告](docs/images/diagnosis-mobile.png)。
+当前输入的覆盖核对见[移动端预览](docs/images/diagnosis-preflight-mobile.png)，逐项未完成需求见[验收索引](docs/25-diagnosis-acceptance-matrix.md)。
+
 ![电商运营分析助手工作台](docs/images/workbench-report.png)
 
 ## 主要能力
@@ -107,7 +120,7 @@ frontend/        工作台和浏览器验收
 migrations/      Alembic 迁移
 data/           明确标注的经营/竞品/文档样例
 tests/          业务、安全、SDK协议、恢复、PostgreSQL测试
-evaluations/    32条固定用例、人工标注及三策略比较器
+evaluations/    历史32条用例、诊断60例分集、独立数值oracle与配对评测器
 docker/         API/Worker/PostgreSQL/前端/HTTPS配置
 docs/           架构、学习、部署、评估与验收
 ```

@@ -109,10 +109,14 @@ export default function WorkspaceSidebar({
             tasks.filter(
               (task) =>
                 activeStatuses.has(task.status) &&
-                task.status !== "waiting_review",
+                !["waiting_review", "waiting_input"].includes(task.status),
             ).length
           }{" "}
           项进行中
+        </span>
+        <span>
+          {tasks.filter((task) => task.status === "waiting_input").length}{" "}
+          项待澄清
         </span>
         <span>
           {tasks.filter((task) => task.status === "waiting_review").length}{" "}

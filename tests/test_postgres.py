@@ -131,7 +131,13 @@ def postgres_setup(tmp_path):
         .update_query_dict({"options": "-csearch_path=" + schema})
         .render_as_string(hide_password=False)
     )
-    settings = Settings(_env_file=None, app_env="test", database_url=url, data_dir=tmp_path)
+    settings = Settings(
+        _env_file=None,
+        app_env="test",
+        diagnosis_runtime="legacy",
+        database_url=url,
+        data_dir=tmp_path,
+    )
     config = Config("alembic.ini")
     config.attributes["settings"] = settings
     command.upgrade(config, "head")

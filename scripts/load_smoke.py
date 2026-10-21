@@ -79,7 +79,7 @@ async def run_benchmark(
         or not 1 <= workers <= 4
         or not 5 <= task_timeout <= 180
         or backend not in {"sqlite", "postgres"}
-        or profile not in {"research", "commerce_review"}
+        or profile not in {"research", "commerce_review", "commerce_diagnosis"}
     ):
         raise ValueError("参数超出隔离演练范围")
     if os.name != "posix":
@@ -183,8 +183,8 @@ async def run_benchmark(
                 )
                 client.headers["X-CSRF-Token"] = login["csrf_token"]
                 conversation = _response(await client.post("/api/conversations"), 201)["id"]
-                dataset_id = None
-                if profile == "commerce_review":
+                dataset_id = bundle = None
+                if profile in {"commerce_review", "commerce_diagnosis"}:
                     staged = _response(
                         await client.post("/api/commerce/scenarios", json={"scenario": "normal"})
                     )
@@ -192,6 +192,21 @@ async def run_benchmark(
                         await client.post(f"/api/commerce/datasets/{staged['id']}/commit")
                     )
                     dataset_id = confirmed["id"]
+                    if profile == "commerce_diagnosis":
+                        bundle = _response(
+                            await client.post(
+                                "/api/analysis-inputs",
+                                json={
+                                    "sales_dataset_id": dataset_id,
+                                    "period": {"start": "2026-09-01", "end": "2026-09-30"},
+                                    "comparison_period": {
+                                        "start": "2026-08-02",
+                                        "end": "2026-08-31",
+                                    },
+                                },
+                            ),
+                            201,
+                        )
                 semaphore = asyncio.Semaphore(concurrency)
                 outcomes = []
                 started = time.monotonic()
@@ -212,6 +227,14 @@ async def run_benchmark(
                                     dataset_id=dataset_id,
                                     sources=["sales"],
                                     strategy="workflow",
+                                )
+                            elif profile == "commerce_diagnosis":
+                                payload.update(
+                                    profile=profile,
+                                    bundle_id=bundle["bundle_id"],
+                                    sources=["sales"],
+                                    strategy="diagnostic",
+                                    query="核对九月净销售额变化、退款和商品贡献",
                                 )
                             headers = {"Idempotency-Key": str(uuid4())}
                             task = _response(
@@ -238,9 +261,26 @@ async def run_benchmark(
                                 raise RuntimeError("任务未通过结构校验")
                             if detail["metrics"]["model_calls"] != 0:
                                 raise RuntimeError("教学演练意外产生模型请求")
+                            if profile == "commerce_diagnosis":
+                                projection = _response(
+                                    await client.get(f"/api/tasks/{task['id']}/diagnosis")
+                                )
+                                if (
+                                    len(projection["steps"]) > 8
+                                    or detail["metrics"]["tool_calls"] > 10
+                                    or detail["report"]["bundle_hash"] != bundle["bundle_hash"]
+                                ):
+                                    raise RuntimeError("诊断范围或全局预算不一致")
                             phase = "download"
                             artifact = next(
-                                a for a in detail["artifacts"] if a["name"] == "report.pdf"
+                                a
+                                for a in detail["artifacts"]
+                                if a["name"]
+                                == (
+                                    "report-v1.pdf"
+                                    if profile == "commerce_diagnosis"
+                                    else "report.pdf"
+                                )
                             )
                             pdf = await client.get(f"/api/artifacts/{artifact['id']}")
                             if (
@@ -254,6 +294,8 @@ async def run_benchmark(
                                     "ok": True,
                                     "submit_ms": submit_ms,
                                     "completion_ms": (time.monotonic() - begin) * 1000,
+                                    "task_id": task["id"],
+                                    "tool_calls": detail["metrics"]["tool_calls"],
                                 }
                             )
                         except Exception as exc:
@@ -296,6 +338,7 @@ async def run_benchmark(
                     "model_calls": model_calls,
                     "completed": len(success),
                     "failures": failures,
+                    "outcomes": outcomes,
                     "unique_tasks": unique_tasks,
                     "elapsed_seconds": round(elapsed, 3),
                     "completed_tasks_per_second": round(len(success) / elapsed, 3),
@@ -331,7 +374,11 @@ async def run_benchmark(
 def main():
     parser = argparse.ArgumentParser(description="仅启动隔离demo，不能指定外部URL/数据库")
     parser.add_argument("--backend", choices=["sqlite", "postgres"], default="sqlite")
-    parser.add_argument("--profile", choices=["research", "commerce_review"], default="research")
+    parser.add_argument(
+        "--profile",
+        choices=["research", "commerce_review", "commerce_diagnosis"],
+        default="research",
+    )
     parser.add_argument("--requests", type=int, default=20)
     parser.add_argument("--concurrency", type=int, default=4)
     parser.add_argument("--workers", type=int, default=2)

@@ -435,11 +435,14 @@ def test_same_tenant_does_not_grant_dataset_access(setup):
 
 
 def test_sqlite_upgrade_preserves_existing_tasks_and_schema_matches(setup, tmp_path):
+    import json
+
     from alembic import command
     from alembic.config import Config
+    from sqlalchemy import MetaData, Table
 
     from app.core.auth import bootstrap_user
-    from app.storage.models import User
+    from app.storage.models import User, utcnow
 
     settings = setup[0].model_copy(
         update={"database_url": "sqlite:///" + str(tmp_path / "upgrade.sqlite")}
@@ -452,14 +455,45 @@ def test_sqlite_upgrade_preserves_existing_tasks_and_schema_matches(setup, tmp_p
         bootstrap_user(repo, settings)
         with repo.session() as db:
             user = db.scalar(select(User).where(User.email == "demo@example.com"))
-        old = repo.create_task(
-            user,
-            TaskRequest(conversation_id=repo.create_conversation(user.id), query="旧版经营分析"),
-            str(uuid4()),
+        # Write a real legacy row; the current ORM correctly requires migrated columns.
+        legacy_request = TaskRequest(
+            conversation_id=repo.create_conversation(user.id), query="旧版经营分析"
         )
+        parameters = legacy_request.model_dump(mode="json", exclude={"bundle_id", "parent_task_id"})
+        key, task_id = str(uuid4()), str(uuid4())
+        legacy_tasks = Table("tasks", MetaData(), autoload_with=repo.engine)
+        with repo.engine.begin() as db:
+            db.execute(
+                legacy_tasks.insert().values(
+                    id=task_id,
+                    conversation_id=legacy_request.conversation_id,
+                    user_id=user.id,
+                    tenant_id=user.tenant_id,
+                    idempotency_key=key,
+                    request_hash=hashlib.sha256(
+                        json.dumps(parameters, sort_keys=True).encode()
+                    ).hexdigest(),
+                    query=legacy_request.query,
+                    parameters=parameters,
+                    mode="demo",
+                    status="queued",
+                    created_at=utcnow(),
+                    updated_at=utcnow(),
+                    attempts=0,
+                    runtime_ms=0,
+                    tool_calls=0,
+                    model_calls=0,
+                    input_tokens=0,
+                    output_tokens=0,
+                    usage_complete=True,
+                    usage_reports=0,
+                )
+            )
         command.upgrade(config, "head")
         command.check(config)
-        assert repo.get_task(old["id"])["query"] == "旧版经营分析"
+        upgraded = repo.get_task(task_id)
+        assert upgraded["query"] == "旧版经营分析" and upgraded["graph_version"] == "research-v1"
+        assert repo.create_task(user, legacy_request, key)["id"] == task_id
         assert commit(repo, user)["committed"]
     finally:
         repo.engine.dispose()

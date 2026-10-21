@@ -1,0 +1,25 @@
+{
+  "version": "diagnosis-targets-v1",
+  "case_set": "diagnosis_cases.json",
+  "expected_behavior_rate_min": 0.9,
+  "positive_task_completion_rate_min": 0.9,
+  "critical_authorization_fact_version_budget_cancel_fencing_rate_min": 1.0,
+  "max_steps": 8,
+  "max_tool_attempts": 10,
+  "max_model_attempts": 12,
+  "holdout_independent_cases": 20,
+  "holdout_repeats": 3,
+  "report_case_all_repeats_and_run_level_rates": true,
+  "preserve_all_failures_and_unknown_costs": true,
+  "live_latency_p95_seconds": null,
+  "live_cost_target": null,
+  "live_measurement_status": "UNTESTED_requires_provider_budget_and_paid_call_authorization",
+  "demo_fixed_baseline": {
+    "run_id": "8b16489c-57c2-4ea3-999d-e1fd64c59802",
+    "cases": 9,
+    "p95_nearest_rank_seconds": 0.043,
+    "scope": "intermediate_implementation_offline_contracts_not_live_SLA"
+  },
+  "cases_canonical_sha256": "843f03b9fc76a87d343ab689de0df5c03441eddec1f332b344c51fc9178c0a7f",
+  "case_file_sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+}

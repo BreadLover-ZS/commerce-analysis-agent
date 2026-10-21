@@ -21,7 +21,8 @@ async def main():
         agent_mode="demo",
         data_dir=root,
         database_url="sqlite:///" + str(root / "app.sqlite"),
-        lease_seconds=5,
+        lease_seconds=int(sys.argv[4]) if len(sys.argv) > 4 else 5,
+        max_runtime_seconds=int(sys.argv[3]) if len(sys.argv) > 3 else 180,
     )
     repo = Repository(settings)
     original = graph_module.convert_md_to_pdf

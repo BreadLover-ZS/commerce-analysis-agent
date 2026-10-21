@@ -1,0 +1,124 @@
+# 诊断评测运行与独立审查
+
+这是 G6 的可执行入口，替代此前“拟新增CLI”的占位说明。它复用实际 Worker、数据库、检查点、工具和产物流程。
+自动检查、脚本故障协议、真实模型效果及独立业务审查分别记录。默认产品入口仍为固定经营复盘。
+
+## 离线运行
+
+从仓库根目录执行，输出目录须尚不存在：
+
+```bash
+uv run --frozen python -m evaluations.diagnosis run \
+  --split development --mode demo \
+  --output evaluations/results/diagnosis-development-new
+
+uv run --frozen python -m evaluations.diagnosis run \
+  --split regression --mode demo \
+  --output evaluations/results/diagnosis-regression-new
+```
+
+`--case-id D01` 可选取对应分集的单例，重复该参数可选多例；`--repeats 3` 保留三次执行，不能覆盖旧结果。
+demo 强制独立临时 SQLite 和本地资料，不读取 `.env`、环境中的业务DB或任何模型/搜索凭据。
+真实 PostgreSQL 的并发、SIGKILL、备份与恢复由独立集成套件验证，不能把 SQLite CLI 写成 PG 验收。
+
+开发集有12个共同能力问题、4个新增能力问题、4个故障问题，产生32次执行。
+回归集有7个共同能力问题、4个新增能力问题、9个准入/故障问题，产生27次执行。
+共同能力每例运行固定流程与诊断图，使用同一输入包、显式两期、授权范围和资源上限。
+新增能力仅进入 `additional` 组；准入/故障进入 `gate`，不会作为模型业务质量的分母。
+
+每次创建新Task及任务内缓存。提供方缓存行为未知；不会把本地新缓存解释成供应商未命中缓存。
+比较记录列出相同包、预算、模型配置及最终范围；范围不同的输出不能直接比金额。
+
+## 自动判定
+
+`diagnosis_oracle.py` 只用原始记录及标准库做第二套数值计算，不调用生产计算核或报告校验器。
+覆盖固定流程的完整事实目录、两期净额、覆盖、商品/品类贡献，以及诊断的五个销售工具和库存代理。
+逐字引用另核对固定清单内的文档/片段身份、原文区间和哈希。
+
+`diagnosis_grading.py` 逐项执行预先声明的断言，未知断言直接失败；不要求唯一工具顺序。
+必要能力按证据判断，固定流程的一份销售结果可覆盖比较、贡献和退款，不能冒充日下钻或库存/规则工具。
+报告事实还要回指独立核对过的目录；程序自己的 `validation.passed` 不足以让篡改事实通过。
+
+原始问题、数据和授权范围进入Task。caseId、split、场景标签、预期答案与故障安排留在评测侧。
+澄清前初始范围的基线事实与澄清后范围分别检查，不用最终子范围改写预先登记的初始预期。
+
+库存样例允许共用一个快照日期；执行适配器将其明确展开到每行，原始用例及其哈希保持不变。
+零需求、缺提前期、不可比较、缺行与启用前记录分别判定，不能把不完整窗口当作安全结论。
+
+故障harness显式注入非法工具、缓存循环、取消、未知usage、旧租约、重复答复、伪造报告和过期批准。
+这些是本进程协议模拟；真实硬杀和PG证据以恢复测试为准。脚本会经过模型调用账本，但不是提供方请求。
+
+## 保留的回执
+
+每个分集输出 `run.json`、`summary.json`、完整计划预期 `expectations-manifest.json`、追加的 `progress.jsonl` 和待填写的 `review-template.json`。
+即使全轮提前停止，也保留全部计划预期，并仅对实际执行的回执审查；未运行部分不能补成通过。
+每例/每次保留业务输入、独立预期、实际输入包、固定/诊断任务、查询与调用账本、步骤、事件和全部已登记产物。
+若准备输入失败，仍保留FAIL及安全错误类型；不能只留下已经通过的例子。
+
+`run.json` 保存源码/锁文件/迁移/测试/前端/部署配置的完整文件哈希、总指纹、Git基线、Prompt版本、数据/预期/目标哈希。
+live还保留实际SDK请求的白名单JSON字段与成功响应的模型、结果和usage，不保存请求头、密钥或提供方错误原文。
+目录被Git忽略，分享或归档时应另行复制需要的回执；源码仓库中的命令可重建新的运行记录。
+
+## 显式 live 入口
+
+入口要求显式付费授权。2026-10-20 用户已授权使用项目指定 DeepSeek 配置，整轮累计最多 **3,000,000 token**；
+该授权不成为以后运行的默认额度，也不修改应用 `.env` 的demo模式。实际结果见23号开发记录。以下是通用命令：
+
+```bash
+uv run --frozen python -m evaluations.diagnosis run \
+  --split holdout --repeats 3 --final-holdout --mode live \
+  --provider 指定提供方 --endpoint https://指定模型端点/v1 \
+  --model 指定模型 --api-key-env 专用密钥环境变量 \
+  --max-paid-requests 明确的请求总上限 --allow-paid \
+  --output evaluations/results/diagnosis-holdout-new
+```
+
+占位参数须换成实际配置。只读显式指定的一个密钥环境变量，不扫描旧凭据。
+HTTPS端点不得内嵌凭据、查询参数或fragment。SDK关闭重试，HTTP发送前还受全轮请求上限保护。
+请求上限以HTTP尝试次数计，不是金额承诺；DNS/连接失败也保守占用尝试。每任务仍受8步、10工具、12模型、60000token和180秒限制。
+
+用户按token授权时，使用 `--max-total-tokens 3000000` 替代请求上限。当前硬token预算只登记了官方端点 `https://api.deepseek.com` 的 `deepseek-flash`：
+按[官方公开上下文上限](https://api-docs.deepseek.com/quick_start/pricing/)的保守上界1,048,576，再加请求最大输出token做请求前预留，
+不把字符数或估算tokenizer当成计费硬界。供应商有效usage须为非负整数、输入加输出等于total、且不超过预留，才结算并释放剩余预留。
+未知usage、非200、解析/读取失败保留整个预留，并停止后续请求；每次预留和结算追加私有 `budget-journal.jsonl` 并fsync。
+若剩余额度不足下一次完整预留，则在HTTP发送前停止，可能保守留下约一个上下文额度；不会为了用满上限改用估算。
+整轮共用同一个计数器，固定基线和诊断、所有案例和重复均计入。未给请求上限时另按所有Task的12次硬限额推导技术防线，
+本轮20×3诊断加13×3固定基线，最多99个Task、1188次尝试；它不扩大300万token授权。
+
+价格未知则费用为null；只有同时显式提供每百万输入/输出token价格，才生成估算，供应商账单和缓存计价仍须另核对。
+任一实际live任务usage不完整就停止全轮后续付费请求；正式输出的关键事实/权限/版本/预算不变量失败停止放行轮次；一般完成度失败保留FAIL并继续统计，不能靠提前停在首个失败缩小原20×3计划。
+保留集必须是全部20例、每例3次、live且显式 `--final-holdout`；禁止用demo保留集调试Prompt。
+
+## 独立语义审查
+
+自动正确率叫 `automatic_contract_rate`，不会写入业务质量率。自然语言是否漏答、因果是否越界、规则是否适用须独立核对。
+复制模板到另一个文件，填写审查人、PASS/FAIL、每项理由及回执JSON字段引用；每条可接受/禁止结论分别有检查项。
+例：`task/report/facts/0` 或 `evidence/0/payload`。PENDING、任务模型自评、漏掉重复运行、重复记录、哈希或引用不符均拒绝导入。
+
+```bash
+uv run --frozen python -m evaluations.diagnosis review \
+  --run evaluations/results/diagnosis-regression-new \
+  --reviews /私有位置/独立审查.json \
+  --output evaluations/results/diagnosis-regression-review-new.json
+```
+
+导入不会覆盖自动回执。demo即使填完审查也不能放行真实模型。
+最终放行要求完整20×3保留集、逐次审查、行为/正向完成率达到版本化目标、关键门禁100%，任何正式事实或无依据因果错误均不能被平均分覆盖。
+逐次正确率、每例全部重复正确率及独立问题数分开报告，不能把60次重复称作60个独立问题。
+是否改变默认入口仍要依据共同问题配对效果与成本单独决定，不由导入工具自动修改。
+
+## 续评与判定器审计
+
+`run --resume-from 已停止回执 --max-total-tokens 原上限` 只承接完整组/重复的前缀，保留所有已执行结果并跳过已完成Task。
+核对完整预算祖先链、每条原始结果hash、HTTP/Task/journal总额；模型/端点/上限、计划、数据与预期必须相同。
+业务实现或Prompt变化拒绝拼接旧轨迹；唯一已核验例外是通过反向逐字替换并核对原文件hash证明的执行方式标签修复。
+独占并fsync的承接记录防止两个续评同时复用同一扣费起点；UNKNOWN不可借新目录免费重试。
+当业务实现或计划已变化，应使用`run --charge-from 原付费回执 --max-total-tokens 原上限`：只承接已对账的累计扣费，不复制旧Task/结果，不将旧通过率计入新实现。
+该参数也可承接已完整完成的轮次；与`--resume-from`互斥。原来的300万授权是累计上限，新目录不会重置额度。
+账户前缀和当前实验结果分别对账，后续续评仍须核对完整祖先；不得忽略UNKNOWN或绕开排他承接锁。
+如用户另行明确增加累计token上限，仅`--charge-from`可配合显式更高`--max-total-tokens`：原祖先仍按各自原上限验证，原已知用量完整计入新累计上限，变更记录写入`budget_limit_change`。
+不能借新上限重置已花用量，`--resume-from`仍要求原上限不变。代码支持增加上限不代表已经取得付费授权；本批真实请求一直使用原300万上限。
+判定器修正必须保留旧FAIL，可用 `audit --run ... --output 新文件` 零请求重算；`review --grading-audit ...` 导入前重新核对审计及源码。
+实际99个Task结果、所有误判和真实失败见[完整真实评测记录](28-diagnosis-live-evaluation.md)。
+
+用户随后明确授权累计上限提升到5,000,000 token，承接全部历史扣费，并启动96 Task的新正式复评。该授权只扩大累计额度，不清零历史账本；具体运行见29号记录。

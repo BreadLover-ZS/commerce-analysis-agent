@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 from sqlalchemy import delete, func, select
 
 from app.commerce.importer import SaleInput
-from app.storage.models import CommerceDataset, User, utcnow
+from app.storage.models import AnalysisInputBundle, CommerceDataset, Task, User, utcnow
 from app.storage.repository import Conflict, NotFound
 
 MAX_FILE_BYTES = 2 * 1024 * 1024
@@ -223,11 +223,23 @@ def stage_dataset(repo, user, payload, name, sample, file_hash):
     with repo.session() as db:
         # Same admission lock as task creation; protects quotas and duplicate imports.
         db.scalar(select(User).where(User.id == user.id).with_for_update())
+        referenced_bundle = (
+            select(AnalysisInputBundle.id)
+            .where(AnalysisInputBundle.sales_dataset_id == CommerceDataset.id)
+            .exists()
+        )
+        referenced_review = (
+            select(Task.id)
+            .where(Task.parameters["dataset_id"].as_string() == CommerceDataset.id)
+            .exists()
+        )
         db.execute(
             delete(CommerceDataset).where(
                 CommerceDataset.user_id == user.id,
                 CommerceDataset.committed.is_(False),
                 CommerceDataset.created_at < utcnow() - timedelta(days=1),
+                ~referenced_bundle,
+                ~referenced_review,
             )
         )
         existing = db.scalar(

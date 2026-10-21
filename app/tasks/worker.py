@@ -9,7 +9,7 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
 
 from app.core.config import get_settings
-from app.core.errors import ReportValidationFailed
+from app.core.errors import ReportValidationFailed, UnsupportedGraphVersion
 from app.research.graph import build_workflow
 from app.storage.repository import BudgetExceeded, Repository, StaleLease, TaskCancelled
 from app.tasks.checkpoints import LeaseFencedSaver
@@ -60,16 +60,43 @@ class Worker:
 
         async def execute():
             async with LeaseFencedSaver(self.saver, self.repo, ctx) as saver:
-                graph = build_workflow(self.repo, self.settings, ctx, saver, self.model)
+                diagnosis = task["parameters"].get("profile") == "commerce_diagnosis"
+                if diagnosis:
+                    from app.diagnosis.graph import RECURSION_LIMIT, build_diagnosis
+
+                    graph = build_diagnosis(self.repo, self.settings, ctx, saver, self.model)
+                else:
+                    graph = build_workflow(self.repo, self.settings, ctx, saver, self.model)
                 config = {
                     "configurable": {"thread_id": ctx.task_id},
-                    "recursion_limit": 20,
+                    "recursion_limit": RECURSION_LIMIT if diagnosis else 20,
                     "run_name": "commerce_analysis_workflow",
                     "metadata": {"task_id": ctx.task_id, "mode": task["mode"]},
                 }
                 snapshot = await graph.aget_state(config)
                 if snapshot.interrupts:
-                    if (
+                    if diagnosis:
+                        from app.diagnosis.store import DiagnosisStore
+
+                        value = snapshot.interrupts[0].value
+                        if not isinstance(value, dict) or value.get("type") not in {
+                            "clarification",
+                            "report_review",
+                        }:
+                            raise ValueError("未知诊断中断")
+                        decision = await asyncio.to_thread(
+                            DiagnosisStore(self.repo).resume_decision, ctx, value["interrupt_id"]
+                        )
+                        if decision is None:
+                            return (
+                                "waiting_input"
+                                if value["type"] == "clarification"
+                                else "waiting_review"
+                            )
+                        result = await graph.ainvoke(
+                            Command(resume=decision), config=config, durability="sync"
+                        )
+                    elif (
                         task["status"] == "running"
                         and task["parameters"]["require_review"]
                         and task.get("report")
@@ -96,6 +123,13 @@ class Worker:
                     # otherwise lose earlier progress during a later SIGKILL.
                     result = await graph.ainvoke({}, config=config, durability="sync")
                 if result.get("__interrupt__"):
+                    if diagnosis:
+                        value = result["__interrupt__"][0].value
+                        return (
+                            "waiting_input"
+                            if value.get("type") == "clarification"
+                            else "waiting_review"
+                        )
                     return "waiting_review"
                 return result.get("status", "failed")
 
@@ -122,6 +156,8 @@ class Worker:
             error_code = "model_or_tool_budget"
         except ReportValidationFailed:
             error_code = "report_validation_failed"
+        except UnsupportedGraphVersion:
+            error_code = "unsupported_graph_version"
         except Exception as exc:
             # Exception type is logged; request bodies/keys/provider errors are not.
             error_code = type(exc).__name__

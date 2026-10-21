@@ -47,6 +47,14 @@ class ResearchState(TypedDict, total=False):
 
 def build_workflow(repo, settings, ctx, checkpointer, model=None):
     task = repo.get_task(ctx.task_id)
+    if task["parameters"].get("profile") == "commerce_review" and task["parameters"].get(
+        "bundle_id"
+    ):
+        from app.commerce.review_inputs import REVIEW_BUNDLE_VERSIONS
+        from app.core.errors import UnsupportedGraphVersion
+
+        if any(task[key] != value for key, value in REVIEW_BUNDLE_VERSIONS.items()):
+            raise UnsupportedGraphVersion()
     # A queued demo task must not become billable after a deployment mode change.
     settings = settings.model_copy(update={"agent_mode": task["mode"]})
     gateway = ToolGateway(repo, settings, ctx, task["parameters"])

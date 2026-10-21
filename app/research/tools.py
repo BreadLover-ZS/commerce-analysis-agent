@@ -68,6 +68,7 @@ class ToolGateway:
                 self.parameters["dataset_id"],
                 start,
                 end,
+                bundle_ctx=self.ctx if self.parameters.get("bundle_id") else None,
             )
         else:
             function = sales_summary if name == "sales" else inventory_risks

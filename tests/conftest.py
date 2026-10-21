@@ -19,6 +19,7 @@ def setup(tmp_path):
     settings = Settings(
         _env_file=None,
         app_env="test",
+        diagnosis_runtime="legacy",
         data_dir=tmp_path,
         database_url="sqlite:///" + str(tmp_path / "app.sqlite"),
         lease_seconds=5,

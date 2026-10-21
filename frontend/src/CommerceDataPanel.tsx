@@ -26,6 +26,7 @@ interface Quality {
   metrics: Record<string, string>;
 }
 interface Props {
+  purpose?: "review" | "diagnosis";
   selected: string | null;
   start: string;
   end: string;
@@ -45,6 +46,7 @@ const scenarios = [
 ];
 
 export default function CommerceDataPanel({
+  purpose = "review",
   selected,
   start,
   end,
@@ -75,7 +77,7 @@ export default function CommerceDataPanel({
     let disposed = false;
     onChecked(null);
     setQuality(null);
-    if (selected && start && end) {
+    if (purpose === "review" && selected && start && end) {
       api<Quality>(
         `/api/commerce/datasets/${selected}/quality?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
       )
@@ -92,7 +94,7 @@ export default function CommerceDataPanel({
     return () => {
       disposed = true;
     };
-  }, [selected, start, end, onChecked]);
+  }, [selected, start, end, onChecked, purpose]);
 
   async function run(action: () => Promise<void>) {
     setBusy(true);
@@ -125,10 +127,10 @@ export default function CommerceDataPanel({
           <span className="section-kicker">数据准备</span>
           <h2>经营数据</h2>
         </div>
-        <span>02 / 03</span>
+        <span>{purpose === "diagnosis" ? "02 / 04" : "02 / 03"}</span>
       </div>
       <p className="field-hint">
-        生成模拟场景或导入 CSV，预览后确认使用。每次复盘绑定固定数据版本。
+        生成模拟场景或导入 CSV，预览后确认使用。每次任务绑定固定数据版本。
       </p>
       {error && (
         <Alert
