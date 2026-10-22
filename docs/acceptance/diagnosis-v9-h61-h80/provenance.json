@@ -1,0 +1,269 @@
+{
+  "source_file": "evaluations/diagnosis_cases.json",
+  "source_file_sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866",
+  "author": "Codex, code author; not external business blind reviewer",
+  "model_or_graph_executions_during_authoring": 0,
+  "derivation": "Only development/regression templates used. Uniform numeric scaling and date/SKU changes preserve existing scenario families; these are not new independent business domains.",
+  "cases": [
+    {
+      "case_id": "H61",
+      "source_family": "D01",
+      "numeric_factor": 31,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P611",
+        "B": "P612"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H62",
+      "source_family": "D02",
+      "numeric_factor": 32,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P621",
+        "B": "P622"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H63",
+      "source_family": "D03",
+      "numeric_factor": 33,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P631",
+        "B": "P632"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H64",
+      "source_family": "D04",
+      "numeric_factor": 34,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P641",
+        "B": "P642"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H65",
+      "source_family": "D05",
+      "numeric_factor": 35,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P651",
+        "B": "P652"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H66",
+      "source_family": "D06",
+      "numeric_factor": 36,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P661",
+        "B": "P662"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H67",
+      "source_family": "D07",
+      "numeric_factor": 37,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P671",
+        "B": "P672"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H68",
+      "source_family": "D08",
+      "numeric_factor": 38,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P681",
+        "B": "P682"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H69",
+      "source_family": "D13",
+      "numeric_factor": 39,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P691",
+        "B": "P692"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H70",
+      "source_family": "D14",
+      "numeric_factor": 40,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P701",
+        "B": "P702"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H71",
+      "source_family": "D15",
+      "numeric_factor": 41,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P711",
+        "B": "P712"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H72",
+      "source_family": "R01",
+      "numeric_factor": 42,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P721",
+        "B": "P722"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H73",
+      "source_family": "D10",
+      "numeric_factor": 43,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P731",
+        "B": "P732"
+      },
+      "scope_expanded_to_all_products": true,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H74",
+      "source_family": "D11",
+      "numeric_factor": 44,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P741",
+        "B": "P742"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H75",
+      "source_family": "D12",
+      "numeric_factor": 45,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P751",
+        "B": "P752"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H76",
+      "source_family": "D16",
+      "numeric_factor": 46,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P761",
+        "B": "P762"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H77",
+      "source_family": "R18",
+      "numeric_factor": 47,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P771",
+        "B": "P772"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H78",
+      "source_family": "R18",
+      "numeric_factor": 48,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P781",
+        "B": "P782"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": 5,
+      "documents_reauthored": false
+    },
+    {
+      "case_id": "H79",
+      "source_family": "R19",
+      "numeric_factor": 49,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P791",
+        "B": "P792"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": true
+    },
+    {
+      "case_id": "H80",
+      "source_family": "R20",
+      "numeric_factor": 50,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "A": "P801",
+        "B": "P802"
+      },
+      "scope_expanded_to_all_products": false,
+      "inventory_lead_days_supplied": null,
+      "documents_reauthored": true
+    }
+  ]
+}

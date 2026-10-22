@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-22",
+  "source": "Direct user reply to the 96-Task execution and cumulative-budget request in this chat",
+  "user_reply": "累计上限提高到800万 token",
+  "authorized_cumulative_limit": 8000000,
+  "carry_known_tokens": 4749932,
+  "carry_provider_requests": 743,
+  "scope": "Run the frozen H61-H80 20-case, three-repeat diagnosis set plus 36 fixed controls; audit and review all retained receipts",
+  "preserve_prior_charges": true,
+  "allow_result_selection": false,
+  "allow_automatic_paid_retry": false,
+  "g7": "EXCLUDED_BY_USER",
+  "frozen_implementation_sha256": "c7ed395f230677f130166243c2419e96d3b249f6225f5b6e19164962bd97cbfd"
+}

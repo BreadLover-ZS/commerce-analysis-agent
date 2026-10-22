@@ -438,6 +438,10 @@ def summarize(rows, planned, *, stopped=None):
 
 
 async def evaluate(args):
+    if getattr(args, "frozen_plan", None) is not None:
+        from evaluations.diagnosis_plan import guard_run
+
+        guard_run(args)
     configuration = live_configuration(args)
     accounting_only = bool(args.charge_paid_run)
     prior_directory = args.charge_paid_run or args.prior_paid_run
@@ -846,6 +850,7 @@ def parser():
     run.add_argument("--mode", choices=("demo", "live"), default="demo")
     run.add_argument("--output", type=Path, required=True)
     run.add_argument("--final-holdout", action="store_true")
+    run.add_argument("--frozen-plan", type=Path, help="发送请求前校验已冻结题包、源码与预算链")
     run.add_argument("--allow-paid", action="store_true")
     run.add_argument("--provider")
     run.add_argument("--endpoint")

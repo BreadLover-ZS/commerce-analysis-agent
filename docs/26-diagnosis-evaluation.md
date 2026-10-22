@@ -122,3 +122,22 @@ uv run --frozen python -m evaluations.diagnosis review \
 实际99个Task结果、所有误判和真实失败见[完整真实评测记录](28-diagnosis-live-evaluation.md)。
 
 用户随后明确授权累计上限提升到5,000,000 token，承接全部历史扣费，并启动96 Task的新正式复评。该授权只扩大累计额度，不清零历史账本；具体运行见29号记录。
+
+## 当前正式轮准备（2026-10-22）
+
+以上300万/500万为历史批次。用户于2026-10-22进一步授权累计800万，现已用5,990,281 token；
+最新H61—H80完整96 Task正式轮已执行审查，诊断59/60、固定29/36，但存在库存快照缺失误述，G6仍未放行，见
+[34号验收](34-diagnosis-h61-h80-formal-acceptance.md)。此前96 Task及18 Task修复轮保留在[32号验收](32-diagnosis-v9-formal-acceptance.md)。
+
+[H61—H80完整题包](acceptance/diagnosis-v9-h61-h80/README.md)在付费前冻结为96 Task，未用于Prompt调试。
+`evaluations.diagnosis_plan`提供零请求的冻结与预检；下面为运行前预检命令的记录，本轮执行后祖先已承接，重复预检会明确拒绝：
+
+```bash
+uv run --frozen python -m evaluations.diagnosis_plan check \
+  --directory docs/acceptance/diagnosis-v9-h61-h80
+```
+
+正式运行可以增加`--frozen-plan 目录`，在读取live配置前检查题包、预期、源码、目标文件和完整历史预算链，
+并绑定实际CLI的完整保留集、模型、累计上限及只承接扣费参数；已有`--allow-paid`要求不变。
+文件冻结不是付费授权，预检通过不是模型成绩；题包和复现命令见上方链接，本轮验证及预算计算见
+[33号准备交付](33-diagnosis-acceptance-preparation-20261022.md)。

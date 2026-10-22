@@ -1,0 +1,334 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_AWAITING_EXPLICIT_PAID_AUTHORIZATION",
+  "cases_file": "cases.json",
+  "implementation_sha256": "c7ed395f230677f130166243c2419e96d3b249f6225f5b6e19164962bd97cbfd",
+  "cases_file_sha256": "e4f877932b1acad2e6d0775f5827e56d42a38d1b2e0eba5c23baf1dca649e6b7",
+  "selected_cases_sha256": "8fc4a97059f0a309e408825ee07e482eb63bfbc51e36ebc1432ab587ba2e46b1",
+  "expected_sha256": "a24597e974d294642fe5f87ee9c8993875523a4d2c8e437dcf26a5127e1a98e5",
+  "targets_sha256": "6a5c8116d16f9f472ad90930959525dfc3b4c74aca4f5d67675a1f58a21cc4a1",
+  "input_hashes": [
+    "f49e5cad2e5caf4d5a001b1e388b9b56cc284e34bc822156bd5bcbaae8830744",
+    "ecbf4f434496a67b76070b0e0f35ce45662270049aa7f78ab7d46c198b482ee7",
+    "a60cf0307b48e2194d37b4669ca287eda901e96b886381aa13415daa9a69ecdd",
+    "fbc099a914f8bfa395a8931644e8ce545c1e3980244460b9312890c45f0fe6f2",
+    "0ddea7b4391d256fbc62001442425f786f9a7c6b3cdc9716a887faad0c14329d",
+    "0b24814d374035fedc79428523a36de0f4639fc40f52e8b74aa1f31c78cc2248",
+    "cee674e2c9fc633961dbfd3c812179992361a2753743db30d6b298133edf0f04",
+    "6e4d53baba177d210d55fc30e741491955171d5ee06b64009b62da583bc7ab8d",
+    "859a4e407f43f12cc6399ee67ce6d2e01d73dc8e892bdad7e9a699e5cded2c74",
+    "cf323f7fda11e29d37f3c4d67b2ff3a46cda7f9509c1a5305b7bc40c3203f62f",
+    "2c9b0dbbefac72036069553df709a9e4b654cdaebd535a3a0610239fd3df0981",
+    "b5a2686a354b38a502e5d78103879d0dee4f282ca492c28328d8a86196075428",
+    "c5bf306b00964ce29917c6caf4e4ad9dff8cc7871751d66ef75d38f5ac7526e5",
+    "403433b4cf8815da17a41481771cdd07dd2b23919fe89896736a426e780803a7",
+    "1ffb59920e9040e3a4e0fedf1ef9ebabd1ef170e5b3a81b0ee3cdbb264a9fc51",
+    "5aec15028721d80db2f1557631b5c3cf7e880619ce704a8e8c65116be82c87f5",
+    "8b91baf11bcf8dd9a8d95eae1d526c6520e4a04bffd78f5e146d517767373dd7",
+    "7ad5640d1f15d19e105a6385581df5ef0139aa0caf4818d6addcb23307968f05",
+    "4c5d16327048727470a725b592aeb0ba3fa495fe4afb2d049cb6e76a0b30c9f4",
+    "48f49b586837d7ab8a471bee289c228e34f88686f8e4c29ccee93b2a155fde0a"
+  ],
+  "case_ids": [
+    "H61",
+    "H62",
+    "H63",
+    "H64",
+    "H65",
+    "H66",
+    "H67",
+    "H68",
+    "H69",
+    "H70",
+    "H71",
+    "H72",
+    "H73",
+    "H74",
+    "H75",
+    "H76",
+    "H77",
+    "H78",
+    "H79",
+    "H80"
+  ],
+  "diagnosis_tasks": 60,
+  "paired_fixed_tasks": 36,
+  "total_tasks": 96,
+  "history": {
+    "provider": "DeepSeek",
+    "endpoint": "https://api.deepseek.com",
+    "model": "deepseek-flash",
+    "previous_cumulative_limit": 6000000,
+    "known_tokens": 4749932,
+    "provider_requests": 743,
+    "run_id": "d99d59d3-a897-407c-bf24-22c79e85f53f",
+    "files_sha256": {
+      "run.json": "6ccb61550f9a80785c267b3d1c186b00101e68a677e1091c6a10250706a39f4a",
+      "summary.json": "23ec222fa878fe7ac26fd80b19241fd69bf704feb4fdfd807d7a727b3260c0c3",
+      "progress.jsonl": "8afb09121b74870a055781a665f625f2bf7ae6546ce1dc9ddd3091cd67035e67",
+      "R61-1/additional.json": "bb040b8765ddd352f72048b605bc3d85ce6af057e16686eb311ac671965acc4d",
+      "R61-2/additional.json": "d58cb319a71735ebf273b8991e98b5ef98c60bf4a9801f954e188bb610bc1be6",
+      "R61-3/additional.json": "138e0645b7ef0cccbef02fca946676531af08e32380cafa724bbbe7dc8518122",
+      "R62-1/additional.json": "dc558876cb45f3884ce64282abec09ee5a2b132dd4b97b23bbb22bd65328443c",
+      "R62-2/additional.json": "8b3c028fc49469cb0cdfbcba1ffbd621a8f3bb98ce8a0b97317cee887872bc84",
+      "R62-3/additional.json": "ca877a5ca1d9c21f3304d15ce3e5541f7dc88f9d077ce89d4e96642ccb667d6d",
+      "R63-1/additional.json": "955a7d4a4f6a26cb67b9a019f767fb9d0fe35bf60d81b6ac2748d53a571e09bd",
+      "R63-2/additional.json": "1a6dc3892564c687f0e69652bc68a6c9040b9bd53cfbd23bc7c2d07094554515",
+      "R63-3/additional.json": "6215d2ebffe67c867635348d9655fbff058d8b545176f2bda4a3be5377d35689",
+      "R64-1/additional.json": "83e92431c7f730195919b6886b7a83b8d7a076f889297fb5b26c0eee4faef230",
+      "R64-2/additional.json": "11a4e4beeaa6d361b36c1d0db21f2f394cdb3ce9a4c9c2590e9296b2dfa54625",
+      "R64-3/additional.json": "644d3a7e1f00fdd4de21e3e2a3284181d62f5353b140dfe2e720aec3968077e0",
+      "R65-1/additional.json": "e3bb6b4fabcbd1394749fc649f60dd675d3dcb3f3964089b74121354054be7fb",
+      "R65-2/additional.json": "93ca8b69ee57d7fa0fffb709f7f68aee0a46a9cb8a7168f5113acfc02931516d",
+      "R65-3/additional.json": "0461604a8553bb8fc2076859d306811947ac31d1dccff0f6f0ea47eff009d33d",
+      "R66-1/additional.json": "1c009389d100d6104f361b1f368d1d31600bd9a0c165a0ce337d6fce4f160009",
+      "R66-2/additional.json": "c893f309c1310742b22fd131debdba3ba997f95fcfc4a744edce883147f1b4c5",
+      "R66-3/additional.json": "00818eced5c0e4c9c45bfc5682ad09318af295090570f9951427e0a4ef9a1962",
+      "budget-journal.jsonl": "992f4a5a889c4edc423a7171a1e26c6643dbfe4fa0ba3257e94492a708f619a7"
+    }
+  },
+  "charge_from": "evaluations/results/diagnosis-v9-repair-verify-live-20261021-01",
+  "reference_round": {
+    "directory": "evaluations/results/diagnosis-v9-fresh-holdout-live-20261021-01",
+    "run_id": "baa2ee7a-523b-4d11-8364-52a7584cf48e",
+    "observed_tokens": 1161798
+  },
+  "budget": {
+    "proposed_cumulative_limit": 8000000,
+    "request_reservation": 1051576,
+    "reference_round_tokens": 1161798,
+    "nominal_remaining_at_existing_limit": 1250068,
+    "estimated_cumulative_with_reservation": 6963306,
+    "existing_limit_estimated_sufficient": false,
+    "proposed_limit_estimated_sufficient": true,
+    "proposed_margin_after_reference_round_and_reservation": 1036694,
+    "authorization_required": true,
+    "monetary_cost": null
+  },
+  "prior_case_files": [
+    {
+      "file": "evaluations/diagnosis_cases.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v5-development-live-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v5-regression-demo-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v5-supplemental-demo-20261020-01/cases-source.json",
+      "sha256": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v5-supplemental-live-20261020-01/cases-source.json",
+      "sha256": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v6-development-demo-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v6-regression-demo-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v6-rule-live-20261020-01/cases-source.json",
+      "sha256": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v6-supplemental-demo-20261020-01/cases-source.json",
+      "sha256": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v7-development-demo-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v7-fresh-holdout-live-20261020-01/cases-source.json",
+      "sha256": "cb668da39386f46af300b925bac2dae8a3247582efc0a96e3aa8a776730812fe"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v7-regression-demo-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v7-rule-live-20261020-01/cases-source.json",
+      "sha256": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v7-supplemental-demo-20261020-01/cases-source.json",
+      "sha256": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-development-live-20261021-01/cases-source.json",
+      "sha256": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-development-offline-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-development-offline-20261020-02/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-multientity-offline-20261020-01/cases-source.json",
+      "sha256": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-multientity-offline-20261020-02/cases-source.json",
+      "sha256": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-regression-offline-20261020-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v8-regression-offline-20261020-02/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v9-development-live-20261021-01/cases-source.json",
+      "sha256": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v9-development-offline-20261021-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v9-fresh-holdout-live-20261021-01/cases-source.json",
+      "sha256": "84f65dc6d3cf73ea8af61727e7073685bfcbac62a48eac1af3d2cf9c69f62f06"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v9-multientity-offline-20261021-01/cases-source.json",
+      "sha256": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v9-regression-offline-20261021-01/cases-source.json",
+      "sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+    },
+    {
+      "file": "evaluations/results/diagnosis-v9-repair-verify-live-20261021-01/cases-source.json",
+      "sha256": "aaece0f7fa11f85d53e62a83252657ed14064b353e115f60736f3fe991978375"
+    }
+  ],
+  "prior_input_hashes": [
+    "0942e93682200822d4d3732e4f5ffdc05ac6dfd2b88073df6f7b934e2b46367b",
+    "09dfc1fcfbb999d408536b170856b943fdaa37d0afab7c0cd842aedb708dd81b",
+    "0a96518a13c03a06b990534eec8f103927689737c1a69f7f4d4d7614a7e67c16",
+    "0b3bcd4bcce12d614596e03567723745bfe33739b393e484fa2a2c0dfb7235f6",
+    "0b80d29a7caaeb0e296155a4dec482f4770840670aa5d90d5031f93b0966318a",
+    "11562b853ec7d5e9267bec65f9e539336bf0e9a3dfb7ba969a1c645bfb9bd6ec",
+    "11a1dab2ba402e04d388b0288e239bc1274d59fec2bb579437cab309aa59b386",
+    "14612c0a6202fa556f127a036b7c3f2a1898979421080e3a329eab175ae24ae1",
+    "1969cf76610ee92a7485c75fe51e8101edd974cc892922f609f729725abfe830",
+    "1e60216ca6e1e7904645a692ef12313a9600d5b2cf6adf795058463af029c243",
+    "1f3e23061af8bec30c270fa8f75bb0c87aa5ebbcc3bc78c50dbfd27a4504f3dd",
+    "20fe9159468ec41b52ce79ff0fedbd2ccefabf81d479c43d9d16448ee5808ed0",
+    "24817efc38fd36585e95d47341f86eb13289376372161f3031f31231806cfba7",
+    "265418daace6a6ba8a3635aedaa94edeab7e4cb64085c6b16e5ed5a79c56dcc9",
+    "29ff9714e700fbef0159d5d9067bdda540089f659bd9e6938a3191872dea3891",
+    "2c06fa18fbe3809423b549171132fa8248f607bf29273c42342f7eb19589e258",
+    "2c64a5ef1f85d160568b433cc97b1aedeeafbd04d381da9d3eeae914e5b5aae5",
+    "2dd45dc876cc2c0eaa70ffee84da65fb2564b27b8846ede0d56dc9e6491fefb7",
+    "302298536c71e27791f1a89cd96bba07dd723ac1a7713b3850218c9939194b02",
+    "326b416c65868c9d19fd913b22a885e470424d4c91ef497ca165483f015af074",
+    "3735e9aa834ebb35f5aa526d673f5fbedb498fedb0542d7e58cdc56a079bd02c",
+    "4030932ddac4a709be643f9e6ab35057334d3d6fbfef26818c6285ef4633722f",
+    "479e44434d5dc2afb264a558f061908e0f79036e42dceaca98fab28c9384ba26",
+    "481271e10df37a93d7cd4639d69aca130aaee2f01410803132ff95999d805d69",
+    "48f4f12d15cb8001e5a240970d0401b280697015b3ad0243a1ea9d98b08c1be7",
+    "497d85783eb4c3014e4ebaea5b96077f3dc148134a497d758461f0e179f465cb",
+    "4a200fa809086ea694deca082f8c0e23a51526bbe97d7f6d0d236b120b55e72e",
+    "4c507986d1d2ab58ca309f2066b50ffdbaa380c7f7d712bd7b1a211cdf10d7f7",
+    "4ef80e8dbb34785e4b9242fd0df628e90922b7ffcf0a21a9bb64725c542df398",
+    "5017a0f212c4dbbb0df8fdc023582f3eb4fede2d4b0f5e13f0dab363145c8f61",
+    "521b5bee890458080b23f39bc8454009eb64c9b019e3e315c25776e77b67f05d",
+    "58063a26ccabc51eb7ebcced780969546994a44e6e733c736673a828d302c14d",
+    "590a6342c78d744f79eaf3b2bc6e64232a844833033e6ab214e93e2ec0166bec",
+    "597bd423146a718d50324a3464be58c59fa7e63d80e2e7043513c08c197cc0c1",
+    "5da3601ca6b0048fd13782a5277532e26c79860b11c9d768eb7c3d7d0056ed71",
+    "5e11a04743cb88d1148faf129e7cc9e412762fbe18f6f75cbf13c0c0c1a215a2",
+    "5f9fea059d19abc52108c898b1b26d8961ac5711e11414f50cc5b56d6dea6309",
+    "61d26a5cbe1377f409f84c78d67fa578f59cddc8f6159e9a1d2e592babfba96d",
+    "65fc5842b0852e43f4d89482411cbededebdc59b666d6e91a9273b175e11092d",
+    "669e06a446cb9fe39adcea14c6d8028c2e2ae90c0be70b4c920a4ccc934728ec",
+    "685dec35b5d9295d68ce07d03cf52bd83fe58a1beb97232df308400f16765bf9",
+    "68fb27e38149b81b3474e117f0f9e310e788a7b9f1db637cacc79c5c05f7201d",
+    "6c15054b8bd67c8996c9fd13d952220eb7a7c6e1354dca10788ba3303c2ec4c9",
+    "6d6e11e35a0ccc9b4151efea8a42d7f51db206f95c9209dd5f3786b9603190de",
+    "6e5310864695164ada1471367aaec232b1e93949cebab98229d12a40e34729a3",
+    "6edd68fa41462b212a050bb1d7dbb49dcc75f6b48a19121a9236249b97630513",
+    "7339b3a41546e3dc273b47c3d823580f4f85688157a8668d0d98f920153752e0",
+    "76f04d29f0b34f5e73f3ec8775947c93291dd9437f4efed7de6982a252003b96",
+    "795f8b61bc762f08aad2ed220fd5c0956439e14ab49470faa9564bf24497a344",
+    "7985bea5f306a7341c5240d7d79b747682aabc3ebf4d5536679f0f1e2cafa054",
+    "7aa4329b96e0b8fa5c0ad17ce2247c144ced4a5ad4227dc2888ca4c100a00221",
+    "8189b0e7a16c34d2e571d49a373d90b2fabe19a13247658a19b62fee3185e65c",
+    "8463d7a8d8b2c4aa9acfc80ffd4cd410e5a9751af8b502fcea2c5c817f10f384",
+    "89c7d55d6a868562f220a5282ff25a7b835f117ae758242872dd2e8dbd9d927d",
+    "8a121b3ce6a3ee3eda9285469ebb2f361b4192ec9e58ea64abffee12f9c3638f",
+    "8acb35f31d0461948eef40ae1c63b45e53cc0eabecf7eab5aefa0d97a834533a",
+    "8b8b324cfc8c92b5d785949a10f007becddde363b2402857484f02becf7cd95e",
+    "8c1aa3efbfaa9ba981e379d6e7b03af88d09f640d5d358390c652698729e00ba",
+    "8f5c0a703c4bfde05ac88bb43e8deec58adf0bc67a6aa7e8aeb970b8a503cbe2",
+    "9514c7fb40f8b1d3ca042c8ca4feffe19e7da1dffb01a2a21152627ec9c57139",
+    "958d097dbffa2b3d1b65e2d8c6c66f320b6060458e58170ef301523a5f135e07",
+    "96fab1c735423d7a72ff8762696886f0f7f55605a9a94373615fe5110e5dbdd2",
+    "98f5ee785caed790a870086800cf6083c2e086984a6a6d0ef181518c6f8c3eae",
+    "9af7804e5685719e12f160ce6dfa84d3cd0177285ea368f43eb0bba744dcf772",
+    "9c288ff5dd185bbbc4972ae0957761370c288d5153c162f9bae663f025c3b346",
+    "9c8f9c5d8fd1c0bf678762187524af77a581ef1020e640992de8d81a4df3c275",
+    "9f1369071205ef360952ba1c4b46e78c80ecb3a3a0a0bc3522052e3b5ef59066",
+    "a13af4f9490308b4de2da13833c36e381ab1791d7da8b521aa1505383784bf48",
+    "a1c9d5f00bf5ff29a4a7f828a13173ea27fab319f23373e91fb79b1277a8df33",
+    "a2321b70706136d9b41d871b6e04e475eca749f2b090813bab8ee5457855e591",
+    "a38ad868d782f94d56dae30a40f940e8bc92d216dc195d32da2cbfd279329667",
+    "a3aee3484169ca02ab5e7eda3a9266f8a769b00bbe2c98769d7e11528df6e370",
+    "a594f0a7a5fd869ceadea974507345cdeb0f7d3237188c18a185564ba7a1a423",
+    "a602525971421658e55f2011ae8ef2e461c90fc7d72ed76309a6528abcfbeaaa",
+    "a6094af2f4ba043706867e0c54782bda7d427a41dad3ac71b084a7914fdb4f71",
+    "a698cdb0c93cb82c185d73d3a91d9ba771aa54b127af1c3b48c1e85d310ef10b",
+    "a7acc1661fd04010e6d7643ac492c96785f326609ca28bb4f93e1aa250000cfa",
+    "a8227303d96597015906cbc49c231d3f777624c75e981bd70e9ef0063c97d486",
+    "a9228ce03e1b29d6c9bec2aed1fe764299080d6b805a3b050dda6378cd02536a",
+    "ad05ddbe3f3420976a2a6ae93a3f61188e13e49bc39541bc7ede80dbd3b06a03",
+    "aec40d1c2636355d6ae1443de04ff5e8b8848ca7b12227230d7022b65aa4e710",
+    "af3f6602412004877665f20edeae7d20ea206e4d8a0fc1d86be5ac3a9664a43e",
+    "b0f2464d9c15b4bb43109f0c6542b3af9b41829be63b684379d6840d0c7bcb6c",
+    "b1a6ec427e8ddf04e8b64c19391a969a8900d59a6d0d990d3a5422644805cf04",
+    "b3f4503c9e061acfcd4d6ba56301162a9c95d5ebbd175dba555703c161afe3cf",
+    "b844bd672413e7ee623a46a002535c811f854664270f3c40c0a15e27ee19e44c",
+    "b8eeefa44e54440f29c5c01e708b36ea9ae834b32311365301d206e970833593",
+    "b91dcfabf189f564f01c7746781fbbf1604505f3977ca4856ace34362e5ac456",
+    "c1cc5dbc1b18c0bb9f18431e37b4ff269324deaa0eabba1a4d67b523a1d62bf4",
+    "c7d3e1d5e6611715692f760eb37eebfbe42f878bef5b4d2c0a5ec50fe5a100b7",
+    "cbcc9961b5d6698677b24829be0e9a7881eeae885abc340eecc2b4a0bb94b3ed",
+    "ce00b1cd9df6d379ea30fd00a8dc8b9059991d18a1a5ce73e73e1966ac250da4",
+    "d05e6b6cbe739f7c946580afc846ba23d557edd59f7637b70d14ec61ca72acb1",
+    "d394b217171b783fec351e095fcd99cc2a3826be0ccf85a15bb8d4f3c2d2e9fb",
+    "d8111b595b7609ee7f97cc3da53d7aa06e9b43c911a640be33454c911de33308",
+    "dc377cf18813b6ad830b3202419ea28664f91b5b869f190ff55ab222df56d7c2",
+    "deeff63b99abdbaccee90d6df0aef4a995c944e8ac725c9c6a03623f82a3d6a3",
+    "e444aade142728ee712285fd2d10bf4df5140c30f46e7fc36a3d877ed619007e",
+    "ec45a58b98712a47f741f9c568d0e781b72a5226857e311d4bed91b6c457a246",
+    "efeddcc5f38248429aeee3a4f81783935eb4f077e4b58e4ccc0f3436337a1951",
+    "f01090cab84d96548e6bb6f00dc3d47945e435558a3e1169636c58245e89a9d4",
+    "f2007261b1176b662c6a16b240cef50a94fa5a98c4309bf95dcc6318c4d5e320",
+    "f25d673daf604271b93cd76c8fb53aa6a17e1fb0d7523062a5c9dff432e2a120",
+    "fb146e11d56d278eed1a2d96073f64eb316f19a61efffcb705dabbb8c9399a9d",
+    "fcf735cc1198956cca1c9afa5ccc0210ceae789ea511d81f51aaf71b435f442a",
+    "ff2a6e85f02c30b0d38a75df14d68007787acd1d07af446ed82a99166e60595f",
+    "ffd968671ea5be73feeb6243a1fd6aff7a986c271cfc7259bc2168fc746bf9c4"
+  ],
+  "model_or_graph_executions_at_freeze": 0,
+  "limitations": [
+    "Author-prepared synthetic variants, not external business blind acceptance.",
+    "Input hashes detect exact reuse, not semantic independence from development families.",
+    "No Agent, Worker, graph or model execution is allowed during preparation.",
+    "Budget estimates are observations, not a guarantee of completion or monetary cost."
+  ]
+}

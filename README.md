@@ -4,6 +4,10 @@
 完整介绍名：**电商运营分析与竞品研究 Agent 系统**。
 命名与迁移记录见 [项目命名](docs/10-project-naming.md)。
 
+最新验收（2026-10-22）：H61—H80完整96 Task已执行，诊断语义59/60、固定29/36，但库存快照缺失误述使G6仍未放行。
+累计5,990,281/8,000,000 token；结果、失败与证据边界见[34号正式验收](docs/34-diagnosis-h61-h80-formal-acceptance.md)。
+下文各批次验证数字按其时间和源码版本保留，不能合并为当前生产验收。
+
 结合销售、退款、库存、内部规则和公开竞品资料，生成区分事实、分析与建议的报告。
 关键结论关联原文或确定性指标；长任务可以复核、取消、恢复，并交付 Markdown/PDF。
 
@@ -33,6 +37,11 @@ f3a12de的库存、内部规则、综合补货三个真实教学单例见[模型
 行为率96.67%（58/60）、正向完成率96.30%，关键用例4/6未达100%，**G6未放行**；累计4,749,932/6,000,000 token、743次请求。
 失败为H59两次停止口径不一致，已修复并用R61—R66新题包18 Task复评18/18通过（全部`target_covered`），仍待完整20题新正式轮重判，见[v9正式验收](docs/32-diagnosis-v9-formal-acceptance.md)。
 当前进度与未完成事项见[2026-10-21进度整理](docs/31-development-progress-20261021.md)，历史过程见[诊断开发记录](docs/23-diagnosis-development.md)。
+2026-10-22已补充零请求题包冻结/预检与正式运行`--frozen-plan`保护，全量隔离PG/HTTP回归679 PASS。
+用户已授权累计800万token，[H61—H80完整96 Task](docs/acceptance/diagnosis-v9-h61-h80/README.md)已执行并逐份审查：
+自动96/96、诊断语义59/60、固定29/36、关键6/6，但库存快照缺失误述触发语义事实门槛，**G6仍未放行**。
+累计5,990,281 token、934次请求、未知0；完整失败与判定见[本轮正式验收](docs/34-diagnosis-h61-h80-formal-acceptance.md)，
+准备与验证见[复现交付](docs/33-diagnosis-acceptance-preparation-20261022.md)。
 新调用链与个人练习见[诊断源码路线](docs/24-diagnosis-source-map.md)。[评测入口](docs/26-diagnosis-evaluation.md)与[运行维护](docs/27-diagnosis-operations.md)已交付。
 本轮另补全轮token硬预算；完整保留集已累计执行99个Task、246次请求、1,495,690 token。独立自动证据复核诊断38/60，未达90%目标，继续保留固定Workflow。
 失败、续评与实现边界见[完整真实评测](docs/28-diagnosis-live-evaluation.md)；本轮不执行G7。
