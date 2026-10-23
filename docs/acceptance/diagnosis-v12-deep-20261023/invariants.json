@@ -1,0 +1,52 @@
+{
+  "seed": 20261023,
+  "generated_datasets": 239,
+  "scopes_per_dataset": 2,
+  "assertions": 20375,
+  "arithmetic_assertions": 20374,
+  "arithmetic_failures": 0,
+  "security_checks": [
+    {
+      "check": "scope_specific_cache",
+      "passed": true
+    },
+    {
+      "check": "reject_execute_sql_1",
+      "passed": true
+    },
+    {
+      "check": "reject_compare_periods_2",
+      "passed": true
+    },
+    {
+      "check": "reject_compare_periods_3",
+      "passed": true
+    },
+    {
+      "check": "reject_compare_periods_4",
+      "passed": true
+    },
+    {
+      "check": "reject_compare_periods_5",
+      "passed": true
+    },
+    {
+      "check": "rejected_arguments_no_execution",
+      "passed": true
+    },
+    {
+      "check": "foreign_bundle_read",
+      "passed": true
+    },
+    {
+      "check": "revoke_cached_read",
+      "passed": true
+    },
+    {
+      "check": "revoke_catalog",
+      "passed": true
+    }
+  ],
+  "new_provider_requests": 0,
+  "scope": "Pure integer-row properties + isolated SQLite gateway controls; not real model quality or production security certification"
+}

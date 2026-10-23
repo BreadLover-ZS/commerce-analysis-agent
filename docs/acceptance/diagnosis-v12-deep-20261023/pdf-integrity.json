@@ -1,0 +1,74 @@
+[
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/category-control/artifacts/report-v1.pdf",
+    "sha256": "e78d68d262bcb3314c21bec8bbec7b53920d948258e9eed800896c38452cd8d5",
+    "pages": 4,
+    "bytes": 8724,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 4457
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/component-control/artifacts/report-v1.pdf",
+    "sha256": "4ba18fa2db065e0ad1630851c79c48fdf2018d3d9124ee917fb25d5b7684d001",
+    "pages": 5,
+    "bytes": 10666,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 6604
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/component-synonym/artifacts/report-v1.pdf",
+    "sha256": "b6ab281d9d4de73c84d9a672e2b17676b84302f2a392ba8f08f5b011a93e2140",
+    "pages": 3,
+    "bytes": 8111,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 3762
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/excluded-sku/artifacts/report-v1.pdf",
+    "sha256": "1e752d988682fc68c4b5b8f16563b488368b2b76022757dec647e436930e9df9",
+    "pages": 2,
+    "bytes": 6023,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 1596
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/literal-control/artifacts/report-v1.pdf",
+    "sha256": "a37dc795cf744e35dd3a30c291146d0b071be99fc8a96f8585ec8d2d6fd74d8c",
+    "pages": 2,
+    "bytes": 6036,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 1603
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/partial-budget-three-skus/artifacts/report-v1.pdf",
+    "sha256": "fac9c015b6a884c6b4596cf6f4b856f418f08fdcc1b7aac5b05f0269cee4a2e7",
+    "pages": 4,
+    "bytes": 9234,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 4497
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/per-sku-counts/artifacts/report-v1.pdf",
+    "sha256": "6e59866d2d6732a7d34a67a62e00531f8e27470a88b12c079dc8b63203bc4f78",
+    "pages": 3,
+    "bytes": 8068,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 3748
+  },
+  {
+    "file": "evaluations/results/diagnosis-deep-acceptance-20261023-01/wrong-contribution-dimension/artifacts/report-v1.pdf",
+    "sha256": "3c0216436c84e9d92c797b824ed1ba4d977bf271a4679a212645b772b785e116",
+    "pages": 4,
+    "bytes": 8707,
+    "nonempty_pages": true,
+    "contains_title": true,
+    "text_characters": 4453
+  }
+]

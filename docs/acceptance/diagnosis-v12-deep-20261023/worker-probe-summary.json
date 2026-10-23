@@ -1,0 +1,240 @@
+{
+  "task_executions": 8,
+  "independent_pass": 4,
+  "independent_fail": 4,
+  "scope": "Targeted local development replays, not a sampled model quality rate or fresh formal holdout",
+  "probes": [
+    {
+      "probe": "literal-control",
+      "query": "请直接列出本期与比较期的净销售额及差额",
+      "task_query": "请直接列出本期与比较期的净销售额及差额。",
+      "task_id": "d0df23ca-f35a-4b09-98de-73ab02bc4654",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": true,
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "stub_model_calls": 0,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": null,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/literal-control/agent.json",
+      "receipt_sha256": "b6660426e0017191e8e233dd77b32e4a3625b49a05823d294666e78946c47e41"
+    },
+    {
+      "probe": "excluded-sku",
+      "query": "比较除商品 A 以外商品的两期净销售额及差额",
+      "task_query": "比较除商品 A 以外商品的两期净销售额及差额。",
+      "task_id": "3c621377-da0e-4866-ad8f-3147dc0031c5",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": false,
+      "expected_scope": [
+        "B"
+      ],
+      "actual_scope": [
+        "A"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "stub_model_calls": 0,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": null,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/excluded-sku/agent.json",
+      "receipt_sha256": "04655f67c3cadab546058bba4e3a69fe458d4ceafe1892d9c60559ec90651b6e"
+    },
+    {
+      "probe": "component-control",
+      "query": "逐商品列出支付金额、退款金额和净销售额的本期值、比较期值及差额",
+      "task_query": "逐商品列出支付金额、退款金额和净销售额的本期值、比较期值及差额。",
+      "task_id": "454b5cd3-d4fd-474c-b6d3-66fa5b87ce55",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": true,
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "stub_model_calls": 2,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": null,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/component-control/agent.json",
+      "receipt_sha256": "2f5a91c929453cc9aa3891843ae7371501cc5cf49c2c32d6e94af1dff15f0b6b"
+    },
+    {
+      "probe": "component-synonym",
+      "query": "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额",
+      "task_query": "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额。",
+      "task_id": "3949c5e6-8387-4911-84a4-2a5261ac92ee",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": false,
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [
+        "A/gross_revenue/current",
+        "A/gross_revenue/comparison",
+        "A/gross_revenue/delta",
+        "A/refund_amount/current",
+        "A/refund_amount/comparison",
+        "A/refund_amount/delta",
+        "A/net_revenue/current",
+        "A/net_revenue/comparison",
+        "A/net_revenue/delta",
+        "B/gross_revenue/current",
+        "B/gross_revenue/comparison",
+        "B/gross_revenue/delta",
+        "B/refund_amount/current",
+        "B/refund_amount/comparison",
+        "B/refund_amount/delta",
+        "B/net_revenue/current",
+        "B/net_revenue/comparison",
+        "B/net_revenue/delta"
+      ],
+      "category_fact_count": 0,
+      "stub_model_calls": 1,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": null,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/component-synonym/agent.json",
+      "receipt_sha256": "cafd0c339dfaab25846ee717c828c25354f78a1de1ca7a7e185246d732ed343e"
+    },
+    {
+      "probe": "per-sku-counts",
+      "query": "逐商品列出本期与比较期的支付件数、退款件数及差额",
+      "task_query": "逐商品列出本期与比较期的支付件数、退款件数及差额。",
+      "task_id": "f2bd17ca-967b-49a1-9c42-868d4c7f5e44",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": false,
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [
+        "A/paid_units/current",
+        "A/paid_units/comparison",
+        "A/paid_units/delta",
+        "A/refunded_units/current",
+        "A/refunded_units/comparison",
+        "A/refunded_units/delta",
+        "B/paid_units/current",
+        "B/paid_units/comparison",
+        "B/paid_units/delta",
+        "B/refunded_units/current",
+        "B/refunded_units/comparison",
+        "B/refunded_units/delta"
+      ],
+      "category_fact_count": 0,
+      "stub_model_calls": 1,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": null,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/per-sku-counts/agent.json",
+      "receipt_sha256": "b743c2f114ac11850a5ccc75a5075abee0fc5f998f5ba047b452c459082f8dd3"
+    },
+    {
+      "probe": "category-control",
+      "query": "按品类核对两期净销售额的变化贡献",
+      "task_query": "按品类核对两期净销售额的变化贡献并对账。",
+      "task_id": "8722fb2d-9018-4e52-bad2-d4998b7b4d7a",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": true,
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 4,
+      "stub_model_calls": 1,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": true,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/category-control/agent.json",
+      "receipt_sha256": "5a0e4747a4dbfb4bf3ca76215a22941bff719c39e282a301b4a171a39a540f3f"
+    },
+    {
+      "probe": "wrong-contribution-dimension",
+      "query": "按品类核对两期净销售额的变化贡献",
+      "task_query": "按品类核对两期净销售额的变化贡献并对账。",
+      "task_id": "f74e23f9-5f52-4863-8601-3d19651eaa9a",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "target_covered",
+      "independent_acceptance_passed": false,
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "stub_model_calls": 1,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": true,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/wrong-contribution-dimension/agent.json",
+      "receipt_sha256": "bbafccee4abbc0f5d25aa41821e4f7c893c2ff2dad21e2a53622bcd9231a4d22"
+    },
+    {
+      "probe": "partial-budget-three-skus",
+      "query": "逐商品列出两期支付金额、退款金额和净销售额及差额",
+      "task_query": "逐商品列出两期支付金额、退款金额和净销售额及差额。",
+      "task_id": "46864e7d-c0ac-4ca4-bd45-bedd5f319619",
+      "task_status": "degraded",
+      "program_validation_passed": true,
+      "stop_reason": "model_budget",
+      "independent_acceptance_passed": true,
+      "expected_scope": [
+        "A",
+        "B",
+        "C"
+      ],
+      "actual_scope": [
+        "A",
+        "B",
+        "C"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "stub_model_calls": 1,
+      "actual_provider_requests": 0,
+      "automatic_grading_passed": null,
+      "receipt": "evaluations/results/diagnosis-deep-acceptance-20261023-01/partial-budget-three-skus/agent.json",
+      "receipt_sha256": "28c4707fd7472022a94280b8d954273c8473c581d5306586d97a86b560f7322a"
+    }
+  ]
+}

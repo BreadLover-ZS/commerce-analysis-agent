@@ -241,6 +241,21 @@ class Repository:
                     bundle_hash=bundle.bundle_hash,
                     **versions,
                 )
+                if versions["graph_version"] == "diagnosis-v13":
+                    from app.commerce.answer_contract_v2 import bound_request
+
+                    existing_contract = db.scalar(
+                        select(Task).where(
+                            Task.user_id == user.id, Task.idempotency_key == idempotency_key
+                        )
+                    )
+                    if existing_contract:
+                        if "answer_contract" in existing_contract.parameters:
+                            payload["answer_contract"] = existing_contract.parameters[
+                                "answer_contract"
+                            ]
+                    else:
+                        payload["answer_contract"] = bound_request(request.query, bundle.payload)
                 payload["budget"] = self._bounded_commerce_budget()
                 fingerprint = hashlib.sha256(
                     json.dumps(payload, sort_keys=True).encode()
@@ -297,6 +312,7 @@ class Repository:
                     "prompt_version",
                     "tool_registry_version",
                     "review_answer_version",
+                    "answer_contract",
                 }
                 prior_hash_valid = (
                     hashlib.sha256(

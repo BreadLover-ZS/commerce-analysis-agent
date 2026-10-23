@@ -47,8 +47,8 @@ class Settings(BaseSettings):
     diagnosis_wait_ttl_seconds: int = Field(86400, ge=60, le=604800)
     diagnosis_inventory_max_age_days: int = Field(7, ge=0, le=365)
     diagnosis_runtime: Literal[
-        "legacy", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12"
-    ] = "v12"
+        "legacy", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13"
+    ] = "v13"
     commerce_review_answer_version: Literal[1, 2, 3] = 3
 
     @model_validator(mode="after")

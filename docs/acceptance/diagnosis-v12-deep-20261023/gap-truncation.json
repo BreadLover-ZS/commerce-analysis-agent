@@ -1,0 +1,31 @@
+{
+  "probe": "open-question-truncation",
+  "total_unfulfilled_items": 27,
+  "displayed_unfulfilled_items": 20,
+  "omitted_items": [
+    "必答项 C/gross_revenue/delta 尚未取得",
+    "必答项 C/net_revenue/comparison 尚未取得",
+    "必答项 C/net_revenue/current 尚未取得",
+    "必答项 C/net_revenue/delta 尚未取得",
+    "必答项 C/refund_amount/comparison 尚未取得",
+    "必答项 C/refund_amount/current 尚未取得",
+    "必答项 C/refund_amount/delta 尚未取得"
+  ],
+  "report_limitations": [
+    "金额按记账期计算，净销售额未扣成本，不是利润。",
+    "退款件数/支付件数是记账期占比，没有订单关联，不能证明同批订单最终退款率或经营因果。",
+    "缺行不补零；启用后停报按缺数处理，不能自行认定下架。",
+    "本输入为模拟数据。",
+    "对比期不相邻，未消除节假日与季节差异。",
+    "没有成本、曝光、访客和订单关联，不能计算利润、转化率、广告ROI或同批订单最终退款率。",
+    "候选支持状态只对应确定性观察规则，不能当作因果证明或统计置信度。",
+    "日序列报告展示首尾及极值代表日期，完整明细在授权证据中。",
+    "每条事实以其实体范围为准；范围缩小前的基线保留初始授权范围。",
+    "启用前日期不适用、不要求补零；启用后零销量须有真实显式零记录，缺行不能造零。",
+    "规则引用只经过逐字重算，解读与冲突候选均未核验；复核导出不改变此状态。"
+  ],
+  "truncation_disclosed": false,
+  "stop_reason": "model_budget",
+  "program_validation_passed": true,
+  "severity": "P2 transparency gap; does not falsely claim target covered"
+}

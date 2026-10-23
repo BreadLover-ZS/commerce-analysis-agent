@@ -33,6 +33,12 @@ FAULTS = {
     "unknown_usage",
 }
 VERSION_CONTRACTS = {
+    "diagnosis-v13": {
+        "graph_version": "diagnosis-v13",
+        "schema_version": "3",
+        "prompt_version": "diagnosis-v13",
+        "tool_registry_version": "6",
+    },
     "diagnosis-v12": {
         "graph_version": "diagnosis-v12",
         "schema_version": "2",
@@ -535,6 +541,7 @@ def grade(case, bundle, run):
                     "diagnosis-v10",
                     "diagnosis-v11",
                     "diagnosis-v12",
+                    "diagnosis-v13",
                 }
                 and not independent
                 and (
@@ -549,6 +556,13 @@ def grade(case, bundle, run):
                 if case.harness.clarification_choice
                 else case.scope_skus
             )
+            if (
+                task.get("graph_version") == "diagnosis-v13"
+                and not case.harness.clarification_choice
+            ):
+                from evaluations.diagnosis_request_checks import expected_entities
+
+                expected_scope = expected_entities(business["query"], case.scope_skus)
             checks["final_scope"] = fixed or report.get("scope", {}).get("skus") == expected_scope
             if fixed:
                 baselines = [p for p in sources if p["tool"] == "sales"]
@@ -564,22 +578,47 @@ def grade(case, bundle, run):
                     p
                     for p in sources
                     if p["tool"] == "compare_periods"
-                    and p["scope"]["skus"] == case.scope_skus
+                    and p["scope"]["skus"]
+                    == (
+                        expected_scope
+                        if task.get("graph_version") == "diagnosis-v13"
+                        else case.scope_skus
+                    )
                     and "net_revenue.current" in p["fact_catalog"]
                 ]
-                checks["literal_baseline_answer"] = bool(baselines) and all(
-                    Decimal(p["fact_catalog"]["net_revenue.current"]["value"]) * 100
-                    == expected.net_cents
-                    and Decimal(p["fact_catalog"]["net_revenue.comparison"]["value"]) * 100
-                    == expected.comparison_net_cents
-                    and p["comparable"] == expected.comparable
-                    and (
-                        not expected.comparable
-                        or Decimal(p["fact_catalog"]["net_revenue.delta"]["value"]) * 100
-                        == expected.delta_cents
+                if task.get("graph_version") == "diagnosis-v13":
+                    current_values, current_coverage = raw_totals(
+                        business["sales"], expected_scope, business["period"]
                     )
-                    for p in baselines
-                )
+                    previous_values, previous_coverage = raw_totals(
+                        business["sales"], expected_scope, business["comparison_period"]
+                    )
+                    bound_comparable = all(
+                        c["complete"] and c["expected_records"] > 0
+                        for c in (current_coverage, previous_coverage)
+                    )
+                    checks["literal_baseline_answer"] = bool(baselines) and all(
+                        Decimal(p["fact_catalog"]["net_revenue.current"]["value"]) * 100
+                        == current_values["net_revenue"]
+                        and Decimal(p["fact_catalog"]["net_revenue.comparison"]["value"]) * 100
+                        == previous_values["net_revenue"]
+                        and p["comparable"] == bound_comparable
+                        for p in baselines
+                    )
+                else:
+                    checks["literal_baseline_answer"] = bool(baselines) and all(
+                        Decimal(p["fact_catalog"]["net_revenue.current"]["value"]) * 100
+                        == expected.net_cents
+                        and Decimal(p["fact_catalog"]["net_revenue.comparison"]["value"]) * 100
+                        == expected.comparison_net_cents
+                        and p["comparable"] == expected.comparable
+                        and (
+                            not expected.comparable
+                            or Decimal(p["fact_catalog"]["net_revenue.delta"]["value"]) * 100
+                            == expected.delta_cents
+                        )
+                        for p in baselines
+                    )
         for mode in FAULTS:
             name = "fault_contract_" + mode
             if name in declared:
@@ -759,7 +798,22 @@ def grade(case, bundle, run):
     # Optional assertion, opt-in for fresh packets. Old expected hashes stay frozen.
     if "multi_sku_daily_covered" in declared:
         checks["multi_sku_daily_covered"] = not fixed and multi_sku_daily_covered(business, sources)
-    mandatory = declared | {"expected_outcome"}
+    v13_checks = {}
+    if (
+        not fixed
+        and task.get("graph_version") == "diagnosis-v13"
+        and case.execution == "diagnostic"
+    ):
+        from evaluations.diagnosis_request_checks import completion_checks
+
+        selected = (
+            [case.harness.clarification_choice]
+            if case.harness.clarification_choice
+            else expected_scope
+        )
+        v13_checks = completion_checks(business, report, sources, selected)
+        checks.update(v13_checks)
+    mandatory = declared | {"expected_outcome"} | set(v13_checks)
     if case.execution == "diagnostic":
         mandatory |= {
             "valid_report",

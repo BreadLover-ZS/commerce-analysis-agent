@@ -272,7 +272,7 @@ class DiagnosisToolGateway:
             # No task row lock while the business tool runs.
             result = (
                 self._calculate(name, args, calculation, extras, registry_version=version)
-                if version in {"3", "4", "5"}
+                if version in {"3", "4", "5", "6"}
                 else self._calculate(name, args, calculation, extras)
             )
         except Exception:
@@ -295,14 +295,14 @@ class DiagnosisToolGateway:
                 calculation.bundle,
                 args.filters,
             )
-            if registry_version in {"4", "5"}:
+            if registry_version in {"4", "5", "6"}:
                 from app.diagnosis.planner_v10 import separate_inventory_coverage
 
                 result = separate_inventory_coverage(result)
             return result
         if name == "search_rule_documents":
             retrieve = search_rules
-            if registry_version in {"3", "4", "5"}:
+            if registry_version in {"3", "4", "5", "6"}:
                 from app.diagnosis.rule_retrieval_v2 import search_rules_v2
 
                 retrieve = search_rules_v2
@@ -317,6 +317,12 @@ class DiagnosisToolGateway:
         if name == "compare_periods":
             return calculation.compare(args.metric)
         if name == "rank_contributors":
+            if registry_version == "6":
+                from app.diagnosis.metrics import METRICS
+
+                return calculation.rank_components(
+                    args.dimension, args.top_k, component_metrics=tuple(METRICS)
+                )
             return (
                 calculation.rank_components(args.dimension, args.top_k)
                 if registry_version == "5"

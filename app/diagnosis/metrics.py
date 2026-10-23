@@ -276,7 +276,13 @@ class DiagnosticMetrics:
             else None,
         }
 
-    def rank_components(self, dimension, top_k):
+    def rank_components(
+        self,
+        dimension,
+        top_k,
+        *,
+        component_metrics=("net_revenue", "gross_revenue", "refund_amount"),
+    ):
         result = self.rank(dimension, top_k)
         keys, coverage = [], {}
         for sku in self.skus:
@@ -287,7 +293,7 @@ class DiagnosticMetrics:
                 for name, span in self.periods.items()
             }
             coverage[sku] = {name: v["coverage"] for name, v in values.items()}
-            for metric in ("net_revenue", "gross_revenue", "refund_amount"):
+            for metric in component_metrics:
                 field, unit, label = METRICS[metric]
                 for part, value in values.items():
                     if value["coverage"]["observed_records"]:

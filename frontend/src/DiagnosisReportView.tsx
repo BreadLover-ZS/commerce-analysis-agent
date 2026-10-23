@@ -391,6 +391,13 @@ export default function DiagnosisReportView({
             )}
             <section className="report-section">
               <h3>核对建议与未完成问题</h3>
+              {report.gap_summary && (
+                <p>
+                  未完成问题共{report.gap_summary.total}项，当前展示
+                  {report.gap_summary.displayed}项，省略
+                  {report.gap_summary.omitted}项。
+                </p>
+              )}
               <ul>
                 {[...report.recommendations, ...report.open_questions].map(
                   (text, index) => (
@@ -399,6 +406,18 @@ export default function DiagnosisReportView({
                 )}
               </ul>
             </section>
+            {!!report.gap_summary?.omitted && report.open_question_details && (
+              <details aria-label="完整未完成清单">
+                <summary>
+                  完整未完成清单（共{report.gap_summary.total}项）
+                </summary>
+                <ul>
+                  {report.open_question_details.map((text, index) => (
+                    <li key={index}>{text}</li>
+                  ))}
+                </ul>
+              </details>
+            )}
             <div className="limitations">
               <h3>资料限制与适用边界</h3>
               <ul>

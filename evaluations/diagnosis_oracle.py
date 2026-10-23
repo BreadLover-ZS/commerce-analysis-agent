@@ -188,19 +188,29 @@ def expected_numeric(sales, bundle, tool, arguments, result, inventory=None):
         else:
             invariants.update(contributors=[], reconciliation=None)
         invariants["all_contributors"] = ordered
-        if result.get("tool_version") == "5":
+        if result.get("tool_version") in {"5", "6"}:
             component_keys, component_coverage = [], {}
             for sku in selected:
                 values = {name: raw_totals(sales, [sku], span) for name, span in periods.items()}
                 component_coverage[sku] = {name: pair[1] for name, pair in values.items()}
-                for metric in ("net_revenue", "gross_revenue", "refund_amount"):
+                for metric in (
+                    (
+                        "net_revenue",
+                        "gross_revenue",
+                        "refund_amount",
+                        "paid_units",
+                        "refunded_units",
+                    )
+                    if result.get("tool_version") == "6"
+                    else ("net_revenue", "gross_revenue", "refund_amount")
+                ):
                     for part, (value, covered) in values.items():
                         if covered["observed_records"]:
                             key = f"component.{sku}.{metric}.{part}"
                             put(
                                 key,
                                 value[metric],
-                                "CNY",
+                                "count" if metric in {"paid_units", "refunded_units"} else "CNY",
                                 entity_type="sku",
                                 entity_id=sku,
                                 span=periods[part],
@@ -211,7 +221,7 @@ def expected_numeric(sales, bundle, tool, arguments, result, inventory=None):
                         put(
                             key,
                             values["current"][0][metric] - values["comparison"][0][metric],
-                            "CNY",
+                            "count" if metric in {"paid_units", "refunded_units"} else "CNY",
                             entity_type="sku",
                             entity_id=sku,
                         )
@@ -353,7 +363,7 @@ def expected_numeric(sales, bundle, tool, arguments, result, inventory=None):
                 "observed_inventory_skus": sum(r["snapshot_day"] is not None for r in items),
             },
         )
-        if result.get("tool_version") in {"4", "5"}:
+        if result.get("tool_version") in {"4", "5", "6"}:
             invariants["coverage"].update(
                 snapshot_complete=all(i["snapshot_day"] is not None for i in items),
                 sales_window_complete=all(

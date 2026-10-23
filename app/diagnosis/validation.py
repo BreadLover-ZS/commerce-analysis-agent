@@ -67,7 +67,7 @@ def verified_evidence(source, query, bundle, sales_payload, task_id, *, task=Non
             DiagnosisToolGateway._calculate(
                 spec["tool"], args, calculation, extras, registry_version=version
             )
-            if version in {"3", "4", "5"}
+            if version in {"3", "4", "5", "6"}
             else DiagnosisToolGateway._calculate(spec["tool"], args, calculation, extras)
         )
     except (ValueError, KeyError, TypeError):

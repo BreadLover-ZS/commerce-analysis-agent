@@ -1,0 +1,86 @@
+{
+  "acceptance_status": "FAIL_LOCAL",
+  "commit": "4af01818b56015fd57fc126c58c4a480403e32ee",
+  "implementation_sha256": "e9bcf8aa1b7ebeb6b53903b33a15980c7908ac87e1ede658004711d10abf353c",
+  "scope": "G0-G6 local acceptance only; no business code edits; G7 excluded",
+  "blockers": [
+    "A01 excluded entity scope",
+    "A02 per-entity request obligations",
+    "A03 contribution dimension and automatic grading"
+  ],
+  "other_findings": [
+    "A04 undisclosed open-question truncation"
+  ],
+  "backend": {
+    "database": "PostgreSQL 16.2",
+    "passed": 755,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 170.03
+  },
+  "browser": {
+    "passed": 17,
+    "actual_api_tests": 9,
+    "mock_response_tests": 8,
+    "seconds": 53.9
+  },
+  "frontend_build_passed": true,
+  "ci_jobs": [
+    {
+      "conclusion": "success",
+      "name": "browser",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "container",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "backend",
+      "status": "completed"
+    }
+  ],
+  "arithmetic": {
+    "seed": 20261023,
+    "datasets_per_execution": 239,
+    "scope_checks_per_execution": 478,
+    "arithmetic_assertions_per_execution": 20374,
+    "total_assertions_including_security_aggregate": 20375,
+    "independent_reproduction_matches": true
+  },
+  "direct_gateway_checks": {
+    "passed": 10,
+    "failed": 0
+  },
+  "worker_probes": {
+    "scenarios": 8,
+    "primary_tasks": 8,
+    "script_reproduction_tasks": 8,
+    "primary_independent_pass": 4,
+    "primary_independent_fail": 4,
+    "reproduction_outcomes_identical": true,
+    "interpretation": "targeted acceptance cases, not a model quality rate"
+  },
+  "pdf": {
+    "structural_checks_passed": 8,
+    "native_visual_sample": "component-control first page only",
+    "all_pages_visual_acceptance": false,
+    "poppler_environment_issue": "Adobe-GB1 mapping not found; native QuickLook renders same PDF"
+  },
+  "old_v11_grading_unchanged": 96,
+  "new_v12_formal_task_executions": 0,
+  "new_paid_requests": 0,
+  "new_paid_tokens": 0,
+  "cumulative_tokens": 8613150,
+  "cumulative_limit": 10000000,
+  "cumulative_provider_requests": 1288,
+  "unknown_usage": 0,
+  "release_eligible": false,
+  "v12_model_quality": "UNTESTED",
+  "reviewer_boundary": "Implementation author AI; expected values independent of production request parser; not organizationally independent or human business acceptance",
+  "source_code_changed": false,
+  "original_frozen_v12_plan_still_valid": true,
+  "artifact_directory": "evaluations/results/diagnosis-deep-acceptance-20261023-01/"
+}

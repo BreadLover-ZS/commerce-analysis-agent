@@ -40,8 +40,15 @@ V11 = {
     "tool_registry_version": "5",
 }
 V12 = {**V11, "graph_version": "diagnosis-v12", "prompt_version": "diagnosis-v12"}
+V13 = {
+    **V12,
+    "graph_version": "diagnosis-v13",
+    "prompt_version": "diagnosis-v13",
+    "schema_version": "3",
+    "tool_registry_version": "6",
+}
 RUNTIME_VERSIONS = {
-    v["graph_version"]: v for v in (V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12)
+    v["graph_version"]: v for v in (V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13)
 }
 EXTENSION_TOOLS = {"inventory_risk": InventoryArgs, "search_rule_documents": RuleSearchArgs}
 
@@ -58,6 +65,8 @@ def extended_objectives(query):
 
 
 def accepted_versions(query, sources, runtime="legacy"):
+    if runtime == "v13":
+        return dict(V13)
     if runtime == "v12":
         return dict(V12)
     if runtime == "v11":
@@ -89,7 +98,7 @@ def is_v2(task):
 
 def is_extended(task):
     return task["graph_version"] in {
-        v["graph_version"] for v in (V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12)
+        v["graph_version"] for v in (V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13)
     }
 
 

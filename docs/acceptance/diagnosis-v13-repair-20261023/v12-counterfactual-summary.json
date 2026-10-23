@@ -1,0 +1,503 @@
+{
+  "new_provider_requests": 0,
+  "fresh_formal_packet_executions": 0,
+  "probes": [
+    {
+      "probe": "literal-control",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "model_stub_calls": 0,
+      "tool_calls": 2,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "请直接列出本期与比较期的净销售额及差额"
+          }
+        ],
+        "goals": [
+          "net_revenue"
+        ],
+        "canonical_query": "请直接列出本期与比较期的净销售额及差额",
+        "unsupported_requests": [],
+        "component_metrics": [],
+        "dimension": "products",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "authorized_scope"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": true
+    },
+    {
+      "probe": "excluded-sku",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A"
+      ],
+      "expected_scope": [
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "model_stub_calls": 0,
+      "tool_calls": 2,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "比较除商品 A 以外商品的两期净销售额及差额"
+          }
+        ],
+        "goals": [
+          "net_revenue"
+        ],
+        "canonical_query": "比较除商品 A 以外商品的两期净销售额及差额",
+        "unsupported_requests": [],
+        "component_metrics": [],
+        "dimension": "products",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "authorized_scope"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": false
+    },
+    {
+      "probe": "component-control",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "model_stub_calls": 2,
+      "tool_calls": 4,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "逐商品列出支付金额、退款金额和净销售额的本期值、比较期值及差额"
+          },
+          {
+            "metric": "gross_revenue",
+            "polarity": "requested",
+            "clause": "逐商品列出支付金额、退款金额和净销售额的本期值、比较期值及差额"
+          },
+          {
+            "metric": "refund_amount",
+            "polarity": "requested",
+            "clause": "逐商品列出支付金额、退款金额和净销售额的本期值、比较期值及差额"
+          }
+        ],
+        "goals": [
+          "net_revenue",
+          "refunds"
+        ],
+        "canonical_query": "逐商品列出支付金额、退款金额和净销售额的本期值、比较期值及差额",
+        "unsupported_requests": [],
+        "component_metrics": [
+          "gross_revenue",
+          "net_revenue",
+          "refund_amount"
+        ],
+        "dimension": "products",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "each_authorized_sku"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": true
+    },
+    {
+      "probe": "component-synonym",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [
+        "A/gross_revenue/current",
+        "A/gross_revenue/comparison",
+        "A/gross_revenue/delta",
+        "A/refund_amount/current",
+        "A/refund_amount/comparison",
+        "A/refund_amount/delta",
+        "A/net_revenue/current",
+        "A/net_revenue/comparison",
+        "A/net_revenue/delta",
+        "B/gross_revenue/current",
+        "B/gross_revenue/comparison",
+        "B/gross_revenue/delta",
+        "B/refund_amount/current",
+        "B/refund_amount/comparison",
+        "B/refund_amount/delta",
+        "B/net_revenue/current",
+        "B/net_revenue/comparison",
+        "B/net_revenue/delta"
+      ],
+      "category_fact_count": 0,
+      "model_stub_calls": 1,
+      "tool_calls": 3,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额"
+          },
+          {
+            "metric": "gross_revenue",
+            "polarity": "requested",
+            "clause": "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额"
+          },
+          {
+            "metric": "refund_amount",
+            "polarity": "requested",
+            "clause": "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额"
+          }
+        ],
+        "goals": [
+          "net_revenue",
+          "refunds"
+        ],
+        "canonical_query": "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额",
+        "unsupported_requests": [],
+        "component_metrics": [],
+        "dimension": "products",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "authorized_scope"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": false
+    },
+    {
+      "probe": "per-sku-counts",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [
+        "A/paid_units/current",
+        "A/paid_units/comparison",
+        "A/paid_units/delta",
+        "A/refunded_units/current",
+        "A/refunded_units/comparison",
+        "A/refunded_units/delta",
+        "B/paid_units/current",
+        "B/paid_units/comparison",
+        "B/paid_units/delta",
+        "B/refunded_units/current",
+        "B/refunded_units/comparison",
+        "B/refunded_units/delta"
+      ],
+      "category_fact_count": 0,
+      "model_stub_calls": 1,
+      "tool_calls": 3,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "paid_units",
+            "polarity": "requested",
+            "clause": "逐商品列出本期与比较期的支付件数、退款件数及差额"
+          },
+          {
+            "metric": "refunded_units",
+            "polarity": "requested",
+            "clause": "逐商品列出本期与比较期的支付件数、退款件数及差额"
+          }
+        ],
+        "goals": [
+          "refunds"
+        ],
+        "canonical_query": "逐商品列出本期与比较期的支付件数、退款件数及差额",
+        "unsupported_requests": [],
+        "component_metrics": [],
+        "dimension": "products",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "authorized_scope"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": false
+    },
+    {
+      "probe": "category-control",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 4,
+      "model_stub_calls": 1,
+      "tool_calls": 3,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "按品类核对两期净销售额的变化贡献"
+          }
+        ],
+        "goals": [
+          "net_revenue",
+          "products"
+        ],
+        "canonical_query": "按品类核对两期净销售额的变化贡献；对账",
+        "unsupported_requests": [],
+        "component_metrics": [],
+        "dimension": "categories",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "authorized_scope"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": true
+    },
+    {
+      "probe": "wrong-contribution-dimension",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "target_covered",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B"
+      ],
+      "expected_scope": [
+        "A",
+        "B"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "model_stub_calls": 1,
+      "tool_calls": 3,
+      "open_questions": [],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "按品类核对两期净销售额的变化贡献"
+          }
+        ],
+        "goals": [
+          "net_revenue",
+          "products"
+        ],
+        "canonical_query": "按品类核对两期净销售额的变化贡献；对账",
+        "unsupported_requests": [],
+        "component_metrics": [],
+        "dimension": "categories",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "authorized_scope"
+      },
+      "computed_gaps": [],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": false
+    },
+    {
+      "probe": "partial-budget-three-skus",
+      "task_status": "degraded",
+      "error_code": null,
+      "stop_reason": "model_budget",
+      "program_validation_passed": true,
+      "actual_scope": [
+        "A",
+        "B",
+        "C"
+      ],
+      "expected_scope": [
+        "A",
+        "B",
+        "C"
+      ],
+      "missing_items": [],
+      "category_fact_count": 0,
+      "model_stub_calls": 1,
+      "tool_calls": 3,
+      "open_questions": [
+        "必答项 A/gross_revenue/current 尚未取得",
+        "必答项 A/gross_revenue/comparison 尚未取得",
+        "必答项 A/gross_revenue/delta 尚未取得",
+        "必答项 A/net_revenue/current 尚未取得",
+        "必答项 A/net_revenue/comparison 尚未取得",
+        "必答项 A/net_revenue/delta 尚未取得",
+        "必答项 A/refund_amount/current 尚未取得",
+        "必答项 A/refund_amount/comparison 尚未取得",
+        "必答项 A/refund_amount/delta 尚未取得",
+        "必答项 B/gross_revenue/current 尚未取得",
+        "必答项 B/gross_revenue/comparison 尚未取得",
+        "必答项 B/gross_revenue/delta 尚未取得",
+        "必答项 B/net_revenue/current 尚未取得",
+        "必答项 B/net_revenue/comparison 尚未取得",
+        "必答项 B/net_revenue/delta 尚未取得",
+        "必答项 B/refund_amount/current 尚未取得",
+        "必答项 B/refund_amount/comparison 尚未取得",
+        "必答项 B/refund_amount/delta 尚未取得",
+        "必答项 C/gross_revenue/current 尚未取得",
+        "必答项 C/gross_revenue/comparison 尚未取得"
+      ],
+      "parser": {
+        "version": "answer-contract-v1",
+        "items": [
+          {
+            "metric": "net_revenue",
+            "polarity": "requested",
+            "clause": "逐商品列出两期支付金额、退款金额和净销售额及差额"
+          },
+          {
+            "metric": "gross_revenue",
+            "polarity": "requested",
+            "clause": "逐商品列出两期支付金额、退款金额和净销售额及差额"
+          },
+          {
+            "metric": "refund_amount",
+            "polarity": "requested",
+            "clause": "逐商品列出两期支付金额、退款金额和净销售额及差额"
+          }
+        ],
+        "goals": [
+          "net_revenue",
+          "refunds"
+        ],
+        "canonical_query": "逐商品列出两期支付金额、退款金额和净销售额及差额",
+        "unsupported_requests": [],
+        "component_metrics": [
+          "gross_revenue",
+          "net_revenue",
+          "refund_amount"
+        ],
+        "dimension": "products",
+        "periods": [
+          "current",
+          "comparison",
+          "delta"
+        ],
+        "presentation": "each_authorized_sku"
+      },
+      "computed_gaps": [
+        "必答项 A/gross_revenue/current 尚未取得",
+        "必答项 A/gross_revenue/comparison 尚未取得",
+        "必答项 A/gross_revenue/delta 尚未取得",
+        "必答项 A/net_revenue/current 尚未取得",
+        "必答项 A/net_revenue/comparison 尚未取得",
+        "必答项 A/net_revenue/delta 尚未取得",
+        "必答项 A/refund_amount/current 尚未取得",
+        "必答项 A/refund_amount/comparison 尚未取得",
+        "必答项 A/refund_amount/delta 尚未取得",
+        "必答项 B/gross_revenue/current 尚未取得",
+        "必答项 B/gross_revenue/comparison 尚未取得",
+        "必答项 B/gross_revenue/delta 尚未取得",
+        "必答项 B/net_revenue/current 尚未取得",
+        "必答项 B/net_revenue/comparison 尚未取得",
+        "必答项 B/net_revenue/delta 尚未取得",
+        "必答项 B/refund_amount/current 尚未取得",
+        "必答项 B/refund_amount/comparison 尚未取得",
+        "必答项 B/refund_amount/delta 尚未取得",
+        "必答项 C/gross_revenue/current 尚未取得",
+        "必答项 C/gross_revenue/comparison 尚未取得",
+        "必答项 C/gross_revenue/delta 尚未取得",
+        "必答项 C/net_revenue/current 尚未取得",
+        "必答项 C/net_revenue/comparison 尚未取得",
+        "必答项 C/net_revenue/delta 尚未取得",
+        "必答项 C/refund_amount/current 尚未取得",
+        "必答项 C/refund_amount/comparison 尚未取得",
+        "必答项 C/refund_amount/delta 尚未取得"
+      ],
+      "new_provider_requests": 0,
+      "independent_acceptance_passed": true
+    }
+  ]
+}

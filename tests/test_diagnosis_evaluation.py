@@ -637,8 +637,8 @@ async def test_extended_case_grading_distinguishes_registry_and_algorithm_versio
     result = await evaluate(args)
     record = json.loads((root / f"{case_id}-1/additional.json").read_text())
     assert result["all_automatic_passed"], record["grading"]
-    assert record["task"]["tool_registry_version"] == "5"
-    assert all(q["query_spec"]["tool_version"] == "5" for q in record["queries"])
+    assert record["task"]["tool_registry_version"] == "6"
+    assert all(q["query_spec"]["tool_version"] == "6" for q in record["queries"])
     assert all(
         f["tool_version"] == "1"
         for e in record["evidence"]

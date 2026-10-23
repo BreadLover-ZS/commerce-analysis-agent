@@ -1,0 +1,26 @@
+[
+  {
+    "receipt": "evaluations/results/diagnosis-v11-h01-h20-live-20261023-01/H09-1/agent.json",
+    "query": "按品类核对两期净销售额贡献，分别列正项、负项并对账总体差额。",
+    "rank_dimensions": [
+      "category"
+    ],
+    "category_fact_count": 4
+  },
+  {
+    "receipt": "evaluations/results/diagnosis-v11-h01-h20-live-20261023-01/H09-2/agent.json",
+    "query": "按品类核对两期净销售额贡献，分别列正项、负项并对账总体差额。",
+    "rank_dimensions": [
+      "category"
+    ],
+    "category_fact_count": 4
+  },
+  {
+    "receipt": "evaluations/results/diagnosis-v11-h01-h20-live-20261023-01/H09-3/agent.json",
+    "query": "按品类核对两期净销售额贡献，分别列正项、负项并对账总体差额。",
+    "rank_dimensions": [
+      "category"
+    ],
+    "category_fact_count": 4
+  }
+]

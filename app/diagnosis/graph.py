@@ -22,6 +22,7 @@ from app.diagnosis.contracts import (
     V10,
     V11,
     V12,
+    V13,
     extended_objectives,
     is_extended,
     tool_schemas,
@@ -108,10 +109,10 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
     findings_fn, information_fn = observations, information_digest
     unsupported_fn, extensions_fn = unsupported_question, extended_objectives
     v3 = task["graph_version"] in {
-        v["graph_version"] for v in (V3, V4, V5, V6, V7, V8, V9, V10, V11, V12)
+        v["graph_version"] for v in (V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13)
     }
     v4 = task["graph_version"] in {
-        v["graph_version"] for v in (V4, V5, V6, V7, V8, V9, V10, V11, V12)
+        v["graph_version"] for v in (V4, V5, V6, V7, V8, V9, V10, V11, V12, V13)
     }
     if is_extended(task):
         from app.diagnosis import planner_v2, validation_v2
@@ -136,7 +137,9 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
 
         prompt_fn = planner_v4.prompt
         computable_fn = planner_v4.computable_gap_tools
-    if task["graph_version"] in {v["graph_version"] for v in (V5, V6, V7, V8, V9, V10, V11, V12)}:
+    if task["graph_version"] in {
+        v["graph_version"] for v in (V5, V6, V7, V8, V9, V10, V11, V12, V13)
+    }:
         from app.diagnosis import planner_v5
 
         propose_fn, prompt_fn = planner_v5.demo_proposal, planner_v5.prompt
@@ -152,6 +155,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         V10["graph_version"],
         V11["graph_version"],
         V12["graph_version"],
+        V13["graph_version"],
     }:
         from app.diagnosis import planner_v7
 
@@ -166,6 +170,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         V10["graph_version"],
         V11["graph_version"],
         V12["graph_version"],
+        V13["graph_version"],
     }:
         from app.diagnosis import planner_v8
 
@@ -175,6 +180,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         V10["graph_version"],
         V11["graph_version"],
         V12["graph_version"],
+        V13["graph_version"],
     }:
         from app.diagnosis import planner_v9
 
@@ -200,6 +206,15 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         propose_fn, prompt_fn = planner_v12.demo_proposal, planner_v12.prompt
         gaps_fn, computable_fn = planner_v12.missing_coverage, planner_v12.computable_gap_tools
         objectives_fn, unsupported_fn = planner_v12.objectives, planner_v12.unsupported_question
+
+    scope_fn = initial_scope
+    if task["graph_version"] == V13["graph_version"]:
+        from app.diagnosis import planner_v10, planner_v13
+
+        propose_fn, prompt_fn = planner_v13.demo_proposal, planner_v13.prompt
+        gaps_fn, computable_fn = planner_v13.missing_coverage, planner_v13.computable_gap_tools
+        objectives_fn, unsupported_fn = planner_v13.objectives, planner_v13.unsupported_question
+        scope_fn = planner_v13.initial_scope
 
     schemas = tool_schemas(task)
     gateway, store = DiagnosisToolGateway(repo, ctx), DiagnosisStore(repo)
@@ -237,7 +252,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             "bundle_id": data["bundle"]["bundle_id"],
             "graph_version": task["graph_version"],
             "objective": task["query"],
-            "scope": initial_scope(task["query"], data["bundle"]),
+            "scope": scope_fn(task["query"], data["bundle"]),
             "plan_version": 1,
             "sequence": 0,
             "steps": [],
@@ -287,7 +302,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                 stop_reason="evidence_gap",
                 open_questions=(
                     gaps_fn(task["query"], [], state["scope"])
-                    if task["graph_version"] in {V11["graph_version"], V12["graph_version"]}
+                    if task["graph_version"]
+                    in {V11["graph_version"], V12["graph_version"], V13["graph_version"]}
                     else ["所问指标或操作超出当前数据与只读边界"]
                 ),
             )
@@ -304,8 +320,10 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
     async def propose(state):
         data = await snapshot()
         if (
-            task["graph_version"] == V12["graph_version"]
-            and planner_v12.baseline_complete(task["query"], data["evidence"], state["scope"])
+            task["graph_version"] in {V12["graph_version"], V13["graph_version"]}
+            and (
+                planner_v13 if task["graph_version"] == V13["graph_version"] else planner_v12
+            ).baseline_complete(task["query"], data["evidence"], state["scope"])
             and data["task"]["metrics"].get("usage_complete") is not False
         ):
             return {"stop_reason": "target_covered"}
@@ -328,7 +346,9 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                 result = await calls.invoke(
                     proposal_schema,
                     prompt_fn(
-                        data["task"] if task["graph_version"] == V12["graph_version"] else task,
+                        data["task"]
+                        if task["graph_version"] in {V12["graph_version"], V13["graph_version"]}
+                        else task,
                         data["bundle"],
                         state["scope"],
                         data["steps"],
@@ -368,6 +388,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             V10["graph_version"],
             V11["graph_version"],
             V12["graph_version"],
+            V13["graph_version"],
         }:
             proposal = planner_v10.public_proposal(proposal)
         step = await asyncio.to_thread(store.put_step, ctx, sequence, proposal, model_call_id)
@@ -425,6 +446,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                     V10["graph_version"],
                     V11["graph_version"],
                     V12["graph_version"],
+                    V13["graph_version"],
                 }
             ):
                 # v9：没有必填缺口、也未超出可回答范围时，声明的缺口无法用授权证据补齐；
@@ -461,6 +483,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                     V10["graph_version"],
                     V11["graph_version"],
                     V12["graph_version"],
+                    V13["graph_version"],
                 }:
                     from app.diagnosis.graph_constraints import SERIES_CONSTRAINT
                     from app.diagnosis.schemas import SeriesArgs
@@ -544,17 +567,25 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             stop = stop or "no_information"
         elif state["sequence"] >= 8:
             stop = stop or "step_budget"
-        if task["graph_version"] in {V11["graph_version"], V12["graph_version"]}:
+        if task["graph_version"] in {
+            V11["graph_version"],
+            V12["graph_version"],
+            V13["graph_version"],
+        }:
             from app.commerce.answer_contract import unsupported_gaps
             from app.diagnosis.planner_v11 import pending_computable
 
             if task["graph_version"] == V12["graph_version"]:
                 pending_computable = planner_v12.pending_computable
+            if task["graph_version"] == V13["graph_version"]:
+                pending_computable = planner_v13.pending_computable
 
             if (
-                (data["task"] if task["graph_version"] == V12["graph_version"] else task)[
-                    "metrics"
-                ].get("usage_complete")
+                (
+                    data["task"]
+                    if task["graph_version"] in {V12["graph_version"], V13["graph_version"]}
+                    else task
+                )["metrics"].get("usage_complete")
                 is not False
                 and stop != "usage_unknown"
                 and not pending_computable(task["query"], data["evidence"], state["scope"])

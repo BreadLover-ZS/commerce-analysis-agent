@@ -274,3 +274,56 @@ test("research fallback is visible while its report remains readable", async ({
   await expect(diagnostic).toContainText("研究结论未通过完整复核");
   expect(observed.writes).toEqual([]);
 });
+
+test("v13 discloses all 27 gaps after expanding the complete list", async ({
+  page,
+}) => {
+  const questions = Array.from(
+    { length: 27 },
+    (_, i) => `未完成核查义务 ${i + 1}`,
+  );
+  const task: Task = {
+    ...failed,
+    query: "逐商品核对本期与比较期金额",
+    status: "completed",
+    error_code: null,
+    parameters: { ...failed.parameters, profile: "commerce_diagnosis" },
+    report: {
+      profile: "commerce_diagnosis",
+      schema_version: 3,
+      title: "经营诊断报告",
+      objective: "逐商品核对",
+      bundle_id: "fixture",
+      bundle_hash: "fixture-hash",
+      period: { start: "2026-09-01", end: "2026-09-30" },
+      comparison_period: { start: "2026-08-01", end: "2026-08-31" },
+      scope: { skus: ["A", "B", "C"], objective: null },
+      versions: { graph_version: "diagnosis-v13" },
+      report_version: 1,
+      execution_mode: "demo_strategy",
+      facts: [],
+      observations: [],
+      steps: [],
+      stop_reason: "model_budget",
+      open_questions: questions.slice(0, 20),
+      open_question_details: questions,
+      gap_summary: { total: 27, displayed: 20, omitted: 7 },
+      recommendations: [],
+      limitations: [],
+    },
+  };
+  const observed = await openFixture(page, task, []);
+  await expect(
+    page.getByText("未完成问题共27项，当前展示20项，省略7项。", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  const full = page.getByLabel("完整未完成清单");
+  await expect(full.locator("li").last()).not.toBeVisible();
+  await full.locator("summary").click();
+  await expect(full.locator("li")).toHaveCount(27);
+  await expect(full.locator("li").last()).toHaveText("未完成核查义务 27");
+  await expect(full.locator("li").last()).toBeVisible();
+  expect(observed.writes).toEqual([]);
+  expect(observed.browserErrors).toEqual([]);
+});

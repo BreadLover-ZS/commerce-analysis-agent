@@ -61,6 +61,10 @@ export interface DiagnosisReport {
   steps: DiagnosisStep[];
   stop_reason: string;
   open_questions: string[];
+  open_question_details?: string[];
+  gap_summary?: { total: number; displayed: number; omitted: number };
+  request_contract?: Record<string, unknown>;
+  request_obligations?: Record<string, unknown>[];
   recommendations: string[];
   limitations: string[];
   rule_quotes?: {

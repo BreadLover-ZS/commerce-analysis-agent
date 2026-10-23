@@ -95,3 +95,11 @@ async def test_postgres_v12_persisted_contract_and_report_gate(setup):
     )
 
     await test_v12_saved_contract_survives_runtime_change_and_publishes(setup)
+
+
+async def test_postgres_v13_saved_entity_contract_and_exports(setup):
+    from tests.test_diagnosis_v13 import (
+        test_v13_persisted_contract_survives_defaults_and_client_retry,
+    )
+
+    await test_v13_persisted_contract_survives_defaults_and_client_retry(setup)

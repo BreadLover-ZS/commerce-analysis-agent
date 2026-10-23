@@ -1,0 +1,675 @@
+{
+  "probes": [
+    {
+      "probe": "literal-control",
+      "task_id": "f4fcaf71-8c44-4787-a600-df83448f3fc5",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 0,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "excluded-sku",
+      "task_id": "ca3b4164-96dc-4c4b-b7ce-4b268098aa4f",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 0,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "component-partial",
+      "task_id": "b4b79b6d-d44d-4dcc-ab0d-d7cea453ada0",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 18,
+        "displayed": 18,
+        "omitted": 0
+      },
+      "missing_items": [
+        [
+          "A",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "delta"
+        ]
+      ],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "component-repaired",
+      "task_id": "91dc92e0-ba30-4f75-9a17-533ce8c16497",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "counts-partial",
+      "task_id": "b1aed67a-dafa-4f41-a99b-a7fc3d8725ac",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 12,
+        "displayed": 12,
+        "omitted": 0
+      },
+      "missing_items": [
+        [
+          "A",
+          "paid_units",
+          "current"
+        ],
+        [
+          "A",
+          "paid_units",
+          "comparison"
+        ],
+        [
+          "A",
+          "paid_units",
+          "delta"
+        ],
+        [
+          "A",
+          "refunded_units",
+          "current"
+        ],
+        [
+          "A",
+          "refunded_units",
+          "comparison"
+        ],
+        [
+          "A",
+          "refunded_units",
+          "delta"
+        ],
+        [
+          "B",
+          "paid_units",
+          "current"
+        ],
+        [
+          "B",
+          "paid_units",
+          "comparison"
+        ],
+        [
+          "B",
+          "paid_units",
+          "delta"
+        ],
+        [
+          "B",
+          "refunded_units",
+          "current"
+        ],
+        [
+          "B",
+          "refunded_units",
+          "comparison"
+        ],
+        [
+          "B",
+          "refunded_units",
+          "delta"
+        ]
+      ],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "counts-repaired",
+      "task_id": "6667b2fc-25eb-4d11-a76d-195a33682ee1",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "category-control",
+      "task_id": "90d02c5d-28ba-4ca6-a4dc-9500ce794820",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-category-partial",
+      "task_id": "3ff147da-a605-4978-8a35-8c2332118cd5",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 1,
+        "displayed": 1,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-category-repaired",
+      "task_id": "2a2f8dc6-a29d-4854-89af-9030671e8f46",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-sku-partial",
+      "task_id": "6e2351d9-c92d-40ee-8304-f56867d5629a",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 1,
+        "displayed": 1,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-sku-repaired",
+      "task_id": "d1ba0cfa-b730-4ae1-8e62-a31bab215679",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "all-27-gaps",
+      "task_id": "026a1c29-2d28-4ffb-8037-38f24f778ebb",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true,
+        "literal_27_20_7": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B",
+        "C"
+      ],
+      "gap_summary": {
+        "total": 27,
+        "displayed": 20,
+        "omitted": 7
+      },
+      "missing_items": [
+        [
+          "A",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "delta"
+        ],
+        [
+          "C",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "C",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "C",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "C",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "C",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "C",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "C",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "C",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "C",
+          "net_revenue",
+          "delta"
+        ]
+      ],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "equivalent-count-path",
+      "task_id": "3afec279-7418-4285-bb7e-c58066e5e378",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "complete_gap_inventory": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 2,
+      "new_provider_requests": 0
+    }
+  ],
+  "passed": true,
+  "new_provider_requests": 0,
+  "formal_packet_executions": 0
+}
