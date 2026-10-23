@@ -187,6 +187,8 @@ class Repository:
             if not request.bundle_id:
                 payload.pop("bundle_id", None)
             payload.pop("parent_task_id", None)
+        if request.profile == "commerce_review":
+            payload["review_answer_version"] = self.settings.commerce_review_answer_version
         fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
         with self.session() as db:
             # Serialize admission per user in PostgreSQL, including duplicates.
@@ -244,7 +246,11 @@ class Repository:
                     json.dumps(payload, sort_keys=True).encode()
                 ).hexdigest()
             elif request.profile == "commerce_review" and request.bundle_id:
-                from app.commerce.review_inputs import REVIEW_BUNDLE_VERSIONS
+                from app.commerce.review_inputs import (
+                    REVIEW_BUNDLE_V2,
+                    REVIEW_BUNDLE_V3,
+                    REVIEW_BUNDLE_VERSIONS,
+                )
                 from app.diagnosis.inputs import owned_bundle
 
                 bundle, sales = owned_bundle(db, request.bundle_id, user.id, user.tenant_id)
@@ -256,7 +262,16 @@ class Repository:
                     for name, key in (("start_date", "start"), ("end_date", "end"))
                 ):
                     raise ValueError("固定复盘日期与输入组合不一致")
-                bundle_id, versions = bundle.id, dict(REVIEW_BUNDLE_VERSIONS)
+                bundle_id, versions = (
+                    bundle.id,
+                    dict(
+                        REVIEW_BUNDLE_V3
+                        if payload["review_answer_version"] == 3
+                        else REVIEW_BUNDLE_V2
+                        if payload["review_answer_version"] == 2
+                        else REVIEW_BUNDLE_VERSIONS
+                    ),
+                )
                 payload.update(
                     start_date=period["start"],
                     end_date=period["end"],
@@ -281,6 +296,7 @@ class Repository:
                     "schema_version",
                     "prompt_version",
                     "tool_registry_version",
+                    "review_answer_version",
                 }
                 prior_hash_valid = (
                     hashlib.sha256(
@@ -291,7 +307,7 @@ class Repository:
                 if bundle_id and not prior_hash_valid:
                     raise Conflict("已登记任务的输入或预算版本校验失败")
                 same_bound_request = (
-                    bool(bundle_id)
+                    bool(bundle_id or request.profile == "commerce_review")
                     and prior_hash_valid
                     and {k: v for k, v in prior.parameters.items() if k not in server_fields}
                     == {k: v for k, v in payload.items() if k not in server_fields}

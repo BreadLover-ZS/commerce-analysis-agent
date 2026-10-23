@@ -37,6 +37,7 @@ def review_task(setup, *, skus=None, payload=None, **changes):
 
 async def test_fixed_and_agent_workers_use_identical_explicit_period_scope_and_source(setup):
     settings, repo, user, _ = setup
+    settings.commerce_review_answer_version = 1  # This contract check intentionally covers v1.
     fixed, bundle, _ = review_task(setup, skus=["B"])
     diagnosis = repo.create_task(
         user,

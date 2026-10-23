@@ -272,7 +272,7 @@ class DiagnosisToolGateway:
             # No task row lock while the business tool runs.
             result = (
                 self._calculate(name, args, calculation, extras, registry_version=version)
-                if version == "3"
+                if version in {"3", "4", "5"}
                 else self._calculate(name, args, calculation, extras)
             )
         except Exception:
@@ -289,15 +289,20 @@ class DiagnosisToolGateway:
     @staticmethod
     def _calculate(name, args, calculation, extras=None, *, registry_version="2"):
         if name == "inventory_risk":
-            return inventory_risk(
+            result = inventory_risk(
                 calculation.cube.payload,
                 extras["inventory_payload"],
                 calculation.bundle,
                 args.filters,
             )
+            if registry_version in {"4", "5"}:
+                from app.diagnosis.planner_v10 import separate_inventory_coverage
+
+                result = separate_inventory_coverage(result)
+            return result
         if name == "search_rule_documents":
             retrieve = search_rules
-            if registry_version == "3":
+            if registry_version in {"3", "4", "5"}:
                 from app.diagnosis.rule_retrieval_v2 import search_rules_v2
 
                 retrieve = search_rules_v2
@@ -312,7 +317,11 @@ class DiagnosisToolGateway:
         if name == "compare_periods":
             return calculation.compare(args.metric)
         if name == "rank_contributors":
-            return calculation.rank(args.dimension, args.top_k)
+            return (
+                calculation.rank_components(args.dimension, args.top_k)
+                if registry_version == "5"
+                else calculation.rank(args.dimension, args.top_k)
+            )
         if name == "drilldown_series":
             return calculation.series()
         return calculation.refunds()

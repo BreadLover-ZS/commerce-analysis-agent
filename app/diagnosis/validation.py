@@ -67,7 +67,7 @@ def verified_evidence(source, query, bundle, sales_payload, task_id, *, task=Non
             DiagnosisToolGateway._calculate(
                 spec["tool"], args, calculation, extras, registry_version=version
             )
-            if version == "3"
+            if version in {"3", "4", "5"}
             else DiagnosisToolGateway._calculate(spec["tool"], args, calculation, extras)
         )
     except (ValueError, KeyError, TypeError):
@@ -262,8 +262,10 @@ def selected_fact_keys(payload):
             for key in (r["fact_key"], r["share_fact_key"])
             if key
         ]
-        return keys + (
-            ["contribution.other", "contribution.total"] if payload["all_contributors"] else []
+        return (
+            keys
+            + payload.get("component_fact_keys", [])
+            + (["contribution.other", "contribution.total"] if payload["all_contributors"] else [])
         )
     if payload["tool"] == "drilldown_series":
         chosen = []

@@ -1,0 +1,22 @@
+{
+  "recorded_at": "2026-10-22T14:03:47.611136+00:00",
+  "authorization_source": "User reply: 可以，提高吧; following explicit cumulative 9000000-token full 96-Task proposal",
+  "previous_cumulative_limit": 8000000,
+  "authorized_cumulative_limit": 9000000,
+  "known_tokens_at_authorization": 5990281,
+  "provider_requests_at_authorization": 934,
+  "scope": "Frozen v10 full 96-Task live evaluation, raw audit and per-receipt semantic review; G7 excluded",
+  "implementation_sha256": "6185ce66c617715c6105ae53d84750b0381421b4a95594dbeb2b13ab4fddb645",
+  "cases_file_sha256": "48b8c6e2d0c27b1b177e423b8e2efdd70b0697b0236d63d5dc74493dd2d13ded",
+  "frozen_manifest_sha256": "d2d6c078fe2029b5923d8a4ccd4ff26348316fa5f117e88564935b9c2a75d3cf",
+  "charge_from": "evaluations/results/diagnosis-v9-h61-h80-live-20261022-01",
+  "output": "evaluations/results/diagnosis-v10-h01-h20-live-20261022-01",
+  "provider": "DeepSeek",
+  "endpoint": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "monetary_cost": null,
+  "notes": [
+    "Historical frozen manifest remains unchanged.",
+    "All historical usage charged; no paid retries or cap expansion authorized."
+  ]
+}

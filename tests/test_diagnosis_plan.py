@@ -241,3 +241,10 @@ async def test_stale_frozen_plan_is_rejected_before_credentials_or_http(
     monkeypatch.setattr(diagnosis, "live_configuration", no_credentials)
     with pytest.raises(ValueError, match="实现指纹"):
         await diagnosis.evaluate(SimpleNamespace(frozen_plan=directory, charge_paid_run=None))
+
+
+def test_preflight_checks_ancestry_after_adding_the_new_round(prepared_inputs, monkeypatch):
+    monkeypatch.setattr(planning, "MAX_BUDGET_ANCESTRY", 1)
+    with pytest.raises(ValueError, match="加入新轮后"):
+        freeze(prepared_inputs)
+    assert not (prepared_inputs[0] / "manifest.json").exists()

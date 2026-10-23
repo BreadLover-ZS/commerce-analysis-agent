@@ -20,6 +20,7 @@ def setup(tmp_path):
         _env_file=None,
         app_env="test",
         diagnosis_runtime="legacy",
+        commerce_review_answer_version=1,
         data_dir=tmp_path,
         database_url="sqlite:///" + str(tmp_path / "app.sqlite"),
         lease_seconds=5,

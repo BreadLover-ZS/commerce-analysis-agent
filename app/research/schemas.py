@@ -140,6 +140,21 @@ class ReviewNarrative(BaseModel):
     )
 
 
+class ReviewActionV3(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    action_id: str
+    precondition_id: str
+    scope_skus: list[str] = Field(max_length=100)
+
+
+class ReviewNarrativeV3(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    analysis: list[
+        Literal["sales_drivers", "refund_drivers", "product_mix", "daily_structure", "data_quality"]
+    ] = Field(min_length=1, max_length=4)
+    recommendations: list[ReviewActionV3] = Field(min_length=1, max_length=4)
+
+
 class SemanticReview(BaseModel):
     unsupported_claim_ids: list[str] = Field(default_factory=list)
     unsupported_limitation_indices: list[int] = Field(

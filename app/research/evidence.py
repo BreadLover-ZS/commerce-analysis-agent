@@ -153,6 +153,38 @@ def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
             allowed = set(allowed_hypotheses(payload).values())
             if any(c.text not in allowed for c in actual[len(baseline) :]):
                 issues.append("经营解释超出当前证据允许的待验证假设目录")
+        if payload.get("answer_version") == 3:
+            from app.commerce.review_actions import ACTIONS
+
+            if any(
+                c.text not in {v[1] for v in ACTIONS.values()} for c in report.sections[4].claims
+            ):
+                issues.append("建议动作或事实前提不在已核验目录")
+            displayed = {m.key for s in report.sections for c in s.claims for m in c.metrics}
+            if (
+                "comparison_net_revenue" in payload["fact_catalog"]
+                and "comparison_net_revenue" not in displayed
+            ):
+                issues.append("比较期净销售额未直接展示")
+            dimension = payload["answer_contract"]["dimension"]
+            entries = payload["dimensions"][dimension]
+            # Check the source catalogue independently of the rendering template.
+            required = {
+                key
+                for key in payload["fact_catalog"]
+                if any(
+                    key.startswith(f"{entry['fact_key'].rsplit('.', 1)[0]}.{metric}.")
+                    for entry in entries[:4]
+                    for metric in ("gross_revenue", "refund_amount", "net_revenue")
+                )
+            }
+            if required - displayed:
+                issues.append("逐对象支付、退款或净额必答项未直接展示")
+            if len(entries) > 4 and not any(
+                "不能视为已完整展示" in note and all(e["entity"] in note for e in entries[4:])
+                for note in report.limitations
+            ):
+                issues.append("展示容量之外的对象未明确列为未展示")
         for section in report.sections[3:]:
             for claim in section.claims:
                 issues.extend(
@@ -373,6 +405,44 @@ def commerce_review_report(evidence, gaps):
             "refunded_units_delta",
         ],
     )
+    if payload.get("answer_version") in {2, 3}:
+        add(
+            "退款观察",
+            "review-denominator-comparison",
+            [
+                "paid_units",
+                "comparison_paid_units",
+                "paid_units_delta",
+                "refunded_units",
+                "comparison_refunded_units",
+            ],
+        )
+        add(
+            "退款观察",
+            "review-refund-comparison",
+            [
+                "refund_amount",
+                "comparison_refund_amount",
+                "refund_rate_pct",
+                "comparison_refund_rate_pct",
+            ],
+        )
+    if payload.get("answer_version") == 3:
+        add("经营表现", "review-comparison-net", ["comparison_net_revenue"])
+        sections["变化贡献"] = []
+        dimension = payload["answer_contract"]["dimension"]
+        entries = payload["dimensions"][dimension]
+        for index, entry in enumerate(entries[:4]):
+            keys = list(entry.get("component_fact_keys", {}).values())
+            for part in range(0, len(keys), 8):
+                add("变化贡献", f"review-components-{index}-{part}", keys[part : part + 8])
+        if len(entries) > 4:
+            gaps = [
+                *gaps,
+                "变化贡献：报告仅展示前四个对象，未展示对象："
+                + "、".join(e["entity"] for e in entries[4:])
+                + "；完整逐项事实在证据文件，不能视为已完整展示。",
+            ]
     for index, finding in enumerate(payload["findings"]):
         sections["经营解读"].append(
             Claim(
@@ -395,14 +465,35 @@ def commerce_review_report(evidence, gaps):
                 ),
             )
         )
-    sections["行动建议"].append(
-        Claim(
-            id="review-action",
-            kind="recommendation",
-            evidence_ids=[eid],
-            text="建议先核对数据完整性与退款记账归属，再结合商品变化贡献补充原因资料，由运营人员确认后执行。",
+    if payload.get("answer_version") in {2, 3}:
+        sections["经营解读"].append(
+            Claim(
+                id="review-direct-answers",
+                kind="analysis",
+                evidence_ids=[eid],
+                text="".join(a["text"] for a in payload["direct_answers"]),
+            )
         )
-    )
+    if payload.get("answer_version") == 3:
+        from app.commerce.review_actions import ACTIONS
+
+        sections["行动建议"] = [
+            Claim(
+                id="review-action",
+                kind="recommendation",
+                evidence_ids=[eid],
+                text=ACTIONS["verify_records"][1],
+            )
+        ]
+    else:
+        sections["行动建议"].append(
+            Claim(
+                id="review-action",
+                kind="recommendation",
+                evidence_ids=[eid],
+                text="建议先核对数据完整性与退款记账归属，再结合商品变化贡献补充原因资料，由运营人员确认后执行。",
+            )
+        )
     return render_bound_metrics(
         ResearchReport(
             title="经营复盘报告",

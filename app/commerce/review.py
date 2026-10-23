@@ -3,6 +3,7 @@
 from collections import defaultdict
 from decimal import Decimal
 
+from app.commerce.answer_contract import request_contract
 from app.commerce.calculations import SalesCube, comparison_dates
 from app.commerce.datasets import owned_dataset
 from app.commerce.service import decimal_string, fact, money
@@ -33,6 +34,8 @@ def calculate_periods(
     comparison_start=None,
     comparison_end=None,
     allowed_skus=None,
+    answer_version=1,
+    objective="",
 ):
     prior_start, prior_end = comparison_dates(start, end, comparison_start, comparison_end)
     cube = SalesCube(payload)
@@ -54,14 +57,16 @@ def calculate_periods(
     )
     metrics, catalog = {}, {}
 
-    def put(key, value, unit, label, entity_id="all", entity_name=None):
+    def put(key, value, unit, label, entity_id="all", entity_name=None, period=None):
         entity_name = entity_name or (
             "经营汇总"
             if current["coverage"]["complete"] and current["coverage"]["observed_records"]
             else "已记录经营数据"
         )
         metrics[key] = str(value)
-        catalog[key] = fact(key, value, unit, label, entity_id, entity_name, start, end)
+        catalog[key] = fact(
+            key, value, unit, label, entity_id, entity_name, *(period or (start, end))
+        )
 
     for key, value, unit, label in [
         ("gross_revenue", money(current["revenue"]), "CNY", "支付金额"),
@@ -149,6 +154,55 @@ def calculate_periods(
             "存在日退款超过当日支付的记录；跨期记账允许此情况，需核对退款归属，不据此断定数据错误"
         )
 
+    if answer_version >= 2:
+        direct_answers = [
+            {
+                "code": "activation_boundary",
+                "text": "商品启用前的日期不适用，不要求记录或补零；启用后每个适用日须有显式记录，零销量需零行，缺行不能当作零。",
+            },
+            {
+                "code": "unsupported_metrics",
+                "text": "本数据未提供成本、访客、曝光及订单关联：不能计算两期利润、转化率、广告ROI或同批订单最终退款率，也不能用净销售额变化率替代转化率。",
+            },
+            {
+                "code": "refund_denominator",
+                "text": "记账期退款件数占比以本周期退款件数为分子、支付件数为分母；两期分别计算，无订单关联不能当作最终订单退款率。",
+            },
+        ]
+        if prior["coverage"]["observed_records"]:
+            for key, value, unit, label in [
+                ("net_revenue", money(prior["net"]), "CNY", "对比期已记录净销售额"),
+                ("refund_amount", money(prior["refund"]), "CNY", "对比期已记录退款金额"),
+                ("paid_units", prior["paid"], "count", "对比期已记录支付件数"),
+                ("refunded_units", prior["refunded"], "count", "对比期已记录退款件数"),
+            ]:
+                put("comparison_" + key, value, unit, label, period=(prior_start, prior_end))
+            if prior["paid"]:
+                put(
+                    "comparison_refund_rate_pct",
+                    decimal_string(Decimal(prior["refunded"]) * 100 / prior["paid"]),
+                    "percent",
+                    "对比期记账退款件数占比",
+                    period=(prior_start, prior_end),
+                )
+        if complete:
+            put(
+                "paid_units_delta", current["paid"] - prior["paid"], "count", "相对前期支付件数变化"
+            )
+            if (
+                current["paid"]
+                and prior["paid"]
+                and current["refunded"] * prior["paid"] > prior["refunded"] * current["paid"]
+                and current["refunded"] <= prior["refunded"]
+                and current["paid"] < prior["paid"]
+            ):
+                direct_answers.append(
+                    {
+                        "code": "payment_denominator_effect",
+                        "text": "记账退款件数占比上升，同时退款件数未增加、支付件数减少，存在支付分母收缩效应；这只说明记账关系，不证明退款业务原因。",
+                    }
+                )
+
     dimensions = {"products": [], "categories": []}
     groups = {"products": {k: [k] for k in products}, "categories": defaultdict(list)}
     for p in products.values():
@@ -173,6 +227,41 @@ def calculate_periods(
                 delta_key = f"{kind}.{index}.delta"
                 put(delta_key, money(delta), "CNY", "相对前期净销售额变化贡献", entity, name)
                 entry.update(delta_key=delta_key, delta_cents=delta)
+            if answer_version == 3:
+                parts = {}
+                for metric, field, label in (
+                    ("net_revenue", "net", "净销售额"),
+                    ("gross_revenue", "revenue", "支付金额"),
+                    ("refund_amount", "refund", "退款金额"),
+                ):
+                    for part, value, period in (
+                        ("current", now, (start, end)),
+                        ("comparison", before, (prior_start, prior_end)),
+                    ):
+                        if value["coverage"]["observed_records"]:
+                            component_key = f"{kind}.{index}.{metric}.{part}"
+                            put(
+                                component_key,
+                                money(value[field]),
+                                "CNY",
+                                ("本期已记录" if part == "current" else "对比期已记录") + label,
+                                entity,
+                                name,
+                                period=period,
+                            )
+                            parts[f"{metric}.{part}"] = component_key
+                    if complete:
+                        component_key = f"{kind}.{index}.{metric}.delta"
+                        put(
+                            component_key,
+                            money(now[field] - before[field]),
+                            "CNY",
+                            label + "变化贡献",
+                            entity,
+                            name,
+                        )
+                        parts[f"{metric}.delta"] = component_key
+                entry["component_fact_keys"] = parts
             dimensions[kind].append(entry)
         if complete and len(dimensions[kind]) > 4:
             limitations.append(
@@ -187,6 +276,11 @@ def calculate_periods(
     if sample:
         limitations.append("本报告使用可复现模拟经营数据，不代表真实业务效果")
     return {
+        **(
+            {"answer_version": answer_version, "direct_answers": direct_answers}
+            if answer_version >= 2
+            else {}
+        ),
         "tool": "sales",
         "review_profile": "commerce_review",
         "sample": sample,
@@ -211,6 +305,7 @@ def calculate_periods(
             "comparable": complete,
         },
         "dimensions": dimensions,
+        **({"answer_contract": request_contract(objective)} if answer_version == 3 else {}),
         "findings": findings,
         "definitions": DEFINITIONS
         if adjacent
@@ -222,7 +317,18 @@ def calculate_periods(
     }
 
 
-def dataset_review(repo, user_id, tenant_id, dataset_id, start, end, *, bundle_ctx=None):
+def dataset_review(
+    repo,
+    user_id,
+    tenant_id,
+    dataset_id,
+    start,
+    end,
+    *,
+    bundle_ctx=None,
+    answer_version=1,
+    objective="",
+):
     if bundle_ctx is not None:
         from datetime import date
 
@@ -246,13 +352,15 @@ def dataset_review(repo, user_id, tenant_id, dataset_id, start, end, *, bundle_c
             comparison_start=date.fromisoformat(info["comparison_period"]["start"]),
             comparison_end=date.fromisoformat(info["comparison_period"]["end"]),
             allowed_skus=info["allowed_skus"],
+            answer_version=answer_version,
+            objective=objective,
         )
         result.update(
             bundle_id=info["bundle_id"],
             bundle_hash=info["bundle_hash"],
             scope={"skus": info["allowed_skus"]},
             source_hashes={"sales": info["sales_content_hash"]},
-            input_binding_version="commerce-review-bundle-v1",
+            input_binding_version=f"commerce-review-bundle-v{answer_version}",
             source_samples=info.get("source_samples", {"sales": info["sample"]}),
         )
         for fact in result["fact_catalog"].values():
@@ -266,6 +374,13 @@ def dataset_review(repo, user_id, tenant_id, dataset_id, start, end, *, bundle_c
         item = owned_dataset(db, dataset_id, user_id, tenant_id)
         # Copy out of the short DB transaction; no model/network call holds a DB lock.
         payload, digest, sample = item.payload, item.content_hash, item.sample
-    return calculate_review(
-        payload, start, end, dataset_id=dataset_id, content_hash=digest, sample=sample
+    return calculate_periods(
+        payload,
+        start,
+        end,
+        dataset_id=dataset_id,
+        content_hash=digest,
+        sample=sample,
+        answer_version=answer_version,
+        objective=objective,
     )

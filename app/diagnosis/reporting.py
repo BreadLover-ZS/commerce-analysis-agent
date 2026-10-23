@@ -51,6 +51,41 @@ def bound_fact(source, key, extended=False):
     }
 
 
+def report_refs(task, evidence, scope):
+    keys = report_contract(task)[0]
+    refs = [(e["id"], key) for e in evidence for key in keys(e["payload"])]
+    if task["graph_version"] == "diagnosis-v11":
+        from app.diagnosis.planner_v11 import component_obligations
+
+        required = {
+            i["fact_key"]
+            for i in component_obligations(task["query"], evidence, scope)
+            if i["status"] == "acquired"
+        }
+        refs.sort(key=lambda ref: ref[1] not in required)
+    return refs[:250]
+
+
+def display_gaps(task, evidence, scope):
+    if task["graph_version"] != "diagnosis-v11":
+        return []
+    from app.diagnosis.planner_v11 import component_obligations
+
+    selected = set(report_refs(task, evidence, scope))
+    shown = {
+        (f["entity_id"], key)
+        for e in evidence
+        for key, f in e["payload"].get("fact_catalog", {}).items()
+        if (e["id"], key) in selected
+    }
+    omitted = [
+        f"{i['sku']}/{i['metric']}/{i['part']}"
+        for i in component_obligations(task["query"], evidence, scope)
+        if i["status"] == "acquired" and (i["sku"], i["fact_key"]) not in shown
+    ]
+    return ["报告展示容量不足，未展示必答项：" + "、".join(omitted)] if omitted else []
+
+
 def make_report(task, bundle, evidence, steps, scope, stop_reason, open_questions, execution_mode):
     keys, finding_fn, schema, _ = report_contract(task)
     facts = [bound_fact(e, key, is_extended(task)) for e in evidence for key in keys(e["payload"])]
@@ -65,9 +100,22 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
             ]
         )
     )
+    if task["graph_version"] == "diagnosis-v11":
+        limitations.append(
+            "启用前日期不适用、不要求补零；启用后零销量须有真实显式零记录，缺行不能造零。"
+        )
     if len(facts) > 250:
-        facts = facts[:250]
         limitations.append("报告事实展示已截断，完整事实目录保留在证据中。")
+    sources = {e["id"]: e for e in evidence}
+    facts = [
+        bound_fact(sources[eid], key, is_extended(task))
+        for eid, key in report_refs(task, evidence, scope)
+    ]
+    omitted = display_gaps(task, evidence, scope)
+    if omitted:
+        open_questions = [*omitted, *open_questions]
+        if stop_reason == "target_covered":
+            stop_reason = "evidence_gap"
     report = {
         "profile": "commerce_diagnosis",
         "schema_version": 2 if is_extended(task) else 1,
@@ -129,7 +177,11 @@ def report_contract(task):
             from app.diagnosis.planner_v5 import missing_coverage as gaps
         if task["graph_version"] in {"diagnosis-v7", "diagnosis-v8"}:
             from app.diagnosis.planner_v7 import missing_coverage as gaps
-        if task["graph_version"] == "diagnosis-v9":
+        if task["graph_version"] == "diagnosis-v11":
+            from app.diagnosis.planner_v11 import missing_coverage as gaps
+        elif task["graph_version"] == "diagnosis-v10":
+            from app.diagnosis.planner_v10 import missing_coverage as gaps
+        elif task["graph_version"] == "diagnosis-v9":
             from app.diagnosis.planner_v9 import missing_coverage as gaps
 
         return keys, findings, DiagnosticReportV2, gaps
@@ -170,11 +222,16 @@ def validate_report(report, task, bundle, evidence, steps):
             errors.append("unknown_fact_reference")
         elif fact != bound_fact(source, fact["metric_key"], is_extended(task)):
             errors.append("fact_or_unit_mismatch")
-    expected_refs = [(e["id"], k) for e in evidence for k in keys(e["payload"])][:250]
+    expected_refs = report_refs(task, evidence, report["scope"])
     if [(f["evidence_id"], f["metric_key"]) for f in report["facts"]] != expected_refs:
         errors.append("required_fact_selection_changed")
     if report["observations"] != finding_fn(task["id"], evidence, steps):
         errors.append("observation_not_program_verified")
+    if task["graph_version"] in {"diagnosis-v10", "diagnosis-v11"}:
+        from app.diagnosis.planner_v10 import public_proposal
+
+        if any(s["proposal"] != public_proposal(s["proposal"]) for s in report["steps"]):
+            errors.append("unverified_step_description")
     if report["steps"] != steps:
         errors.append("step_ledger_mismatch")
     if report["stop_reason"] not in STOP_TEXT:
@@ -187,6 +244,19 @@ def validate_report(report, task, bundle, evidence, steps):
         "所问指标或操作超出当前数据与只读边界",
         "调用结果或用量未知，未继续发起模型请求",
     }
+    if task["graph_version"] == "diagnosis-v11":
+        gaps = set(gap_fn(task["query"], evidence, report["scope"])) | set(
+            display_gaps(task, evidence, report["scope"])
+        )
+        for text in ("本期没有可核对的已记录事实", "两期数据覆盖不足，需补充原始数据并新建任务"):
+            if text in [g for e in evidence for g in e["payload"].get("limitations", [])] or any(
+                e["payload"].get("comparable") is False for e in evidence
+            ):
+                gaps.add(text)
+        if task["metrics"].get("usage_complete") is False:
+            gaps.add("调用结果或用量未知，未继续发起模型请求")
+        if report["stop_reason"] == "target_covered" and gaps:
+            errors.append("unfulfilled_request_items")
     if set(report["open_questions"]) - gaps:
         errors.append("unverified_gap_statement")
     template = make_report(

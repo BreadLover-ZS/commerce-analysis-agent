@@ -1,0 +1,210 @@
+{
+  "source": "evaluations/diagnosis_cases.json",
+  "source_sha256": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866",
+  "author": "AI code author; not external business blind assessment",
+  "scope": "v10 corpus-local H01-H20 identifiers; old corpora with these IDs remain separate by cases hash and run ID",
+  "model_or_graph_executions_during_authoring": 0,
+  "limitations": "Synthetic development/regression-family variants. Different data hashes do not imply independent business domains.",
+  "origins": [
+    {
+      "case_id": "H01",
+      "development_source": "D01",
+      "scale_factor": 61,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K011",
+        "B": "K012"
+      }
+    },
+    {
+      "case_id": "H02",
+      "development_source": "D02",
+      "scale_factor": 62,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K021",
+        "B": "K022"
+      }
+    },
+    {
+      "case_id": "H03",
+      "development_source": "D03",
+      "scale_factor": 63,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K031",
+        "B": "K032"
+      }
+    },
+    {
+      "case_id": "H04",
+      "development_source": "D04",
+      "scale_factor": 64,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K041",
+        "B": "K042"
+      }
+    },
+    {
+      "case_id": "H05",
+      "development_source": "D05",
+      "scale_factor": 65,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K051",
+        "B": "K052"
+      }
+    },
+    {
+      "case_id": "H06",
+      "development_source": "D06",
+      "scale_factor": 66,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K061",
+        "B": "K062"
+      }
+    },
+    {
+      "case_id": "H07",
+      "development_source": "D07",
+      "scale_factor": 67,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K071",
+        "B": "K072"
+      }
+    },
+    {
+      "case_id": "H08",
+      "development_source": "D08",
+      "scale_factor": 68,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K081",
+        "B": "K082"
+      }
+    },
+    {
+      "case_id": "H09",
+      "development_source": "D13",
+      "scale_factor": 69,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K091",
+        "B": "K092"
+      }
+    },
+    {
+      "case_id": "H10",
+      "development_source": "D14",
+      "scale_factor": 70,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K101",
+        "B": "K102"
+      }
+    },
+    {
+      "case_id": "H11",
+      "development_source": "D15",
+      "scale_factor": 71,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K111",
+        "B": "K112"
+      }
+    },
+    {
+      "case_id": "H12",
+      "development_source": "R01",
+      "scale_factor": 72,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K121",
+        "B": "K122"
+      }
+    },
+    {
+      "case_id": "H13",
+      "development_source": "D10",
+      "scale_factor": 73,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K131",
+        "B": "K132"
+      }
+    },
+    {
+      "case_id": "H14",
+      "development_source": "D11",
+      "scale_factor": 74,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K141",
+        "B": "K142"
+      }
+    },
+    {
+      "case_id": "H15",
+      "development_source": "D12",
+      "scale_factor": 75,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K151",
+        "B": "K152"
+      }
+    },
+    {
+      "case_id": "H16",
+      "development_source": "D16",
+      "scale_factor": 76,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K161",
+        "B": "K162"
+      }
+    },
+    {
+      "case_id": "H17",
+      "development_source": "R18",
+      "scale_factor": 77,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K171",
+        "B": "K172"
+      }
+    },
+    {
+      "case_id": "H18",
+      "development_source": "R18",
+      "scale_factor": 78,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K181",
+        "B": "K182"
+      }
+    },
+    {
+      "case_id": "H19",
+      "development_source": "R19",
+      "scale_factor": 79,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K191",
+        "B": "K192"
+      }
+    },
+    {
+      "case_id": "H20",
+      "development_source": "R20",
+      "scale_factor": 80,
+      "date_shift_days": 17,
+      "sku_mapping": {
+        "A": "K201",
+        "B": "K202"
+      }
+    }
+  ]
+}

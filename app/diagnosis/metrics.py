@@ -275,3 +275,43 @@ class DiagnosticMetrics:
             if self.comparable
             else None,
         }
+
+    def rank_components(self, dimension, top_k):
+        result = self.rank(dimension, top_k)
+        keys, coverage = [], {}
+        for sku in self.skus:
+            values = {
+                name: self.cube.aggregate(
+                    [sku], date.fromisoformat(span["start"]), date.fromisoformat(span["end"])
+                )
+                for name, span in self.periods.items()
+            }
+            coverage[sku] = {name: v["coverage"] for name, v in values.items()}
+            for metric in ("net_revenue", "gross_revenue", "refund_amount"):
+                field, unit, label = METRICS[metric]
+                for part, value in values.items():
+                    if value["coverage"]["observed_records"]:
+                        keys.append(
+                            self.fact(
+                                f"component.{sku}.{metric}.{part}",
+                                value[field],
+                                unit,
+                                f"已记录{label}",
+                                period=self.periods[part],
+                                entity_type="sku",
+                                entity_id=sku,
+                            )
+                        )
+                if self.comparable:
+                    keys.append(
+                        self.fact(
+                            f"component.{sku}.{metric}.delta",
+                            values["current"][field] - values["comparison"][field],
+                            unit,
+                            f"{label}变化贡献",
+                            entity_type="sku",
+                            entity_id=sku,
+                        )
+                    )
+        result.update(component_fact_keys=keys, component_coverage=coverage)
+        return result

@@ -60,9 +60,14 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                 # Preserve summary and the exact contribution facts used in the report.
                 # Keep the full per-product ledger out of the model character budget.
                 chosen = {k for k in catalog if "." not in k}
-                for entries in payload["dimensions"].values():
+                dimensions = payload["dimensions"].values()
+                if payload.get("answer_version") == 3:
+                    dimensions = [payload["dimensions"][payload["answer_contract"]["dimension"]]]
+                for entries in dimensions:
                     for entry in entries[:4]:
                         chosen.add(entry["delta_key"] or entry["fact_key"])
+                        if payload.get("answer_version") == 3:
+                            chosen.update(entry.get("component_fact_keys", {}).values())
                 catalog = {k: v for k, v in catalog.items() if k in chosen}
             item["excerpt"] = "权威事实见payload.fact_catalog；完整计算结果保存在证据账本。"
             item["payload"] = {
@@ -89,6 +94,16 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                             "findings",
                         )
                     }
+                )
+            if payload.get("answer_version") == 3:
+                from app.commerce.review_actions import action_catalog
+
+                item["payload"].update(
+                    answer_version=3,
+                    direct_answers=payload["direct_answers"],
+                    answer_contract=payload["answer_contract"],
+                    allowed_actions=action_catalog(payload),
+                    scope=payload.get("scope", {}),
                 )
             omitted = len(payload.get("items", [])) - len(kept_items)
             if omitted:

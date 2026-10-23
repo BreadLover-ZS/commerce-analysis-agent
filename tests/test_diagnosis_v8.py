@@ -12,7 +12,7 @@ from tests.test_diagnosis_model_calls import ScriptedDecisionModel
 from tests.test_diagnosis_v3 import projected, stop
 
 
-@pytest.mark.parametrize("runtime", ["v7", "v8"])
+@pytest.mark.parametrize("runtime", ["v7", "v8", "v11"])
 async def test_series_constraint_feedback_and_correction_preserve_saved_version(setup, runtime):
     setup[0].diagnosis_runtime = runtime
     task, _ = new_diagnosis(setup, "查看每个商品的每日走势")
@@ -30,8 +30,8 @@ async def test_series_constraint_feedback_and_correction_preserve_saved_version(
     steps = projected(setup, task)["steps"]
     correction = steps[0]["assessment"]["correction"]
     assert steps[0]["status"] == "REJECTED"
-    assert ("constraints" in correction) is (runtime == "v8")
-    if runtime == "v8":
+    assert ("constraints" in correction) is (runtime in {"v8", "v11"})
+    if runtime in {"v8", "v11"}:
         assert correction["constraints"] == [SERIES_CONSTRAINT]
         assert "exactly_one_entity" in json.dumps(model.requests[1], ensure_ascii=False)
     else:
@@ -39,8 +39,10 @@ async def test_series_constraint_feedback_and_correction_preserve_saved_version(
             "code": "argument_schema",
             "fields": [{"field": "arguments", "type": "value_error"}],
         }
-    assert [s["status"] for s in steps] == ["REJECTED", "SUCCEEDED", "SUCCEEDED", "SUCCEEDED"]
-    assert len(model.requests) == done["metrics"]["model_calls"] == 4
+    assert [s["status"] for s in steps] == ["REJECTED"] + ["SUCCEEDED"] * (
+        2 if runtime == "v11" else 3
+    )
+    assert len(model.requests) == done["metrics"]["model_calls"] == (3 if runtime == "v11" else 4)
     facts = done["report"]["facts"]
     assert {f["entity_id"] for f in facts if f["metric_key"].startswith("series.")} == {"A", "B"}
     assert done["metrics"]["tool_calls"] == 4  # Two baselines, two actual series, no auto-split.

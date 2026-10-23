@@ -11,7 +11,7 @@ from pathlib import Path
 
 from app.diagnosis.inputs import digest
 from evaluations.diagnosis import ROOT, implementation_manifest, write
-from evaluations.diagnosis_budget import prior_spend
+from evaluations.diagnosis_budget import MAX_BUDGET_ANCESTRY, prior_spend
 from evaluations.diagnosis_cases import business_input, load_cases
 from evaluations.diagnosis_grading import ASSERTIONS, TOOLS
 
@@ -93,6 +93,8 @@ def reconcile_history(directory):
     )
     if Path(directory).with_name(Path(directory).name + ".budget-continuation.json").exists():
         raise ValueError("该预算祖先已被其他轮次承接；请改用最新回执")
+    if history["ancestry_depth"] + 1 > MAX_BUDGET_ANCESTRY:
+        raise ValueError("加入新轮后的预算承接链过长；禁止开始付费运行")
     return {
         "provider": meta["provider"],
         "endpoint": meta["endpoint"],

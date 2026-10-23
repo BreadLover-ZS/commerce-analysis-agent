@@ -56,3 +56,34 @@ async def test_postgres_bound_baseline_concurrent_idempotent_admission(setup):
     assert len({row["id"] for row in results}) == 1
     with repo.session() as db:
         assert db.scalar(select(func.count()).select_from(Task)) == before + 1
+
+
+async def test_postgres_fixed_v2_answers_survive_runtime_change(setup):
+    from tests.test_diagnosis_v10 import (
+        test_fixed_v2_worker_keeps_direct_answers_after_runtime_change,
+    )
+
+    await test_fixed_v2_worker_keeps_direct_answers_after_runtime_change(setup)
+
+
+async def test_postgres_v10_stock_gap_and_public_trace(setup):
+    from tests.test_diagnosis_v10 import test_v10_worker_stock_snapshot_and_lead_gaps_are_distinct
+
+    await test_v10_worker_stock_snapshot_and_lead_gaps_are_distinct(setup)
+
+
+async def test_postgres_v11_persisted_contract_and_completion(setup):
+    from tests.test_diagnosis_v11 import (
+        test_v11_saved_contract_survives_default_change_and_two_call_budget,
+    )
+
+    await test_v11_saved_contract_survives_default_change_and_two_call_budget(setup)
+
+
+@pytest.mark.parametrize("bad_action", [False, True])
+async def test_postgres_fixed_v3_model_protocol_and_fallback(setup, bad_action):
+    from tests.test_fixed_v3_protocol import (
+        test_fixed_v3_protocol_context_and_invalid_action_fallback,
+    )
+
+    await test_fixed_v3_protocol_context_and_invalid_action_fallback(setup, bad_action)

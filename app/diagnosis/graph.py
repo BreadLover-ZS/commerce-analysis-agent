@@ -19,6 +19,8 @@ from app.diagnosis.contracts import (
     V7,
     V8,
     V9,
+    V10,
+    V11,
     extended_objectives,
     is_extended,
     tool_schemas,
@@ -33,7 +35,7 @@ from app.diagnosis.planner import (
     prompt,
     unsupported_question,
 )
-from app.diagnosis.reporting import make_report, markdown
+from app.diagnosis.reporting import display_gaps, make_report, markdown
 from app.diagnosis.schemas import (
     StepProposal,
 )
@@ -104,8 +106,10 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
     )
     findings_fn, information_fn = observations, information_digest
     unsupported_fn, extensions_fn = unsupported_question, extended_objectives
-    v3 = task["graph_version"] in {v["graph_version"] for v in (V3, V4, V5, V6, V7, V8, V9)}
-    v4 = task["graph_version"] in {v["graph_version"] for v in (V4, V5, V6, V7, V8, V9)}
+    v3 = task["graph_version"] in {
+        v["graph_version"] for v in (V3, V4, V5, V6, V7, V8, V9, V10, V11)
+    }
+    v4 = task["graph_version"] in {v["graph_version"] for v in (V4, V5, V6, V7, V8, V9, V10, V11)}
     if is_extended(task):
         from app.diagnosis import planner_v2, validation_v2
         from app.diagnosis.schemas_v2 import StepProposalV2
@@ -129,7 +133,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
 
         prompt_fn = planner_v4.prompt
         computable_fn = planner_v4.computable_gap_tools
-    if task["graph_version"] in {v["graph_version"] for v in (V5, V6, V7, V8, V9)}:
+    if task["graph_version"] in {v["graph_version"] for v in (V5, V6, V7, V8, V9, V10, V11)}:
         from app.diagnosis import planner_v5
 
         propose_fn, prompt_fn = planner_v5.demo_proposal, planner_v5.prompt
@@ -138,7 +142,13 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         from app.diagnosis import planner_v6
 
         prompt_fn = planner_v6.prompt
-    if task["graph_version"] in {V7["graph_version"], V8["graph_version"], V9["graph_version"]}:
+    if task["graph_version"] in {
+        V7["graph_version"],
+        V8["graph_version"],
+        V9["graph_version"],
+        V10["graph_version"],
+        V11["graph_version"],
+    }:
         from app.diagnosis import planner_v7
 
         prompt_fn, gaps_fn, objectives_fn = (
@@ -146,15 +156,33 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             planner_v7.missing_coverage,
             planner_v7.objectives,
         )
-    if task["graph_version"] in {V8["graph_version"], V9["graph_version"]}:
+    if task["graph_version"] in {
+        V8["graph_version"],
+        V9["graph_version"],
+        V10["graph_version"],
+        V11["graph_version"],
+    }:
         from app.diagnosis import planner_v8
 
         propose_fn, prompt_fn = planner_v8.demo_proposal, planner_v8.prompt
-    if task["graph_version"] == V9["graph_version"]:
+    if task["graph_version"] in {V9["graph_version"], V10["graph_version"], V11["graph_version"]}:
         from app.diagnosis import planner_v9
 
         propose_fn, prompt_fn = planner_v9.demo_proposal, planner_v9.prompt
         gaps_fn, computable_fn = planner_v9.missing_coverage, planner_v9.computable_gap_tools
+
+    if task["graph_version"] == V10["graph_version"]:
+        from app.diagnosis import planner_v10
+
+        propose_fn, prompt_fn = planner_v10.demo_proposal, planner_v10.prompt
+        gaps_fn, computable_fn = planner_v10.missing_coverage, planner_v10.computable_gap_tools
+
+    if task["graph_version"] == V11["graph_version"]:
+        from app.diagnosis import planner_v10, planner_v11
+
+        propose_fn, prompt_fn = planner_v11.demo_proposal, planner_v11.prompt
+        gaps_fn, computable_fn = planner_v11.missing_coverage, planner_v11.computable_gap_tools
+        objectives_fn, unsupported_fn = planner_v11.objectives, planner_v11.unsupported_question
 
     schemas = tool_schemas(task)
     gateway, store = DiagnosisToolGateway(repo, ctx), DiagnosisStore(repo)
@@ -239,7 +267,12 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             )
         elif unsupported_fn(task["query"]):
             value.update(
-                stop_reason="evidence_gap", open_questions=["所问指标或操作超出当前数据与只读边界"]
+                stop_reason="evidence_gap",
+                open_questions=(
+                    gaps_fn(task["query"], [], state["scope"])
+                    if task["graph_version"] == V11["graph_version"]
+                    else ["所问指标或操作超出当前数据与只读边界"]
+                ),
             )
         if is_extended(task) and extensions_fn(task["query"]) and not unsupported_fn(task["query"]):
             value.pop("stop_reason", None)
@@ -308,6 +341,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             proposal = propose_fn(task, state["scope"], data["evidence"], data["steps"]).model_dump(
                 mode="json"
             )
+        if task["graph_version"] in {V10["graph_version"], V11["graph_version"]}:
+            proposal = planner_v10.public_proposal(proposal)
         step = await asyncio.to_thread(store.put_step, ctx, sequence, proposal, model_call_id)
         if invalid:
             step = await update(
@@ -357,7 +392,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                 reason == "evidence_gap"
                 and not missing
                 and not unsupported_fn(task["query"])
-                and task["graph_version"] == V9["graph_version"]
+                and task["graph_version"]
+                in {V9["graph_version"], V10["graph_version"], V11["graph_version"]}
             ):
                 # v9：没有必填缺口、也未超出可回答范围时，声明的缺口无法用授权证据补齐；
                 # 原文查阅不应因适用性未核验而被报成资料不足。
@@ -387,7 +423,12 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             assessment = {"error_code": "tool_or_argument_rejected"}
             if v3:
                 assessment["correction"] = argument_feedback(error, schema)
-                if task["graph_version"] in {V8["graph_version"], V9["graph_version"]}:
+                if task["graph_version"] in {
+                    V8["graph_version"],
+                    V9["graph_version"],
+                    V10["graph_version"],
+                    V11["graph_version"],
+                }:
                     from app.diagnosis.graph_constraints import SERIES_CONSTRAINT
                     from app.diagnosis.schemas import SeriesArgs
 
@@ -470,6 +511,23 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             stop = stop or "no_information"
         elif state["sequence"] >= 8:
             stop = stop or "step_budget"
+        if task["graph_version"] == V11["graph_version"]:
+            from app.commerce.answer_contract import unsupported_gaps
+            from app.diagnosis.planner_v11 import pending_computable
+
+            if (
+                task["metrics"].get("usage_complete") is not False
+                and stop != "usage_unknown"
+                and not pending_computable(task["query"], data["evidence"], state["scope"])
+            ):
+                stop = (
+                    "evidence_gap"
+                    if (
+                        unsupported_gaps(task["query"])
+                        or display_gaps(task, data["evidence"], state["scope"])
+                    )
+                    else "target_covered"
+                )
         if stop:
             assessment["next_action"] = "stop"
         step = await update(state["sequence"], assessment=assessment)

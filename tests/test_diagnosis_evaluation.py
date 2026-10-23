@@ -637,8 +637,8 @@ async def test_extended_case_grading_distinguishes_registry_and_algorithm_versio
     result = await evaluate(args)
     record = json.loads((root / f"{case_id}-1/additional.json").read_text())
     assert result["all_automatic_passed"], record["grading"]
-    assert record["task"]["tool_registry_version"] == "3"
-    assert all(q["query_spec"]["tool_version"] == "3" for q in record["queries"])
+    assert record["task"]["tool_registry_version"] == "5"
+    assert all(q["query_spec"]["tool_version"] == "5" for q in record["queries"])
     assert all(
         f["tool_version"] == "1"
         for e in record["evidence"]
@@ -659,3 +659,17 @@ async def test_extended_case_grading_distinguishes_registry_and_algorithm_versio
             }
         ]
         assert not grade(case, bundle, forged)["automatic_passed"]
+
+
+@pytest.mark.parametrize("split,case_id", [("development", "D17"), ("regression", "R14")])
+async def test_optional_display_assertions_do_not_break_admission_or_fault_grading(
+    tmp_path, split, case_id
+):
+    root = tmp_path / "receipt"
+    result = await evaluate(
+        parser().parse_args(["run", "--split", split, "--case-id", case_id, "--output", str(root)])
+    )
+    record = json.loads((root / f"{case_id}-1/gate.json").read_text())
+    assert result["all_automatic_passed"], record["grading"]
+    assert "evaluation_completed" not in record["grading"]["assertions"]
+    assert not any(e.startswith("evaluation_error") for e in record["grading"]["errors"])

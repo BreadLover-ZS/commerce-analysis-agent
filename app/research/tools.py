@@ -69,6 +69,8 @@ class ToolGateway:
                 start,
                 end,
                 bundle_ctx=self.ctx if self.parameters.get("bundle_id") else None,
+                answer_version=self.parameters.get("review_answer_version", 1),
+                objective=self.repo.get_task(self.ctx.task_id)["query"],
             )
         else:
             function = sales_summary if name == "sales" else inventory_risks

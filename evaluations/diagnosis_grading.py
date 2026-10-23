@@ -33,6 +33,30 @@ FAULTS = {
     "unknown_usage",
 }
 VERSION_CONTRACTS = {
+    "diagnosis-v11": {
+        "graph_version": "diagnosis-v11",
+        "schema_version": "2",
+        "prompt_version": "diagnosis-v11",
+        "tool_registry_version": "5",
+    },
+    "commerce-review-bundle-v3": {
+        "graph_version": "commerce-review-bundle-v3",
+        "schema_version": "1",
+        "prompt_version": "commerce-review-v3",
+        "tool_registry_version": "commerce-review-bundle-v3",
+    },
+    "diagnosis-v10": {
+        "graph_version": "diagnosis-v10",
+        "schema_version": "2",
+        "prompt_version": "diagnosis-v10",
+        "tool_registry_version": "4",
+    },
+    "commerce-review-bundle-v2": {
+        "graph_version": "commerce-review-bundle-v2",
+        "schema_version": "1",
+        "prompt_version": "commerce-review-v2",
+        "tool_registry_version": "commerce-review-bundle-v2",
+    },
     "diagnosis-v9": {
         "graph_version": "diagnosis-v9",
         "schema_version": "2",
@@ -96,6 +120,10 @@ VERSION_CONTRACTS = {
 }
 ASSERTIONS = {
     "immutable_source_versions",
+    "comparison_net_displayed",
+    "per_sku_components_displayed",
+    "refund_answer_displayed",
+    "activation_actions_bound",
     "facts_match_raw_records",
     "bounded_execution",
     "admission_rejected_without_execution",
@@ -497,6 +525,8 @@ def grade(case, bundle, run):
                     "diagnosis-v7",
                     "diagnosis-v8",
                     "diagnosis-v9",
+                    "diagnosis-v10",
+                    "diagnosis-v11",
                 }
                 and not independent
                 and (
@@ -662,6 +692,61 @@ def grade(case, bundle, run):
                 for q in run.get("queries", [])
             )
             and checks["immutable_source_versions"]
+        )
+    displayed = (
+        [
+            (m["entity_id"], m["key"], m["value"])
+            for section in report.get("sections", [])
+            for claim in section["claims"]
+            for m in claim.get("metrics", [])
+        ]
+        if fixed
+        else [(f["entity_id"], f["metric_key"], f["value"]) for f in report.get("facts", [])]
+    )
+    checks["comparison_net_displayed"] = any(
+        ("comparison_net_revenue" == key or "net_revenue.comparison" == key)
+        and Decimal(value) * 100 == expected.comparison_net_cents
+        for _, key, value in displayed
+    )
+    checks["per_sku_components_displayed"] = all(
+        any(
+            entity == sku and metric in key and key.endswith("." + part)
+            for entity, key, _ in displayed
+        )
+        for sku in case.scope_skus
+        for metric in ("net_revenue", "gross_revenue", "refund_amount")
+        for part in ("current", "comparison", "delta")
+    )
+    checks["refund_answer_displayed"] = all(
+        any(metric == key for _, key, _ in displayed)
+        for metric in (
+            (
+                "refund_amount",
+                "comparison_refund_amount",
+                "refund_rate_pct",
+                "comparison_refund_rate_pct",
+            )
+            if fixed
+            else (
+                "refund_amount.current",
+                "refund_amount.comparison",
+                "refund_ratio.current",
+                "refund_ratio.comparison",
+            )
+        )
+    )
+    if fixed:
+        from app.commerce.review_actions import ACTIONS
+
+        checks["activation_actions_bound"] = all(
+            claim["text"] in {value[1] for value in ACTIONS.values()}
+            for section in report.get("sections", [])
+            if section["name"] == "行动建议"
+            for claim in section["claims"]
+        )
+    else:
+        checks["activation_actions_bound"] = checks.get("valid_report", False) and any(
+            "启用前日期不适用、不要求补零" in note for note in report.get("limitations", [])
         )
     mandatory = declared | {"expected_outcome"}
     if case.execution == "diagnostic":

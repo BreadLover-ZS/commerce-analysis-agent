@@ -10,6 +10,22 @@ REVIEW_BUNDLE_VERSIONS = {
     "tool_registry_version": "commerce-review-bundle-v1",
 }
 
+REVIEW_BUNDLE_V2 = {
+    **REVIEW_BUNDLE_VERSIONS,
+    "graph_version": "commerce-review-bundle-v2",
+    "prompt_version": "commerce-review-v2",
+    "tool_registry_version": "commerce-review-bundle-v2",
+}
+REVIEW_BUNDLE_V3 = {
+    **REVIEW_BUNDLE_V2,
+    "graph_version": "commerce-review-bundle-v3",
+    "prompt_version": "commerce-review-v3",
+    "tool_registry_version": "commerce-review-bundle-v3",
+}
+REVIEW_CONTRACTS = {
+    v["graph_version"]: v for v in (REVIEW_BUNDLE_VERSIONS, REVIEW_BUNDLE_V2, REVIEW_BUNDLE_V3)
+}
+
 
 def authorized_review_bundle(db, task):
     parameters = task.parameters

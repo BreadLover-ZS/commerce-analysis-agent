@@ -455,7 +455,7 @@ async def test_accounting_only_cli_uses_new_worker_results_and_old_charges(
     assert run_meta["paid_request_limit"] == 13  # One prior + this Task's hard 12.
     assert not (output / "case-1").exists()
     current = json.loads((output / "D10-1/additional.json").read_text())
-    assert current["task"]["graph_version"] == "diagnosis-v9"
+    assert current["task"]["graph_version"] == "diagnosis-v11"
     assert current["provider_trace"][0]["sequence"] == 2
     reconciled = prior_spend(
         output,
@@ -520,3 +520,54 @@ def test_resume_requires_frozen_business_implementation_and_all_failed_attempts(
             history, planned, signatures, manifest, {"D01": ["agent"], "D02": ["agent"]}
         ) == {("D01", 1)}
         assert history["_rows"][0]["automatic_passed"] is False
+
+
+@pytest.mark.parametrize("depth", [17, 64])
+def test_long_valid_budget_ancestry_preserves_every_receipt(previous, tmp_path, depth):
+    import shutil
+
+    root = previous
+    for index in range(1, depth):
+        history = reconcile(root)
+        child = tmp_path / f"segment-{index}"
+        shutil.copytree(previous, child)
+        meta = json.loads((child / "run.json").read_text())
+        meta.update(
+            run_id=f"segment-{index}",
+            prior_paid_budget={k: v for k, v in history.items() if not k.startswith("_")},
+        )
+        (child / "run.json").write_text(json.dumps(meta))
+        summary = json.loads((child / "summary.json").read_text())
+        summary["run_id"] = meta["run_id"]
+        (child / "summary.json").write_text(json.dumps(summary))
+        (child / "budget-journal.jsonl").write_text(
+            json.dumps(
+                {
+                    "event": "carried_prior_usage",
+                    "spent_tokens": 4,
+                    "reserved_tokens": 0,
+                    "provider_requests": 1,
+                    "prior_run_id": history["prior_run"]["run_id"],
+                }
+            )
+            + "\n"
+        )
+        root = child
+    assert reconcile(root)["known_tokens"] == 4
+    assert reconcile(root)["provider_requests"] == 1
+    original = previous / "case-1/agent.json"
+    original.write_text(original.read_text() + " ")
+    with pytest.raises(ValueError, match="预算链"):
+        reconcile(root)
+
+
+def test_budget_ancestry_still_rejects_cycles_and_depth_overflow(previous):
+    from evaluations.diagnosis_budget import MAX_BUDGET_ANCESTRY
+
+    kwargs = dict(
+        provider="test", endpoint="https://provider.invalid", model="chosen", token_limit=25
+    )
+    with pytest.raises(ValueError, match="循环或过长"):
+        prior_spend(previous, **kwargs, _seen=(previous.resolve(),))
+    with pytest.raises(ValueError, match="循环或过长"):
+        prior_spend(previous, **kwargs, _seen=tuple(range(MAX_BUDGET_ANCESTRY)))

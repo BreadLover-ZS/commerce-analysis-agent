@@ -9,6 +9,8 @@ import json
 import os
 from pathlib import Path
 
+MAX_BUDGET_ANCESTRY = 64
+
 
 def valid_usage(usage):
     return (
@@ -34,7 +36,7 @@ def prior_spend(
             "_traces": [],
         }
     root = Path(directory).resolve()
-    if root in _seen or len(_seen) >= 16:
+    if root in _seen or len(_seen) >= MAX_BUDGET_ANCESTRY:
         raise ValueError("预算承接链循环或过长")
     files = {}
 
@@ -203,6 +205,7 @@ def prior_spend(
         "known_tokens": spent,
         "provider_requests": sent,
         "max_total_tokens": token_limit,
+        "ancestry_depth": base.get("ancestry_depth", 0) + 1,
         "prior_run": {"directory": str(root), "run_id": meta["run_id"], "files_sha256": files},
         "_meta": meta,
         "_rows": rows,

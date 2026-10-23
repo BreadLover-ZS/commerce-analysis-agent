@@ -188,6 +188,37 @@ def expected_numeric(sales, bundle, tool, arguments, result, inventory=None):
         else:
             invariants.update(contributors=[], reconciliation=None)
         invariants["all_contributors"] = ordered
+        if result.get("tool_version") == "5":
+            component_keys, component_coverage = [], {}
+            for sku in selected:
+                values = {name: raw_totals(sales, [sku], span) for name, span in periods.items()}
+                component_coverage[sku] = {name: pair[1] for name, pair in values.items()}
+                for metric in ("net_revenue", "gross_revenue", "refund_amount"):
+                    for part, (value, covered) in values.items():
+                        if covered["observed_records"]:
+                            key = f"component.{sku}.{metric}.{part}"
+                            put(
+                                key,
+                                value[metric],
+                                "CNY",
+                                entity_type="sku",
+                                entity_id=sku,
+                                span=periods[part],
+                            )
+                            component_keys.append(key)
+                    if comparable:
+                        key = f"component.{sku}.{metric}.delta"
+                        put(
+                            key,
+                            values["current"][0][metric] - values["comparison"][0][metric],
+                            "CNY",
+                            entity_type="sku",
+                            entity_id=sku,
+                        )
+                        component_keys.append(key)
+            invariants.update(
+                component_fact_keys=component_keys, component_coverage=component_coverage
+            )
     elif tool == "drilldown_series":
         expected_points = []
         for name, span in periods.items():
@@ -322,6 +353,17 @@ def expected_numeric(sales, bundle, tool, arguments, result, inventory=None):
                 "observed_inventory_skus": sum(r["snapshot_day"] is not None for r in items),
             },
         )
+        if result.get("tool_version") in {"4", "5"}:
+            invariants["coverage"].update(
+                snapshot_complete=all(i["snapshot_day"] is not None for i in items),
+                sales_window_complete=all(
+                    i.get("sales_coverage", {}).get("complete") is True for i in items
+                ),
+                lead_days_complete=all("lead_days" in i["fact_keys"] for i in items),
+                proxy_calculable=all(i["coverage_days"] is not None for i in items),
+                threshold_comparable=all(i["below_lead_proxy"] is not None for i in items),
+                meaning="complete仅表示全部代理比较条件齐备，不代表库存快照是否存在",
+            )
     elif tool == "search_rule_documents":
         pass  # Literal/semantic bindings are a separate evaluator assertion.
     else:
@@ -362,14 +404,14 @@ def fixed_numeric_errors(sales, bundle, result):
         )
         catalog, expected_dimensions = {}, {}
 
-        def put(key, raw, unit, entity=None):
+        def put(key, raw, unit, entity=None, period=None):
             catalog[key] = {
                 "key": key,
                 "value": fixed(Decimal(raw) / 100) if unit == "CNY" else str(raw),
                 "unit": unit,
                 "entity_id": entity or ",".join(skus),
-                "period_start": bundle["period"]["start"],
-                "period_end": bundle["period"]["end"],
+                "period_start": (period or bundle["period"])["start"],
+                "period_end": (period or bundle["period"])["end"],
                 "snapshot_as_of": None,
             }
 
@@ -403,6 +445,24 @@ def fixed_numeric_errors(sales, bundle, result):
                     ),
                     "percent",
                 )
+        if result.get("answer_version") in {2, 3}:
+            if prior_coverage["observed_records"]:
+                for key in ("net_revenue", "refund_amount", "paid_units", "refunded_units"):
+                    put(
+                        "comparison_" + key,
+                        before[key],
+                        "CNY" if key in {"net_revenue", "refund_amount"} else "count",
+                        period=bundle["comparison_period"],
+                    )
+                if before["paid_units"]:
+                    put(
+                        "comparison_refund_rate_pct",
+                        fixed(Decimal(before["refunded_units"]) * 100 / before["paid_units"]),
+                        "percent",
+                        period=bundle["comparison_period"],
+                    )
+            if comparable:
+                put("paid_units_delta", now["paid_units"] - before["paid_units"], "count")
         for dimension, column in (("products", "sku"), ("categories", "category")):
             groups = {}
             for product in sales["products"]:
@@ -418,8 +478,30 @@ def fixed_numeric_errors(sales, bundle, result):
                 delta_key = f"{dimension}.{index}.delta" if comparable else None
                 if comparable:
                     put(delta_key, delta, "CNY", entity)
+                parts = {}
+                if result.get("answer_version") == 3:
+                    periods = {
+                        "current": bundle["period"],
+                        "comparison": bundle["comparison_period"],
+                    }
+                    for metric in ("net_revenue", "gross_revenue", "refund_amount"):
+                        for part, span in periods.items():
+                            value, cov = raw_totals(sales, members, span)
+                            if cov["observed_records"]:
+                                component_key = f"{dimension}.{index}.{metric}.{part}"
+                                put(component_key, value[metric], "CNY", entity, period=span)
+                                parts[f"{metric}.{part}"] = component_key
+                        if comparable:
+                            component_key = f"{dimension}.{index}.{metric}.delta"
+                            put(component_key, current[metric] - previous[metric], "CNY", entity)
+                            parts[f"{metric}.delta"] = component_key
                 values.append(
                     {
+                        **(
+                            {"component_fact_keys": parts}
+                            if result.get("answer_version") == 3
+                            else {}
+                        ),
                         "entity": entity,
                         "net_revenue": fixed(Decimal(current["net_revenue"]) / 100),
                         "fact_key": key,
