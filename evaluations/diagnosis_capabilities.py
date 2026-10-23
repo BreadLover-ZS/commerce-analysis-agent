@@ -1,6 +1,7 @@
 """Question/evidence equivalence without requiring one tool path or runtime intent."""
 
 import re
+from datetime import date, timedelta
 from decimal import Decimal
 
 from evaluations.diagnosis_oracle import raw_totals
@@ -62,3 +63,57 @@ def literal_net_comparison(business, sources, report):
         )
         for key, value in wanted.items()
     )
+
+
+def multi_sku_daily_covered(business, sources):
+    """Independent scope/day obligations, never production intent or a complete flag alone."""
+    skus = business["scope_skus"]
+    if len(set(skus)) < 2:
+        return False
+    for sku in skus:
+        good = False
+        for p in sources:
+            if (
+                p.get("tool") != "drilldown_series"
+                or p.get("status") != "ok"
+                or p.get("scope", {}).get("skus") != [sku]
+                or p.get("granularity") != "day"
+            ):
+                continue
+            wanted = {}
+            for name, period in (
+                ("current", business["period"]),
+                ("comparison", business["comparison_period"]),
+            ):
+                day, last = date.fromisoformat(period["start"]), date.fromisoformat(period["end"])
+                while day <= last:
+                    span = {"start": str(day), "end": str(day)}
+                    totals, coverage = raw_totals(business["sales"], [sku], span)
+                    wanted[name, str(day)] = (totals, coverage)
+                    day += timedelta(days=1)
+            points = p.get("series", [])
+            if len(points) != len(wanted) or {
+                (s.get("period_name"), s.get("day")) for s in points
+            } != set(wanted):
+                continue
+            valid = True
+            for point in points:
+                totals, coverage = wanted[point["period_name"], point["day"]]
+                if point.get("coverage") != coverage or not coverage["complete"]:
+                    valid = False
+                    break
+                if coverage["expected_records"]:
+                    key = point.get("fact_keys", {}).get("net_revenue")
+                    fact = p.get("fact_catalog", {}).get(key, {})
+                    if (
+                        fact.get("entity_id") != sku
+                        or fact.get("unit") != "CNY"
+                        or fact.get("period") != {"start": point["day"], "end": point["day"]}
+                        or Decimal(fact.get("value", "NaN")) * 100 != totals["net_revenue"]
+                    ):
+                        valid = False
+                        break
+            good = good or valid
+        if not good:
+            return False
+    return True

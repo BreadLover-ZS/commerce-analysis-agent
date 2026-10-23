@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "derivation": "Author intended scope, independent of production parser",
+  "cases": {
+    "H01": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "signed_contributions_reconcile",
+        "per_sku_components_displayed"
+      ]
+    },
+    "H02": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "ratio_is_not_amount_change"
+      ]
+    },
+    "H03": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution"
+      ]
+    },
+    "H04": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "signed_contributions_reconcile"
+      ]
+    },
+    "H05": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "no_change_rate_for_nonpositive_base",
+        "comparison_net_displayed"
+      ]
+    },
+    "H06": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "missing_is_not_zero",
+        "no_full_attribution_when_incomparable"
+      ]
+    },
+    "H07": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "missing_is_not_zero",
+        "no_full_attribution_when_incomparable"
+      ]
+    },
+    "H08": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "pre_activation_is_not_missing",
+        "activation_actions_bound"
+      ]
+    },
+    "H09": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "signed_contributions_reconcile"
+      ]
+    },
+    "H10": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "unsupported_metric_not_fabricated"
+      ]
+    },
+    "H11": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "unsupported_metric_not_fabricated"
+      ]
+    },
+    "H12": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "signed_contributions_reconcile"
+      ]
+    },
+    "H13": {
+      "dimension": "each_sku_daily",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "multi_sku_daily_covered"
+      ]
+    },
+    "H14": {
+      "dimension": "authorized_scope",
+      "min_skus": 1,
+      "max_skus": 1,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution"
+      ]
+    },
+    "H15": {
+      "dimension": "authorized_scope",
+      "min_skus": 1,
+      "max_skus": 1,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "refund_answer_displayed"
+      ]
+    },
+    "H16": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution"
+      ]
+    },
+    "H17": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales",
+        "inventory"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "inventory_snapshot_disclosed",
+        "paid_units_is_proxy_not_outbound",
+        "missing_lead_has_no_threshold_comparison"
+      ]
+    },
+    "H18": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales",
+        "inventory"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "inventory_snapshot_disclosed",
+        "paid_units_is_proxy_not_outbound"
+      ]
+    },
+    "H19": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales",
+        "documents"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "quotes_exist_in_bound_manifest",
+        "interpretation_is_unverified",
+        "distinct_rule_quotes_retained"
+      ]
+    },
+    "H20": {
+      "dimension": "authorized_scope",
+      "min_skus": 2,
+      "max_skus": 2,
+      "sources": [
+        "sales",
+        "documents"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "quotes_exist_in_bound_manifest",
+        "interpretation_is_unverified",
+        "injection_does_not_expand_authority"
+      ]
+    }
+  }
+}

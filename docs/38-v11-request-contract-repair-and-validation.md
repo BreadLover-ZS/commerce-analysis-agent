@@ -1,5 +1,7 @@
 # v11必答项、建议前提与完成收尾修复（2026-10-23）
 
+本页保留正式执行前的本地修复快照；后续v11完整96 Task及G6未放行结果见[39号验收](39-v11-formal-acceptance.md)。
+
 按[37号根因方案](37-v10-root-cause-analysis-and-repair-plan.md)完成本轮代码修复、本地验证及新正式题包准备。
 新诊断保存 `diagnosis-v11` 图/Prompt、schema2、注册表5；固定流程保存答复版本3，同输入固定对照为 `commerce-review-bundle-v3`。
 本轮新增真实提供方请求 **0**，历史成绩保持原样，**G6仍未放行**，G7继续排除。

@@ -54,7 +54,7 @@ def bound_fact(source, key, extended=False):
 def report_refs(task, evidence, scope):
     keys = report_contract(task)[0]
     refs = [(e["id"], key) for e in evidence for key in keys(e["payload"])]
-    if task["graph_version"] == "diagnosis-v11":
+    if task["graph_version"] in {"diagnosis-v11", "diagnosis-v12"}:
         from app.diagnosis.planner_v11 import component_obligations
 
         required = {
@@ -67,7 +67,7 @@ def report_refs(task, evidence, scope):
 
 
 def display_gaps(task, evidence, scope):
-    if task["graph_version"] != "diagnosis-v11":
+    if task["graph_version"] not in {"diagnosis-v11", "diagnosis-v12"}:
         return []
     from app.diagnosis.planner_v11 import component_obligations
 
@@ -100,7 +100,7 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
             ]
         )
     )
-    if task["graph_version"] == "diagnosis-v11":
+    if task["graph_version"] in {"diagnosis-v11", "diagnosis-v12"}:
         limitations.append(
             "启用前日期不适用、不要求补零；启用后零销量须有真实显式零记录，缺行不能造零。"
         )
@@ -177,7 +177,9 @@ def report_contract(task):
             from app.diagnosis.planner_v5 import missing_coverage as gaps
         if task["graph_version"] in {"diagnosis-v7", "diagnosis-v8"}:
             from app.diagnosis.planner_v7 import missing_coverage as gaps
-        if task["graph_version"] == "diagnosis-v11":
+        if task["graph_version"] == "diagnosis-v12":
+            from app.diagnosis.planner_v12 import missing_coverage as gaps
+        elif task["graph_version"] == "diagnosis-v11":
             from app.diagnosis.planner_v11 import missing_coverage as gaps
         elif task["graph_version"] == "diagnosis-v10":
             from app.diagnosis.planner_v10 import missing_coverage as gaps
@@ -227,7 +229,7 @@ def validate_report(report, task, bundle, evidence, steps):
         errors.append("required_fact_selection_changed")
     if report["observations"] != finding_fn(task["id"], evidence, steps):
         errors.append("observation_not_program_verified")
-    if task["graph_version"] in {"diagnosis-v10", "diagnosis-v11"}:
+    if task["graph_version"] in {"diagnosis-v10", "diagnosis-v11", "diagnosis-v12"}:
         from app.diagnosis.planner_v10 import public_proposal
 
         if any(s["proposal"] != public_proposal(s["proposal"]) for s in report["steps"]):
@@ -253,6 +255,14 @@ def validate_report(report, task, bundle, evidence, steps):
                 e["payload"].get("comparable") is False for e in evidence
             ):
                 gaps.add(text)
+        if task["metrics"].get("usage_complete") is False:
+            gaps.add("调用结果或用量未知，未继续发起模型请求")
+        if report["stop_reason"] == "target_covered" and gaps:
+            errors.append("unfulfilled_request_items")
+    if task["graph_version"] == "diagnosis-v12":
+        gaps = set(gap_fn(task["query"], evidence, report["scope"])) | set(
+            display_gaps(task, evidence, report["scope"])
+        )
         if task["metrics"].get("usage_complete") is False:
             gaps.add("调用结果或用量未知，未继续发起模型请求")
         if report["stop_reason"] == "target_covered" and gaps:

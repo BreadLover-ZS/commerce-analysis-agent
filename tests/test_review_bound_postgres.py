@@ -87,3 +87,11 @@ async def test_postgres_fixed_v3_model_protocol_and_fallback(setup, bad_action):
     )
 
     await test_fixed_v3_protocol_context_and_invalid_action_fallback(setup, bad_action)
+
+
+async def test_postgres_v12_persisted_contract_and_report_gate(setup):
+    from tests.test_diagnosis_v12 import (
+        test_v12_saved_contract_survives_runtime_change_and_publishes,
+    )
+
+    await test_v12_saved_contract_survives_runtime_change_and_publishes(setup)

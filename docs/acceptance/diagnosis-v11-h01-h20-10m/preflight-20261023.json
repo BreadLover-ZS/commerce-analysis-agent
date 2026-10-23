@@ -1,0 +1,20 @@
+{
+  "validation_passed": true,
+  "total_tasks": 96,
+  "implementation_sha256": "1defb7af1e2c271ff1a62e46e07e29567f2da6e80f7ecb22d84694ca898881b4",
+  "known_tokens": 7273355,
+  "budget": {
+    "proposed_cumulative_limit": 10000000,
+    "request_reservation": 1051576,
+    "reference_round_tokens": 1283074,
+    "nominal_remaining_at_existing_limit": 1726645,
+    "estimated_cumulative_with_reservation": 9608005,
+    "existing_limit_estimated_sufficient": false,
+    "proposed_limit_estimated_sufficient": true,
+    "proposed_margin_after_reference_round_and_reservation": 391995,
+    "authorization_required": true,
+    "monetary_cost": null
+  },
+  "provider_requests_this_check": 0,
+  "release_eligible": false
+}

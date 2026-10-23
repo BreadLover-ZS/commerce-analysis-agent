@@ -49,7 +49,33 @@ def validate_cases(path, used_inputs=()):
     hashes = [input_hash(c) for c in cases]
     if len(hashes) != len(set(hashes)) or set(hashes) & set(used_inputs):
         raise ValueError("业务数据重复；只改问法不能成为未执行的新输入")
+    semantic_path = Path(path).with_name("semantic-contract.json")
+    semantic = json.loads(semantic_path.read_bytes()) if semantic_path.exists() else None
+    if semantic is not None:
+        if semantic.get("schema_version") != 1 or set(semantic.get("cases", {})) != {
+            c.case_id for c in cases
+        }:
+            raise ValueError("题包语义范围契约必须逐题完整覆盖")
+        for case in cases:
+            rule = semantic["cases"][case.case_id]
+            if (
+                not rule["min_skus"] <= len(set(case.scope_skus)) <= rule["max_skus"]
+                or not set(rule["required_assertions"]) <= set(case.expected.required_assertions)
+                or set(rule["sources"]) != set(case.sources)
+            ):
+                raise ValueError("题包语义范围、断言或数据源不满足作者冻结契约")
+            if rule["dimension"] == "each_sku_daily" and (
+                len(set(case.scope_skus)) < 2
+                or "multi_sku_daily_covered" not in case.expected.required_assertions
+            ):
+                raise ValueError("逐商品日序列契约不可降为单SKU或删除范围断言")
     for case in cases:
+        if "multi_sku_daily_covered" in case.expected.required_assertions:
+            if (
+                len(set(case.scope_skus)) < 2
+                or "drilldown_series" not in case.expected.required_tools
+            ):
+                raise ValueError("逐商品日序列验收要求至少两个授权SKU及日序列工具")
         if (
             set(case.expected.required_assertions) - ASSERTIONS
             or set(case.expected.required_tools) - TOOLS
@@ -63,6 +89,7 @@ def validate_cases(path, used_inputs=()):
     if not common or common == len(cases):
         raise ValueError("正式题包须同时覆盖共同能力与新增能力")
     return cases, {
+        "semantic_contract_sha256": file_hash(semantic_path) if semantic is not None else None,
         "cases_file_sha256": file_hash(path),
         "selected_cases_sha256": selected_hash,
         "expected_sha256": digest([c.expected.model_dump(mode="json") for c in cases]),

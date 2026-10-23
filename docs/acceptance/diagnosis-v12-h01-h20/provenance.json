@@ -1,0 +1,232 @@
+{
+  "source": "docs/acceptance/diagnosis-v11-h01-h20/cases.json",
+  "source_sha256": "02aa2a3b04c267caf5a222f9b61d47df362b9a0dccd0b63f22ad915f7e6073c8",
+  "author": "AI code author; not external blind acceptance",
+  "model_or_graph_executions_during_authoring": 0,
+  "origins": [
+    {
+      "case_id": "H01",
+      "source_case": "H01",
+      "scale_factor": 3,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V011": "W011",
+        "V012": "W012"
+      },
+      "input_hash": "4a8209fce78af2bd1d90608ca0139658f71e439f13922baa14e40490a687524a"
+    },
+    {
+      "case_id": "H02",
+      "source_case": "H02",
+      "scale_factor": 4,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V021": "W021",
+        "V022": "W022"
+      },
+      "input_hash": "abc6022d20b327081c73c94b436dd573be9318cbaeb99bad82457459e34c12b2"
+    },
+    {
+      "case_id": "H03",
+      "source_case": "H03",
+      "scale_factor": 5,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V031": "W031",
+        "V032": "W032"
+      },
+      "input_hash": "3ed0d4b33bf7869ec42a43dc427f7d3f3a1939e235a2a8d21acd04beffea55f5"
+    },
+    {
+      "case_id": "H04",
+      "source_case": "H04",
+      "scale_factor": 6,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V041": "W041",
+        "V042": "W042"
+      },
+      "input_hash": "6aada498b2620ff4e7c1fc9909a1d5d02680f4b1a46c322271fb7495ea02522b"
+    },
+    {
+      "case_id": "H05",
+      "source_case": "H05",
+      "scale_factor": 7,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V051": "W051",
+        "V052": "W052"
+      },
+      "input_hash": "869fc97be45139120400f8d762dda22bbf058a63cc393421099518416488da75"
+    },
+    {
+      "case_id": "H06",
+      "source_case": "H06",
+      "scale_factor": 8,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V061": "W061",
+        "V062": "W062"
+      },
+      "input_hash": "0b590a63830ba358501b435aafbb0b52e16f8112d8e3dd41c8b9858f4647a4fa"
+    },
+    {
+      "case_id": "H07",
+      "source_case": "H07",
+      "scale_factor": 9,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V071": "W071",
+        "V072": "W072"
+      },
+      "input_hash": "97f6cc04a387ec951599aeffa2158770f9650936ad0c0ce4dbda38fab8e1cc1a"
+    },
+    {
+      "case_id": "H08",
+      "source_case": "H08",
+      "scale_factor": 10,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V081": "W081",
+        "V082": "W082"
+      },
+      "input_hash": "de7f6ccef240f2df8a5d082a71356cd8adff9cc6f36353909fc0b9d96f432e70"
+    },
+    {
+      "case_id": "H09",
+      "source_case": "H09",
+      "scale_factor": 11,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V091": "W091",
+        "V092": "W092"
+      },
+      "input_hash": "00f2d687590264975ad31f7df5a6f6cf46e3c260b442aed161f23fdee0952298"
+    },
+    {
+      "case_id": "H10",
+      "source_case": "H10",
+      "scale_factor": 12,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V101": "W101",
+        "V102": "W102"
+      },
+      "input_hash": "b44602b6269a4c37cbd119dc252f7df25f01589d0ed36d0b696109c1d45d8645"
+    },
+    {
+      "case_id": "H11",
+      "source_case": "H11",
+      "scale_factor": 13,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V111": "W111",
+        "V112": "W112"
+      },
+      "input_hash": "255db415b1356595247add7faad0781f7726707ab7a018589b0ad473f028bd5e"
+    },
+    {
+      "case_id": "H12",
+      "source_case": "H12",
+      "scale_factor": 14,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V121": "W121",
+        "V122": "W122"
+      },
+      "input_hash": "134e79fcf8b1227bdda891dc66cb2be57ec74e0a81d1a7fcc52469e9fa553424"
+    },
+    {
+      "case_id": "H13",
+      "source_case": "H13",
+      "scale_factor": 15,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V131": "W131",
+        "V132": "W132"
+      },
+      "input_hash": "c92953003228d02dab69828134d38c25610cc6e851cdc8ff16148465d91399ab"
+    },
+    {
+      "case_id": "H14",
+      "source_case": "H14",
+      "scale_factor": 16,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V141": "W141",
+        "V142": "W142"
+      },
+      "input_hash": "2551373e12e6570a667caa514012e4a392b458098792e89d68721c05c36a9791"
+    },
+    {
+      "case_id": "H15",
+      "source_case": "H15",
+      "scale_factor": 17,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V151": "W151",
+        "V152": "W152"
+      },
+      "input_hash": "a33f3f48f8cbcff9bf1a5cd4d6897067319503e595ba25b4c14e9164b521c984"
+    },
+    {
+      "case_id": "H16",
+      "source_case": "H16",
+      "scale_factor": 18,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V161": "W161",
+        "V162": "W162"
+      },
+      "input_hash": "a60841d039c8fb9f5cf4962c3f75b6eb50cf9ba7039b8649829d9f54315915eb"
+    },
+    {
+      "case_id": "H17",
+      "source_case": "H17",
+      "scale_factor": 19,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V171": "W171",
+        "V172": "W172"
+      },
+      "input_hash": "29b143c59e5c2703f04eb68604e471d169fac1396ee537547918befc24f75117"
+    },
+    {
+      "case_id": "H18",
+      "source_case": "H18",
+      "scale_factor": 20,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V181": "W181",
+        "V182": "W182"
+      },
+      "input_hash": "97ca27ba368ed5068589ce10cbc258f0c13aa02d195da624f90c024ca50850b9"
+    },
+    {
+      "case_id": "H19",
+      "source_case": "H19",
+      "scale_factor": 21,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V191": "W191",
+        "V192": "W192"
+      },
+      "input_hash": "3b7ecae07bb940c567a7679a1e0c515d7904270292682af010d87860077d3615"
+    },
+    {
+      "case_id": "H20",
+      "source_case": "H20",
+      "scale_factor": 22,
+      "date_shift_days": 11,
+      "sku_mapping": {
+        "V201": "W201",
+        "V202": "W202"
+      },
+      "input_hash": "dfdbd98dabba9242e468490e7f83374c1a1244c432bc62622e467001a72e1d0a"
+    }
+  ],
+  "executed_receipts_checked": 1168,
+  "distinct_executed_data_hashes": 167,
+  "exact_reuse": false,
+  "limitations": "Synthetic development-family variants. Different hashes do not establish semantic independence."
+}

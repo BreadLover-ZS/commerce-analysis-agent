@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-10-23T03:04:43.638256+00:00",
+  "authorization_source": "User reply: 可以; after explicit proposal for a complete 96-Task v11 real-model evaluation and cumulative token cap increased from 9000000 to 10000000",
+  "previous_cumulative_limit": 9000000,
+  "authorized_cumulative_limit": 10000000,
+  "known_tokens_at_authorization": 7273355,
+  "provider_requests_at_authorization": 1123,
+  "scope": "Full frozen v11 96-Task real-model run, raw numeric audit, complete per-receipt AI semantic review and G6 decision; G7 excluded",
+  "implementation_sha256": "1defb7af1e2c271ff1a62e46e07e29567f2da6e80f7ecb22d84694ca898881b4",
+  "cases_file_sha256": "02aa2a3b04c267caf5a222f9b61d47df362b9a0dccd0b63f22ad915f7e6073c8",
+  "frozen_manifest_sha256": "d25dd4669d422bc32d393f65dc762c19b51e8f4963a5e210c27925a692b7cd73",
+  "answer_obligations_sha256": "60b2d657e8eb216aa05f02ba6281586be13bad821555a76259da8e4037cc5588",
+  "charge_from": "evaluations/results/diagnosis-v10-h01-h20-live-20261022-01",
+  "output": "evaluations/results/diagnosis-v11-h01-h20-live-20261023-01",
+  "provider": "DeepSeek",
+  "endpoint": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "monetary_cost": null,
+  "notes": [
+    "All historical charges carried; no prior quality scores inherited.",
+    "No paid retries or further cap increases authorized.",
+    "Original 9000000-token preparation plan remains unchanged."
+  ]
+}

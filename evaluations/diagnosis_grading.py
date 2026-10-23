@@ -8,7 +8,7 @@ import hashlib
 import json
 from decimal import Decimal
 
-from evaluations.diagnosis_capabilities import literal_net_comparison
+from evaluations.diagnosis_capabilities import literal_net_comparison, multi_sku_daily_covered
 from evaluations.diagnosis_oracle import fixed_numeric_errors, numeric_errors, raw_totals
 
 TOOLS = {
@@ -33,6 +33,12 @@ FAULTS = {
     "unknown_usage",
 }
 VERSION_CONTRACTS = {
+    "diagnosis-v12": {
+        "graph_version": "diagnosis-v12",
+        "schema_version": "2",
+        "prompt_version": "diagnosis-v12",
+        "tool_registry_version": "5",
+    },
     "diagnosis-v11": {
         "graph_version": "diagnosis-v11",
         "schema_version": "2",
@@ -121,6 +127,7 @@ VERSION_CONTRACTS = {
 ASSERTIONS = {
     "immutable_source_versions",
     "comparison_net_displayed",
+    "multi_sku_daily_covered",
     "per_sku_components_displayed",
     "refund_answer_displayed",
     "activation_actions_bound",
@@ -527,6 +534,7 @@ def grade(case, bundle, run):
                     "diagnosis-v9",
                     "diagnosis-v10",
                     "diagnosis-v11",
+                    "diagnosis-v12",
                 }
                 and not independent
                 and (
@@ -748,6 +756,9 @@ def grade(case, bundle, run):
         checks["activation_actions_bound"] = checks.get("valid_report", False) and any(
             "启用前日期不适用、不要求补零" in note for note in report.get("limitations", [])
         )
+    # Optional assertion, opt-in for fresh packets. Old expected hashes stay frozen.
+    if "multi_sku_daily_covered" in declared:
+        checks["multi_sku_daily_covered"] = not fixed and multi_sku_daily_covered(business, sources)
     mandatory = declared | {"expected_outcome"}
     if case.execution == "diagnostic":
         mandatory |= {

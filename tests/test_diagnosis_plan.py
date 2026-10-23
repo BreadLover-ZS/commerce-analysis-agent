@@ -248,3 +248,48 @@ def test_preflight_checks_ancestry_after_adding_the_new_round(prepared_inputs, m
     with pytest.raises(ValueError, match="加入新轮后"):
         freeze(prepared_inputs)
     assert not (prepared_inputs[0] / "manifest.json").exists()
+
+
+@pytest.mark.parametrize("tamper", ["scope", "assertion", "sources", "missing_case", "remove_file"])
+def test_semantic_scope_contract_is_frozen_and_cannot_be_downgraded(prepared_inputs, tamper):
+    directory, cases, _ = prepared_inputs
+    raw = json.loads(cases.read_bytes())
+    daily = next(c for c in raw["cases"] if c["case_id"] == "H13")
+    daily["scope_skus"] = [p["sku"] for p in daily["sales"]["products"]]
+    daily["expected"]["required_tools"] = ["drilldown_series"]
+    daily["expected"]["required_assertions"].append("multi_sku_daily_covered")
+    # Scope changes require independently refreshed raw expectations.
+    from evaluations.diagnosis_cases import Case, reference_answer
+
+    daily["expected"].update(reference_answer(Case.model_validate(daily)))
+    save(cases, raw)
+    rules = {
+        c["case_id"]: {
+            "min_skus": len(c["scope_skus"]),
+            "max_skus": len(c["scope_skus"]),
+            "required_assertions": c["expected"]["required_assertions"],
+            "sources": c["sources"],
+            "dimension": "each_sku_daily" if c == daily else "scope",
+        }
+        for c in raw["cases"]
+    }
+    contract = directory / "semantic-contract.json"
+    save(contract, {"schema_version": 1, "cases": rules})
+    freeze(prepared_inputs)
+    if tamper == "scope":
+        daily["scope_skus"] = daily["scope_skus"][:1]
+        daily["expected"].update(reference_answer(Case.model_validate(daily)))
+        save(cases, raw)
+    elif tamper == "assertion":
+        daily["expected"]["required_assertions"].remove("multi_sku_daily_covered")
+        save(cases, raw)
+    elif tamper == "sources":
+        rules[daily["case_id"]]["sources"] = ["sales", "inventory"]
+        save(contract, {"schema_version": 1, "cases": rules})
+    elif tamper == "missing_case":
+        rules.pop(daily["case_id"])
+        save(contract, {"schema_version": 1, "cases": rules})
+    else:
+        contract.unlink()
+    with pytest.raises(ValueError):
+        planning.check(directory)
