@@ -256,6 +256,8 @@ def guard_run(args):
     directory = Path(args.frozen_plan)
     check(directory, args.charge_paid_run)
     plan = json.loads((directory / "manifest.json").read_bytes())
+    if plan["budget"]["proposed_limit_estimated_sufficient"] is not True:
+        raise ValueError("冻结预算估计不足以完成正式轮；须审查额度并重新冻结，禁止付费执行")
     if (
         args.mode != "live"
         or args.split != "holdout"

@@ -1,0 +1,378 @@
+{
+  "planned": {
+    "case_ids": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D05",
+      "D06",
+      "D07",
+      "D08",
+      "D09",
+      "D10",
+      "D11",
+      "D12",
+      "D13",
+      "D14",
+      "D15",
+      "D16",
+      "D17",
+      "D18",
+      "D19",
+      "D20"
+    ],
+    "split": "development",
+    "repeats": 1,
+    "mode": "demo"
+  },
+  "executed_runs": 32,
+  "stopped": null,
+  "groups": {
+    "additional": {
+      "runs": 4,
+      "independent_cases": 4,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": null,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.1107,
+      "tool_calls": 12,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "clarify": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "daily": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "daily_flat": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "scoped": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "agent": {
+      "runs": 12,
+      "independent_cases": 12,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.1398,
+      "tool_calls": 34,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "category": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "conversion": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "cross_refund": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "denominator": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "flat_offset": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "missing": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "new": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "no_prior": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "offset": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "profit": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "refund_up": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "zero": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "fixed": {
+      "runs": 12,
+      "independent_cases": 12,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.0917,
+      "tool_calls": 12,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "category": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "conversion": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "cross_refund": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "denominator": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "flat_offset": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "missing": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "new": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "no_prior": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "offset": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "profit": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "refund_up": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "zero": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "gate": {
+      "runs": 4,
+      "independent_cases": 4,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": null,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.1003,
+      "tool_calls": 9,
+      "model_calls": 4,
+      "input_tokens": 30,
+      "output_tokens": 12,
+      "known_usage_rate": 0.75,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "cancel": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "illegal_tool": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "takeover": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "unknown_usage": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    }
+  },
+  "common_paired_contracts": [
+    {
+      "case_id": "D01",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D02",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D03",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D04",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D05",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D06",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D07",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D08",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D09",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D13",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D14",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "D15",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    }
+  ],
+  "all_automatic_passed": true,
+  "business_quality_rate": null,
+  "independent_review_status": "PENDING",
+  "release_eligible": false,
+  "default_entrypoint": "commerce_review",
+  "scope": "Automatic contracts/raw-record facts only. Gates are separate from model quality. Repeats are not independent cases; no Agent benefit is inferred.",
+  "run_id": "10f11a22-ae08-4188-b012-a538e4ac7952",
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "provider_requests": 0,
+  "provider_requests_this_run": 0,
+  "token_budget": {
+    "max_total_tokens": null,
+    "known_tokens": 0,
+    "unresolved_reserved_tokens": 0,
+    "upper_bound_charged_tokens": 0,
+    "request_context_ceiling": null,
+    "denied_reason": null
+  },
+  "prior_paid_budget": {
+    "known_tokens": 0,
+    "provider_requests": 0,
+    "prior_run": null
+  }
+}

@@ -79,7 +79,7 @@ def stop(reason="target_covered"):
 
 
 def test_new_admissions_default_to_current_version():
-    assert Settings(_env_file=None).diagnosis_runtime == "v13"
+    assert Settings(_env_file=None).diagnosis_runtime == "v14"
 
 
 @pytest.mark.parametrize(

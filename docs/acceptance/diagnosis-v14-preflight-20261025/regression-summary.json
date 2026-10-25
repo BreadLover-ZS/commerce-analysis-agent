@@ -1,0 +1,308 @@
+{
+  "planned": {
+    "case_ids": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20"
+    ],
+    "split": "regression",
+    "repeats": 1,
+    "mode": "demo"
+  },
+  "executed_runs": 27,
+  "stopped": null,
+  "groups": {
+    "additional": {
+      "runs": 4,
+      "independent_cases": 4,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.1218,
+      "tool_calls": 13,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "document_injection": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "inventory_no_lead": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "inventory_zero": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "rules_conflict": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "agent": {
+      "runs": 7,
+      "independent_cases": 7,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.1325,
+      "tool_calls": 18,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "base_negative": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "custom_prior": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "denominator": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "missing_zero": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "new_midperiod": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "offset_top1": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "zero_denominator": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "fixed": {
+      "runs": 7,
+      "independent_cases": 7,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.0912,
+      "tool_calls": 7,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "base_negative": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "custom_prior": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "denominator": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "missing_zero": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "new_midperiod": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "offset_top1": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "zero_denominator": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "gate": {
+      "runs": 9,
+      "independent_cases": 9,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": null,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 0.1692,
+      "tool_calls": 14,
+      "model_calls": 6,
+      "input_tokens": 60,
+      "output_tokens": 24,
+      "known_usage_rate": 0.6666666666666666,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "cache_loop": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "duplicate_answer": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "foreign_bundle": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "forged_fact": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "overlap": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "revoked": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "stale_approval": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "stale_worker": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        },
+        "unequal": {
+          "runs": 1,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    }
+  },
+  "common_paired_contracts": [
+    {
+      "case_id": "R01",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "R02",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "R03",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "R04",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "R05",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "R06",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "R07",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    }
+  ],
+  "all_automatic_passed": true,
+  "business_quality_rate": null,
+  "independent_review_status": "PENDING",
+  "release_eligible": false,
+  "default_entrypoint": "commerce_review",
+  "scope": "Automatic contracts/raw-record facts only. Gates are separate from model quality. Repeats are not independent cases; no Agent benefit is inferred.",
+  "run_id": "8bedce01-a2f8-4ac0-990e-deefcd718611",
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "provider_requests": 0,
+  "provider_requests_this_run": 0,
+  "token_budget": {
+    "max_total_tokens": null,
+    "known_tokens": 0,
+    "unresolved_reserved_tokens": 0,
+    "upper_bound_charged_tokens": 0,
+    "request_context_ceiling": null,
+    "denied_reason": null
+  },
+  "prior_paid_budget": {
+    "known_tokens": 0,
+    "provider_requests": 0,
+    "prior_run": null
+  }
+}

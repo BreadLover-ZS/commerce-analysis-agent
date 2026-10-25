@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "scope": "G0-G6 local code preflight, no real model calls, G7 excluded",
+  "baseline_commit": "6239c093829b0dfc3995e06637bb0d9ce66f1215",
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "implementation_files": 225,
+  "versions": {
+    "graph_version": "diagnosis-v14",
+    "prompt_version": "diagnosis-v14",
+    "schema_version": "3",
+    "tool_registry_version": "6",
+    "answer_contract": "answer-contract-v3"
+  },
+  "local_code_preflight": "PASS_LOCAL",
+  "known_code_blockers_closed": [
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P06-draft-regressions"
+  ],
+  "validation": {
+    "backend_postgres_http": {
+      "passed": 869,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 192.77,
+      "postgres": "16.2"
+    },
+    "chrome": {
+      "passed": 18,
+      "failed": 0,
+      "seconds": 47.3
+    },
+    "development_offline_tasks": 32,
+    "regression_offline_tasks": 27,
+    "worker_literal_probes": 21,
+    "scope_before_after_probes": 2,
+    "durable_recovery_probes": 4,
+    "legacy_recovery_budget_window_versions": [
+      "diagnosis-v1",
+      "diagnosis-v2",
+      "diagnosis-v3",
+      "diagnosis-v4",
+      "diagnosis-v5",
+      "diagnosis-v6",
+      "diagnosis-v7",
+      "diagnosis-v8",
+      "diagnosis-v9",
+      "diagnosis-v10",
+      "diagnosis-v11",
+      "diagnosis-v12",
+      "diagnosis-v13",
+      "diagnosis-v14"
+    ],
+    "postgres_durable_recovery_tests": 4,
+    "arithmetic_assertions": 72478,
+    "generated_datasets": 239,
+    "scopes_per_dataset": 2,
+    "gateway_controls": 10,
+    "metadata_controls": 16,
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "frontend_build": "PASS",
+    "frontend_format": "PASS"
+  },
+  "history": {
+    "original_grades_identical": 96,
+    "original_receipts_modified": false,
+    "known_tokens": 8613150,
+    "provider_requests": 1288,
+    "ancestry_fully_reconciled": true,
+    "unknown_usage": 0,
+    "protected_prior_packet_files": 32,
+    "protected_files_unchanged": true
+  },
+  "fresh_packet": {
+    "directory": "docs/acceptance/diagnosis-v14-h01-h20",
+    "planned_tasks": 96,
+    "per_sku_items": 64,
+    "scope_items": 30,
+    "daily_items": 12,
+    "contribution_groups": 11,
+    "executions": 0,
+    "executed_data_overlap": 0
+  },
+  "budget": {
+    "proposed_cumulative_limit": 10000000,
+    "request_reservation": 1051576,
+    "reference_round_tokens": 1339795,
+    "nominal_remaining_at_existing_limit": 1386850,
+    "estimated_cumulative_with_reservation": 11004521,
+    "existing_limit_estimated_sufficient": false,
+    "proposed_limit_estimated_sufficient": false,
+    "proposed_margin_after_reference_round_and_reservation": -1004521,
+    "authorization_required": true,
+    "monetary_cost": null
+  },
+  "provider_requests_this_work": 0,
+  "paid_budget_ancestry_claimed": false,
+  "real_model_readiness": "BLOCKED_BUDGET_AND_EXPLICIT_AUTHORIZATION",
+  "real_model_quality": "UNTESTED",
+  "release_eligible": false,
+  "untested": [
+    "real provider/model choices and JSON outputs on v14",
+    "fresh formal 96 tasks and independent business review",
+    "uncovered natural language and real business data",
+    "target deployment and production reliability (G7 excluded)"
+  ],
+  "artifacts_committed": false,
+  "artifacts_pushed": false,
+  "process_failures_preserved": {
+    "backend_draft_regressions": "postgres-final.log",
+    "legacy_test_fixture_configuration": "postgres-ready.log",
+    "chrome_followup_timeout": "chrome-final.log",
+    "recovery_original_v13": "recovery-release/"
+  },
+  "raw_evidence_directory": "evaluations/results/diagnosis-pre-model-preflight-20261025-01",
+  "raw_evidence_sha256": {
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/postgres-accepted.log": "1ebe399be0bcb3c4c226539121faefe36e44ad827394eb14b1888c06419fea59",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/chrome-accepted.log": "5303de29f66b6217034cd0b97028fd437a846108a5729231d385fd923ea6c6b8",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/frontend-build-accepted.log": "c8ac2164cac4665689dc921f59a6d0e5d9b35b253ee9e864b0b2e2969ee07556",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/frontend-format-accepted.log": "2a1baaff6534d8995cd4a41e4d940115f9b559dfd53fd24f1f19e267e7704cef",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/ruff-accepted.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/ruff-format-accepted.log": "5eb321ace635f2f7f88ff00ff35f3534395bcbf69b5657bc6e720088152637b7",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/development-accepted/summary.json": "e8c4a71ba33f20c9c505c16f0b148aab4e6d0da2d968f03bb3540bfbca9310b2",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/regression-accepted/summary.json": "6ccc1ad5659d4bbd5feafdc34cdc90bc91e976b773b0dd72a7d9d1784bbe482c",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/worker-accepted/summary.json": "b379d00f8131256b1bca1592e9e2e8bde049c7ce5c4ddb3e47263b6709389e63",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/scope-accepted/summary.json": "9e5f86ad221fedb447c8356a6133a8c1a717082fc03a5d329d6ae7b0d1391a22",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/recovery-accepted/summary.json": "1c3370f59f77dcee988a1b53fa42689678722fbc41b317e678d486e4601d2d01",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/invariants-accepted/invariants.json": "1e5675207ef8a64530a698e4094de2f80e9091a9f4ab5b12a1574a55de4eaced",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/v11-grading-accepted.json": "cf2af7bc9c6307f4f9a79f95915b810d15fed1d281ac339269a89054643be24b",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/v14-plan-preflight-final.json": "0dacabf1814295e2ceb09b5bb75b73e97a92a783cf54633b80af061654f965d7",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/v14-plan-tamper-controls-accepted.json": "e4ecc0fc3ca630e30d7e0846782f60abd86b12b1867c73085a1982be66da990a",
+    "evaluations/results/diagnosis-pre-model-preflight-20261025-01/immutability-accepted.json": "89433d28c2f2aaaea3d864b0de11bea5eded768bc209c91eb5125b8ed6832bb2"
+  }
+}

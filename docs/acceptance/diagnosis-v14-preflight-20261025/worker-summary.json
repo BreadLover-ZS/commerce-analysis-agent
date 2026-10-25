@@ -1,0 +1,963 @@
+{
+  "probes": [
+    {
+      "probe": "literal-control",
+      "task_id": "5f3eff57-b283-4c1f-b976-b15aff740539",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 0,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "excluded-sku",
+      "task_id": "8a23638a-f649-4327-8d32-91d264eb1e97",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 0,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "component-partial",
+      "task_id": "9b157aa1-aa00-4660-af7a-ddc6bb5c55e3",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 18,
+        "displayed": 18,
+        "omitted": 0
+      },
+      "missing_items": [
+        [
+          "A",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "delta"
+        ]
+      ],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "component-repaired",
+      "task_id": "018e1718-ee3b-4bcb-b8dc-304ece92f09f",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "counts-partial",
+      "task_id": "d7bda092-ee70-4d19-83bf-6af1aa84e47f",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 12,
+        "displayed": 12,
+        "omitted": 0
+      },
+      "missing_items": [
+        [
+          "A",
+          "paid_units",
+          "current"
+        ],
+        [
+          "A",
+          "paid_units",
+          "comparison"
+        ],
+        [
+          "A",
+          "paid_units",
+          "delta"
+        ],
+        [
+          "A",
+          "refunded_units",
+          "current"
+        ],
+        [
+          "A",
+          "refunded_units",
+          "comparison"
+        ],
+        [
+          "A",
+          "refunded_units",
+          "delta"
+        ],
+        [
+          "B",
+          "paid_units",
+          "current"
+        ],
+        [
+          "B",
+          "paid_units",
+          "comparison"
+        ],
+        [
+          "B",
+          "paid_units",
+          "delta"
+        ],
+        [
+          "B",
+          "refunded_units",
+          "current"
+        ],
+        [
+          "B",
+          "refunded_units",
+          "comparison"
+        ],
+        [
+          "B",
+          "refunded_units",
+          "delta"
+        ]
+      ],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "counts-repaired",
+      "task_id": "aee1c162-a278-4981-a112-df7a891c6041",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "category-control",
+      "task_id": "8b40c132-c76a-42a5-97f6-474687324593",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-category-partial",
+      "task_id": "067c7675-5c95-40e3-8f3f-4916c38228f2",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 1,
+        "displayed": 1,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-category-repaired",
+      "task_id": "a22782bc-90b9-4d48-8d44-d8ff7ac515b3",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-sku-partial",
+      "task_id": "4fd2d16f-4720-497e-a0b6-7507b148e243",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 1,
+        "displayed": 1,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "wrong-sku-repaired",
+      "task_id": "81bfd62e-4daf-4376-a808-70a4b300c1e8",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "all-27-gaps",
+      "task_id": "5140c924-c017-4a23-8878-433e590cc681",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true,
+        "literal_27_20_7": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B",
+        "C"
+      ],
+      "gap_summary": {
+        "total": 27,
+        "displayed": 20,
+        "omitted": 7
+      },
+      "missing_items": [
+        [
+          "A",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "A",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "A",
+          "net_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "B",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "B",
+          "net_revenue",
+          "delta"
+        ],
+        [
+          "C",
+          "gross_revenue",
+          "current"
+        ],
+        [
+          "C",
+          "gross_revenue",
+          "comparison"
+        ],
+        [
+          "C",
+          "gross_revenue",
+          "delta"
+        ],
+        [
+          "C",
+          "refund_amount",
+          "current"
+        ],
+        [
+          "C",
+          "refund_amount",
+          "comparison"
+        ],
+        [
+          "C",
+          "refund_amount",
+          "delta"
+        ],
+        [
+          "C",
+          "net_revenue",
+          "current"
+        ],
+        [
+          "C",
+          "net_revenue",
+          "comparison"
+        ],
+        [
+          "C",
+          "net_revenue",
+          "delta"
+        ]
+      ],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "equivalent-count-path",
+      "task_id": "7b45117a-d25e-4f92-9c0e-ff119d94c066",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 2,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "postfix-exclusion",
+      "task_id": "baf3e4f8-b6f2-4bb0-a718-a3a3fb052d0d",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 0,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "unspaced-exclusion-list",
+      "task_id": "701e0547-1655-43b9-a1ce-5fd47dfed0c9",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "C"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 0,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "negated-category-axis",
+      "task_id": "bfb633c9-c4c2-45f9-9a25-147573355304",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "implicit-category-axis",
+      "task_id": "41509bf7-f213-46ce-ae69-dacf8f703939",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "both-grouping-axes",
+      "task_id": "a7313334-5d93-4f9b-b008-ff7817aeb072",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 2,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "clause-periods-and-excluded-metrics",
+      "task_id": "27beaa71-dce4-4080-abb7-ebe14285f3b3",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "scope-amount-partial",
+      "task_id": "b9f85e03-5735-4959-9e2f-dc42a3f473a5",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true,
+        "partial_gap_present": true,
+        "forged_completion_rejected": true,
+        "independent_forgery_rejected": true
+      },
+      "passed": true,
+      "stop_reason": "model_budget",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 1,
+        "displayed": 1,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 1,
+      "new_provider_requests": 0
+    },
+    {
+      "probe": "scope-amount-repaired",
+      "task_id": "c3d482a9-25db-44ce-a4a8-a2fe74db0e8e",
+      "checks": {
+        "program_validation": true,
+        "literal_scope": true,
+        "literal_stop": true,
+        "full_gap_counts": true,
+        "requested_dimension_bound": true,
+        "requested_per_entity_items": true,
+        "requested_scope_items": true,
+        "complete_gap_inventory": true,
+        "unsupported_positive_requests_preserved": true,
+        "excluded_metrics_not_displayed": true,
+        "literal_component_facts": true
+      },
+      "passed": true,
+      "stop_reason": "target_covered",
+      "scope": [
+        "A",
+        "B"
+      ],
+      "gap_summary": {
+        "total": 0,
+        "displayed": 0,
+        "omitted": 0
+      },
+      "missing_items": [],
+      "scripted_protocol_calls": 3,
+      "new_provider_requests": 0
+    }
+  ],
+  "passed": true,
+  "new_provider_requests": 0,
+  "formal_packet_executions": 0
+}

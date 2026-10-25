@@ -54,11 +54,37 @@ def bound_fact(source, key, extended=False):
 def report_refs(task, evidence, scope):
     keys = report_contract(task)[0]
     refs = [(e["id"], key) for e in evidence for key in keys(e["payload"])]
-    if task["graph_version"] in {"diagnosis-v11", "diagnosis-v12", "diagnosis-v13"}:
+    if task["graph_version"] == "diagnosis-v14":
+        contract = task["parameters"]["answer_contract"]
+        blocked = set(contract["excluded_metrics"])
+
+        def requested_ref(ref):
+            tokens = ref[1].split(".")
+            if blocked.intersection(tokens):
+                return False
+            metric = next((m for m in contract["requested_metrics"] if m in tokens), None)
+            parts = contract["metric_periods"].get(metric, contract["periods"])
+            return (
+                tokens[-1] not in {"current", "comparison", "delta", "change_pct"}
+                or tokens[-1] in parts
+                or tokens[-1] == "change_pct"
+                and "delta" in parts
+            )
+
+        refs = [ref for ref in refs if requested_ref(ref)]
+    if task["graph_version"] in {
+        "diagnosis-v11",
+        "diagnosis-v12",
+        "diagnosis-v13",
+        "diagnosis-v14",
+    }:
         from app.diagnosis.planner_v11 import component_obligations
 
-        if task["graph_version"] == "diagnosis-v13":
+        if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
             from app.diagnosis.planner_v13 import component_obligations
+
+            if task["graph_version"] == "diagnosis-v14":
+                from app.diagnosis.planner_v14 import component_obligations
 
         required = {
             i["fact_key"]
@@ -70,12 +96,20 @@ def report_refs(task, evidence, scope):
 
 
 def display_gaps(task, evidence, scope):
-    if task["graph_version"] not in {"diagnosis-v11", "diagnosis-v12", "diagnosis-v13"}:
+    if task["graph_version"] not in {
+        "diagnosis-v11",
+        "diagnosis-v12",
+        "diagnosis-v13",
+        "diagnosis-v14",
+    }:
         return []
     from app.diagnosis.planner_v11 import component_obligations
 
-    if task["graph_version"] == "diagnosis-v13":
+    if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
         from app.diagnosis.planner_v13 import component_obligations
+
+        if task["graph_version"] == "diagnosis-v14":
+            from app.diagnosis.planner_v14 import component_obligations
 
     selected = set(report_refs(task, evidence, scope))
     shown = {
@@ -106,7 +140,12 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
             ]
         )
     )
-    if task["graph_version"] in {"diagnosis-v11", "diagnosis-v12", "diagnosis-v13"}:
+    if task["graph_version"] in {
+        "diagnosis-v11",
+        "diagnosis-v12",
+        "diagnosis-v13",
+        "diagnosis-v14",
+    }:
         limitations.append(
             "启用前日期不适用、不要求补零；启用后零销量须有真实显式零记录，缺行不能造零。"
         )
@@ -123,7 +162,7 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
         if stop_reason == "target_covered":
             stop_reason = "evidence_gap"
     full_questions = list(dict.fromkeys(open_questions))
-    if task["graph_version"] == "diagnosis-v13" and len(full_questions) > 20:
+    if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"} and len(full_questions) > 20:
         limitations.insert(
             0,
             f"未完成问题共{len(full_questions)}项，正文展示20项，省略{len(full_questions) - 20}项；完整清单见同版本JSON报告及工作台完整清单。",
@@ -131,7 +170,7 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
     report = {
         "profile": "commerce_diagnosis",
         "schema_version": 3
-        if task["graph_version"] == "diagnosis-v13"
+        if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}
         else 2
         if is_extended(task)
         else 1,
@@ -161,8 +200,11 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
         "limitations": limitations[:30],
         "usage": {k: v for k, v in task["metrics"].items() if k != "runtime_ms"},
     }
-    if task["graph_version"] == "diagnosis-v13":
+    if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
         from app.diagnosis.planner_v13 import component_obligations
+
+        if task["graph_version"] == "diagnosis-v14":
+            from app.diagnosis.planner_v14 import component_obligations
 
         report.update(
             request_contract=task["parameters"]["answer_contract"],
@@ -206,9 +248,33 @@ def report_contract(task):
             from app.diagnosis.planner_v5 import missing_coverage as gaps
         if task["graph_version"] in {"diagnosis-v7", "diagnosis-v8"}:
             from app.diagnosis.planner_v7 import missing_coverage as gaps
-        if task["graph_version"] == "diagnosis-v13":
+        if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
             from app.diagnosis.planner_v13 import missing_coverage as gaps
             from app.diagnosis.schemas_v3 import DiagnosticReportV3
+
+            if task["graph_version"] == "diagnosis-v14":
+                from app.diagnosis.planner_v14 import missing_coverage as gaps
+
+                original_findings = findings
+                blocked = task["parameters"]["answer_contract"]["excluded_metrics"]
+                labels = {
+                    "net_revenue": ("净销售额", "净额"),
+                    "gross_revenue": ("支付金额",),
+                    "refund_amount": ("退款金额",),
+                    "paid_units": ("支付件数",),
+                    "refunded_units": ("退款件数",),
+                }
+
+                def findings(task_id, evidence, steps):
+                    return [
+                        f
+                        for f in original_findings(task_id, evidence, steps)
+                        if not any(
+                            word in f["text"]
+                            for metric in blocked
+                            for word in labels.get(metric, ())
+                        )
+                    ]
 
             return keys, findings, DiagnosticReportV3, gaps
         if task["graph_version"] == "diagnosis-v12":
@@ -233,12 +299,31 @@ def validate_report(report, task, bundle, evidence, steps):
         return {"passed": False, "errors": ["invalid_report_schema"]}
     sources = {e["id"]: e for e in evidence}
     expected_scope = initial_scope(task["query"], bundle)
-    if task["graph_version"] == "diagnosis-v13":
+    if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
         from app.commerce.answer_contract_v2 import bound_request
         from app.commerce.answer_contract_v2 import initial_scope as v13_scope
 
-        expected_scope = v13_scope(task["query"], bundle)
-        if task["parameters"].get("answer_contract") != bound_request(task["query"], bundle):
+        if task["graph_version"] == "diagnosis-v14":
+            from app.commerce.answer_contract_v3 import bound_request as bind_v3
+            from app.commerce.answer_contract_v3 import initial_scope as scope_v3
+
+            catalog = next(
+                (
+                    e["payload"].get("products")
+                    for e in evidence
+                    if e["payload"].get("tool") == "inspect_dataset"
+                ),
+                None,
+            )
+            if catalog is None:
+                errors.append("missing_request_catalog")
+                catalog = task["parameters"]["answer_contract"]["entity_catalog"]
+            expected_scope = scope_v3(task["query"], bundle, catalog)
+            expected_contract = bind_v3(task["query"], bundle, catalog)
+        else:
+            expected_scope = v13_scope(task["query"], bundle)
+            expected_contract = bound_request(task["query"], bundle)
+        if task["parameters"].get("answer_contract") != expected_contract:
             errors.append("request_contract_changed")
     for step in steps:
         if step["proposal"]["action"] == "clarify" and step["status"] == "SUCCEEDED":
@@ -275,6 +360,7 @@ def validate_report(report, task, bundle, evidence, steps):
         "diagnosis-v11",
         "diagnosis-v12",
         "diagnosis-v13",
+        "diagnosis-v14",
     }:
         from app.diagnosis.planner_v10 import public_proposal
 
@@ -305,7 +391,7 @@ def validate_report(report, task, bundle, evidence, steps):
             gaps.add("调用结果或用量未知，未继续发起模型请求")
         if report["stop_reason"] == "target_covered" and gaps:
             errors.append("unfulfilled_request_items")
-    if task["graph_version"] in {"diagnosis-v12", "diagnosis-v13"}:
+    if task["graph_version"] in {"diagnosis-v12", "diagnosis-v13", "diagnosis-v14"}:
         gaps = set(gap_fn(task["query"], evidence, report["scope"])) | set(
             display_gaps(task, evidence, report["scope"])
         )
@@ -314,7 +400,7 @@ def validate_report(report, task, bundle, evidence, steps):
         if report["stop_reason"] == "target_covered" and gaps:
             errors.append("unfulfilled_request_items")
     checked_questions = report.get("open_question_details", report["open_questions"])
-    if task["graph_version"] == "diagnosis-v13" and not set(
+    if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"} and not set(
         gap_fn(task["query"], evidence, report["scope"])
     ) | set(display_gaps(task, evidence, report["scope"])) <= set(checked_questions):
         errors.append("missing_required_gap")
@@ -343,7 +429,7 @@ def validate_report(report, task, bundle, evidence, steps):
                 "gap_summary",
                 "open_questions",
             )
-            if task["graph_version"] == "diagnosis-v13"
+            if task["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}
             else ()
         ),
         *(("rule_quotes", "rule_interpretations", "rule_conflicts") if is_extended(task) else ()),
@@ -359,9 +445,15 @@ def validate_report(report, task, bundle, evidence, steps):
             for e in evidence
         )
     )
+    record_periods = ("current",)
+    if task["graph_version"] == "diagnosis-v14":
+        from app.diagnosis.planner_v14 import single_period
+
+        record_periods = (single_period(task["query"]) or "current",)
     if not extension_fact and not any(
-        e["payload"].get("coverage", {}).get("current", {}).get("observed_records", 0)
+        e["payload"].get("coverage", {}).get(part, {}).get("observed_records", 0)
         for e in evidence
+        for part in record_periods
     ):
         errors.append("no_recorded_facts")
     return {

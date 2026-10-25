@@ -293,3 +293,23 @@ def test_semantic_scope_contract_is_frozen_and_cannot_be_downgraded(prepared_inp
         contract.unlink()
     with pytest.raises(ValueError):
         planning.check(directory)
+
+
+async def test_insufficient_frozen_capacity_blocks_before_credentials_or_output(
+    prepared_inputs, monkeypatch
+):
+    from evaluations import diagnosis
+
+    directory, _, prior = prepared_inputs
+    monkeypatch.setattr(planning, "REQUEST_RESERVATION", 9000000)
+    plan = freeze(prepared_inputs)
+    assert not plan["budget"]["proposed_limit_estimated_sufficient"]
+    assert planning.check(directory)["validation_passed"]
+
+    def no_credentials(*args):
+        pytest.fail("Insufficient formal capacity must fail before credentials")
+
+    monkeypatch.setattr(diagnosis, "live_configuration", no_credentials)
+    with pytest.raises(ValueError, match="冻结预算估计不足"):
+        await diagnosis.evaluate(SimpleNamespace(frozen_plan=directory, charge_paid_run=prior))
+    assert not prior.with_name(prior.name + ".budget-continuation.json").exists()

@@ -103,3 +103,19 @@ async def test_postgres_v13_saved_entity_contract_and_exports(setup):
     )
 
     await test_v13_persisted_contract_survives_defaults_and_client_retry(setup)
+
+
+@pytest.mark.parametrize("runtime", ["v13", "v14"])
+@pytest.mark.parametrize("limit", [1, 12])
+async def test_postgres_saved_response_recovers_before_budget(setup, runtime, limit):
+    from tests.test_diagnosis_v14 import saved_response_recovery
+
+    await saved_response_recovery(setup, runtime, limit)
+
+
+async def test_postgres_v14_saved_contract_and_publication(setup):
+    from tests.test_diagnosis_v14 import (
+        test_v14_bound_contract_and_publishing_survive_default_change,
+    )
+
+    await test_v14_bound_contract_and_publishing_survive_default_change(setup)

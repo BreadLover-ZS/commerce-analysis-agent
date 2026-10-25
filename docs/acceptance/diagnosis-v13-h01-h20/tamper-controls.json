@@ -1,0 +1,113 @@
+{
+  "controls": [
+    {
+      "control": "unchanged_copy",
+      "passed": true,
+      "expected": "PASS",
+      "actual": "PASS"
+    },
+    {
+      "control": "query",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "题目、预期、门槛或配对计划已改变，禁止沿用原冻结计划"
+    },
+    {
+      "control": "raw_payment_count",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "题目、预期、门槛或配对计划已改变，禁止沿用原冻结计划"
+    },
+    {
+      "control": "positive_exploration_stop",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "题目、预期、门槛或配对计划已改变，禁止沿用原冻结计划"
+    },
+    {
+      "control": "excluded_author_scope",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "独立预期与原始输入不匹配：H14"
+    },
+    {
+      "control": "daily_scope",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "独立预期与原始输入不匹配：H13"
+    },
+    {
+      "control": "category_dimension",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "题目、预期、门槛或配对计划已改变，禁止沿用原冻结计划"
+    },
+    {
+      "control": "missing_case",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "题包语义范围契约必须逐题完整覆盖"
+    },
+    {
+      "control": "missing_count_item",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "author obligations differ from frozen semantic contract"
+    },
+    {
+      "control": "wrong_amount",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "author obligations differ from frozen semantic contract"
+    },
+    {
+      "control": "gap_limit",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "author obligations differ from frozen semantic contract"
+    },
+    {
+      "control": "stale_source",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "实现指纹已改变，须重新审查并冻结新计划"
+    },
+    {
+      "control": "history_tokens",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "历史扣费或回执已改变，须重新核对预算"
+    },
+    {
+      "control": "budget_limit",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "预算投影与冻结参数不一致"
+    },
+    {
+      "control": "fake_provenance",
+      "passed": true,
+      "expected": "REJECT",
+      "actual": "REJECT",
+      "reason": "provenance input hashes drifted"
+    }
+  ],
+  "passed": 15,
+  "failed": 0,
+  "http_attempts": 0,
+  "task_model_tool_executions": 0,
+  "scope": "fresh packet metadata copies only; no graph, tool, model or Task execution"
+}

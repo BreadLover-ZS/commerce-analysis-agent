@@ -1,0 +1,11 @@
+{
+  "protected_prior_packet_files": 32,
+  "all_unchanged": true,
+  "v13_old_plan": {
+    "expected_rejected": true,
+    "reason": "实现指纹已改变，须重新审查并冻结新计划"
+  },
+  "source_unchanged": true,
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "provider_requests": 0
+}

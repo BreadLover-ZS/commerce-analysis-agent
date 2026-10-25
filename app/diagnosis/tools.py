@@ -125,6 +125,13 @@ class DiagnosisToolGateway:
                 conversation_id=task.conversation_id,
                 enforce_conversation=True,
             )
+        if task.graph_version == "diagnosis-v14":
+            from app.commerce.answer_contract_v3 import bound_request
+
+            if task.parameters.get("answer_contract") != bound_request(
+                task.query, bundle.payload, sales.payload["products"]
+            ):
+                raise Conflict("保存的请求契约与授权输入或问题不一致")
         return task, bundle, sales
 
     def catalog(self):

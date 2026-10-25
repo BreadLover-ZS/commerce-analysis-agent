@@ -210,7 +210,7 @@ class Repository:
                     ):
                         raise NotFound()
                     bundle_id = bundle_id or parent.bundle_id
-                bundle, _ = owned_bundle(db, bundle_id, user.id, user.tenant_id)
+                bundle, diagnosis_sales = owned_bundle(db, bundle_id, user.id, user.tenant_id)
                 if set(request.sources) - set(bundle.payload["sources"]):
                     raise ValueError("任务来源超出输入包授权")
                 period = bundle.payload["period"]
@@ -241,7 +241,7 @@ class Repository:
                     bundle_hash=bundle.bundle_hash,
                     **versions,
                 )
-                if versions["graph_version"] == "diagnosis-v13":
+                if versions["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
                     from app.commerce.answer_contract_v2 import bound_request
 
                     existing_contract = db.scalar(
@@ -255,7 +255,16 @@ class Repository:
                                 "answer_contract"
                             ]
                     else:
-                        payload["answer_contract"] = bound_request(request.query, bundle.payload)
+                        if versions["graph_version"] == "diagnosis-v14":
+                            from app.commerce.answer_contract_v3 import bound_request as bind_v3
+
+                            payload["answer_contract"] = bind_v3(
+                                request.query, bundle.payload, diagnosis_sales.payload["products"]
+                            )
+                        else:
+                            payload["answer_contract"] = bound_request(
+                                request.query, bundle.payload
+                            )
                 payload["budget"] = self._bounded_commerce_budget()
                 fingerprint = hashlib.sha256(
                     json.dumps(payload, sort_keys=True).encode()

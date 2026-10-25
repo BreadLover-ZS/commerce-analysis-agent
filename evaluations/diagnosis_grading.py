@@ -33,6 +33,12 @@ FAULTS = {
     "unknown_usage",
 }
 VERSION_CONTRACTS = {
+    "diagnosis-v14": {
+        "graph_version": "diagnosis-v14",
+        "schema_version": "3",
+        "prompt_version": "diagnosis-v14",
+        "tool_registry_version": "6",
+    },
     "diagnosis-v13": {
         "graph_version": "diagnosis-v13",
         "schema_version": "3",
@@ -542,6 +548,7 @@ def grade(case, bundle, run):
                     "diagnosis-v11",
                     "diagnosis-v12",
                     "diagnosis-v13",
+                    "diagnosis-v14",
                 }
                 and not independent
                 and (
@@ -557,12 +564,21 @@ def grade(case, bundle, run):
                 else case.scope_skus
             )
             if (
-                task.get("graph_version") == "diagnosis-v13"
+                task.get("graph_version") in {"diagnosis-v13", "diagnosis-v14"}
                 and not case.harness.clarification_choice
             ):
                 from evaluations.diagnosis_request_checks import expected_entities
 
-                expected_scope = expected_entities(business["query"], case.scope_skus)
+                if task.get("graph_version") == "diagnosis-v14":
+                    from evaluations.diagnosis_request_checks_v2 import (
+                        expected_entities as v2_entities,
+                    )
+
+                    expected_scope = v2_entities(
+                        business["query"], case.scope_skus, business["sales"]["products"]
+                    )
+                else:
+                    expected_scope = expected_entities(business["query"], case.scope_skus)
             checks["final_scope"] = fixed or report.get("scope", {}).get("skus") == expected_scope
             if fixed:
                 baselines = [p for p in sources if p["tool"] == "sales"]
@@ -581,12 +597,12 @@ def grade(case, bundle, run):
                     and p["scope"]["skus"]
                     == (
                         expected_scope
-                        if task.get("graph_version") == "diagnosis-v13"
+                        if task.get("graph_version") in {"diagnosis-v13", "diagnosis-v14"}
                         else case.scope_skus
                     )
                     and "net_revenue.current" in p["fact_catalog"]
                 ]
-                if task.get("graph_version") == "diagnosis-v13":
+                if task.get("graph_version") in {"diagnosis-v13", "diagnosis-v14"}:
                     current_values, current_coverage = raw_totals(
                         business["sales"], expected_scope, business["period"]
                     )
@@ -812,6 +828,20 @@ def grade(case, bundle, run):
             else expected_scope
         )
         v13_checks = completion_checks(business, report, sources, selected)
+        checks.update(v13_checks)
+    if (
+        not fixed
+        and task.get("graph_version") == "diagnosis-v14"
+        and case.execution == "diagnostic"
+    ):
+        from evaluations.diagnosis_request_checks_v2 import completion_checks as v2_completion
+
+        selected = (
+            [case.harness.clarification_choice]
+            if case.harness.clarification_choice
+            else expected_scope
+        )
+        v13_checks = v2_completion(business, report, sources, selected)
         checks.update(v13_checks)
     mandatory = declared | {"expected_outcome"} | set(v13_checks)
     if case.execution == "diagnostic":

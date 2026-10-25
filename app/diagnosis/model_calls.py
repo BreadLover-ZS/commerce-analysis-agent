@@ -54,6 +54,43 @@ class DiagnosisModelGateway:
             raise ValueError("需要有效模型版本")
         self.model_version = model_version
 
+    def _recover(self, schema, step_id, phase, attempt):
+        """Recover a graph step before rebuilding its mutable budget context.
+
+        This is deliberately separate from invoke(): an explicit new invocation
+        with a different prompt must still conflict. Only the graph's saved
+        Task/step identity may retrieve a durable response without a new send.
+        """
+        if (
+            not 1 <= len(step_id) <= 80
+            or not 1 <= len(phase) <= 40
+            or type(attempt) is not int
+            or attempt not in (1, 2)
+        ):
+            raise ValueError("无效模型调用身份")
+        call_id = str(
+            uuid5(NAMESPACE_URL, f"diagnosis:{self.ctx.task_id}:{step_id}:{phase}:{attempt}")
+        )
+        with self.repo.session() as db:
+            task, _, _ = DiagnosisToolGateway(self.repo, self.ctx)._authorize(db)
+            call = db.get(ModelInvocation, call_id)
+            if call is None:
+                return None
+            if (
+                call.schema_hash != digest(schema.model_json_schema())
+                or call.model_version != self.model_version
+            ):
+                raise Conflict("保存的模型调用schema或模型版本不一致")
+            if call.status == "STARTED":
+                if call.lease_token == self.ctx.lease_token:
+                    raise Conflict("模型调用仍在进行")
+                self._unknown_locked(task, call)
+                db.commit()
+            return outcome(call, reused=True)
+
+    async def recover(self, schema, *, step_id, phase="propose", attempt=1):
+        return await asyncio.to_thread(self._recover, schema, step_id, phase, attempt)
+
     def _prepare(self, schema, messages, step_id, phase, attempt):
         if (
             not 1 <= len(step_id) <= 80
