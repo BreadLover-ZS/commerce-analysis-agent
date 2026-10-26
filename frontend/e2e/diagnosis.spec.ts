@@ -356,3 +356,33 @@ test("exact preflight is shown before task creation and changing input requires 
     path: testInfo.outputPath("diagnosis-preflight-mobile.png"),
   });
 });
+
+test("v15 answer completion and all nine amounts are visible with raw evidence", async ({
+  page,
+}) => {
+  const task = await submitComparisonDiagnosis(
+    page,
+    "列出两期支付金额、退款金额、净销售额及差额，并核对记账恒等式。",
+  );
+  await expect(
+    page.getByText("答复完成度：请求已答齐", { exact: true }),
+  ).toBeVisible({ timeout: 15000 });
+  const response = await page.request.get(`/api/tasks/${task.id}`);
+  const value = await response.json();
+  expect(value.report.schema_version).toBe(4);
+  expect(value.report.answer_completion.status).toBe("fulfilled");
+  expect(value.report.capability_witnesses).toHaveLength(1);
+  for (const metric of ["gross_revenue", "refund_amount", "net_revenue"]) {
+    for (const part of ["current", "comparison", "delta"]) {
+      expect(
+        value.report.facts.some(
+          (f: { metric_key: string }) => f.metric_key === `${metric}.${part}`,
+        ),
+      ).toBe(true);
+    }
+  }
+  await page.reload();
+  await expect(
+    page.getByText("答复完成度：请求已答齐", { exact: true }),
+  ).toBeVisible();
+});

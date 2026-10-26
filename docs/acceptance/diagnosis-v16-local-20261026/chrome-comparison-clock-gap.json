@@ -1,0 +1,16 @@
+{
+  "scope": "EXTRACTED_TOOL_OBSERVATIONS_FROM_ORIGINAL_TRACE_NOT_PRODUCT_ROOT_CAUSE_PROOF",
+  "original_trace_retained": false,
+  "retention_note": "Playwright cleared its prior output directory when the isolated run started; the failure log and observations already read by tools are retained.",
+  "last_task_request_at": "2026-10-26T02:45:21.769Z",
+  "last_comparison_detail_at": "2026-10-26T02:45:20.729Z",
+  "last_comparison_detail_status": "queued",
+  "last_task_list_at": "2026-10-26T02:45:20.991Z",
+  "last_task_list_fixed_status": "queued",
+  "trace_log_time_before_gap_ms": 18739.328,
+  "trace_after_time_ms": 255775.226,
+  "gap_observed_ms": 237035.898,
+  "test_assertion_timeout_ms": 15000,
+  "test_timeout_ms": 30000,
+  "interpretation": "A long trace/request gap occurred; serialized verification is required. No timeout was extended."
+}

@@ -1,0 +1,29 @@
+{
+  "validation_passed": true,
+  "total_tasks": 96,
+  "implementation_sha256": "1bb3bbb8302c4bc5c471dec6d1193636222734c384cb967d07ed74dcb5b85db7",
+  "known_tokens": 9768379,
+  "budget": {
+    "proposed_cumulative_limit": 12000000,
+    "request_reservation": 1051576,
+    "reference_round_tokens": 1155229,
+    "nominal_remaining_at_existing_limit": 2231621,
+    "estimated_cumulative_with_reservation": 11975184,
+    "existing_limit_estimated_sufficient": true,
+    "proposed_limit_estimated_sufficient": true,
+    "proposed_margin_after_reference_round_and_reservation": 24816,
+    "authorization_required": true,
+    "monetary_cost": null
+  },
+  "provider_requests_this_check": 0,
+  "release_eligible": false,
+  "required_items": 95,
+  "daily_items": 12,
+  "contribution_groups": 11,
+  "author_obligations_verified": true,
+  "independent_integer_rows_verified": true,
+  "executed_inputs_checked": 1842,
+  "fresh_input_overlap": 0,
+  "formal_packet_executions": 0,
+  "network_attempts": 0
+}

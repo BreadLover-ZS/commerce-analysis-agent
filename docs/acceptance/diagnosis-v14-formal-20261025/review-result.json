@@ -1,0 +1,51 @@
+{
+  "run_id": "a5a95b5b-cb87-4fdd-beab-b43fea8cc1c2",
+  "review_completed": true,
+  "automatic_safety_all_passed": true,
+  "paired_comparison_valid": true,
+  "execution_source_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "release_eligible": false,
+  "reviewer": "Codex code-author AI, separate from evaluated DeepSeek instances",
+  "reviewer_kind": "independent_external_reviewer",
+  "reviews_sha256": "8dcbce854b27edbbd99c2ca24ab018187290129fbae667ec0f076f7d8b4c6728",
+  "grading_audit_sha256": "a16ca3ef69b3443de4e46a17e8319aab447f02516698d59add42b35c46daff0e",
+  "automatic_summary_sha256": "eb207c3b23875b6179e66ccc526408aa96d72d39f858ac1aa9b83ef7ab821f6f",
+  "failures": [
+    "H02-3/agent.json",
+    "H03-1/fixed.json",
+    "H03-1/agent.json",
+    "H03-2/fixed.json",
+    "H03-2/agent.json",
+    "H03-3/fixed.json",
+    "H03-3/agent.json",
+    "H06-1/agent.json",
+    "H06-2/agent.json",
+    "H06-3/agent.json",
+    "H07-1/agent.json",
+    "H07-2/agent.json",
+    "H07-3/agent.json",
+    "H17-1/additional.json",
+    "H17-2/additional.json",
+    "H17-3/additional.json"
+  ],
+  "expected_behavior_rate": 0.7833333333333333,
+  "positive_task_completion_rate": 0.7592592592592593,
+  "critical_rate": 1.0,
+  "independent_cases": 20,
+  "groups": {
+    "additional": {
+      "runs": 24,
+      "business_pass_rate": 0.875
+    },
+    "agent": {
+      "runs": 36,
+      "business_pass_rate": 0.7222222222222222
+    },
+    "fixed": {
+      "runs": 36,
+      "business_pass_rate": 0.9166666666666666
+    }
+  },
+  "default_entrypoint": "commerce_review",
+  "default_decision": "Retain workflow. This review does not automatically change product defaults; paired effects and costs must be assessed explicitly."
+}

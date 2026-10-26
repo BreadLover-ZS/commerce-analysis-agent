@@ -1,0 +1,492 @@
+{
+  "method": "Recorded author-side AI review, not evaluated-model self-review or organizationally independent human acceptance",
+  "case_notes": {
+    "H01": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+    "H02": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+    "H03": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+    "H04": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+    "H05": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+    "H06": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+    "H07": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+    "H08": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+    "H09": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+    "H10": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+    "H11": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+    "H12": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+    "H13": "前两次两SKU×两期×三日共12项逐日净额及日覆盖齐全。第三次只有T131的6项日事实，T132尚未查询时被全局预算发送前拒绝；保留不完整答复，不能计为完成日序列任务。"
+  },
+  "receipts": [
+    {
+      "receipt": "H01-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H01-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H01-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H01-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H01-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H01-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "三SKU各三金额×本期/比较期/差额27项及记账恒等式已核对，零退款项保留；正负贡献对账，不把贡献认作业务因果。固定回退仍保留必答金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H02-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H02-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H02-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H02-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H02-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H02-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "两期退款金额、退款件数、支付件数及记账占比分开呈现。退款件数/金额均减少而支付分母收缩，解释为记账分母效应，不以占比上升推断金额上升或最终订单退款率。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H03-1/fixed.json",
+      "verdict": "FAIL",
+      "case_note": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+      "failed_criteria": [
+        "business_conclusions",
+        "required_sections_complete",
+        "all_facts_bound",
+        "accepted: 仅按固定版本和记账事实报告；未获资料支持的业务原因保持未证实。"
+      ]
+    },
+    {
+      "receipt": "H03-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H03-2/fixed.json",
+      "verdict": "FAIL",
+      "case_note": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+      "failed_criteria": [
+        "business_conclusions",
+        "required_sections_complete",
+        "all_facts_bound",
+        "accepted: 仅按固定版本和记账事实报告；未获资料支持的业务原因保持未证实。"
+      ]
+    },
+    {
+      "receipt": "H03-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H03-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H03-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "题面本轮明确要求九项金额。诊断三次均直接呈现，249000元支付变化减377235元退款变化等于净额变化负128235元。固定仅第三次完成；前两次章节容量异常导致无报告，不能视作已答。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H04-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H04-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H04-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H04-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H04-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H04-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "整体净额持平，但商品正负变化抵消；保留逐对象金额与贡献，不把持平解释为无风险或无波动。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H05-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H05-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H05-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H05-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H05-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H05-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "两期均为真实显式零记录，净额/差额为零；非正基期不提供无定义变化率。明确缺行不补零，不以零销量推断业务健康。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H06-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H06-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H06-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H06-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H06-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H06-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "启用后本期确有缺行，不作完整变化归因；来源缺口与答复完成分开，evidence_gap和boundary_explained回答所问限制，不制造缺行金额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H07-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H07-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H07-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H07-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H07-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H07-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "比较期缺少应有记录，不能当作合法零销量；直接呈现本期已有净额，并保留比较期不可比边界，没有伪造比较期数值或差额。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H08-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H08-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H08-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H08-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H08-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H08-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "新品启用前不适用，不要求补零；正文未把其比较期0当作真实记录，当前新品增加与原商品下降的贡献按授权范围对账。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H09-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H09-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H09-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H09-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H09-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H09-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "实际仅两个品类，饮具负项、收纳正项与总体差额对账；没有编造第二个下降品类，未以商品排名替代品类。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H10-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H10-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H10-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H10-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H10-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H10-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "输入缺成本，明确不能计算利润或利润差额。现有净额事实未称作利润，答复保持unsupported/incomplete，并非完成正向利润计算。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H11-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H11-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H11-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H11-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H11-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H11-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "缺访客/曝光及订单关联，不能计算转化率或其变化；未把净销售额变化率替代转化率，资料限制明确。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H12-1/fixed.json",
+      "verdict": "PASS",
+      "case_note": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H12-1/agent.json",
+      "verdict": "PASS",
+      "case_note": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H12-2/fixed.json",
+      "verdict": "PASS",
+      "case_note": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H12-2/agent.json",
+      "verdict": "PASS",
+      "case_note": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H12-3/fixed.json",
+      "verdict": "PASS",
+      "case_note": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H12-3/agent.json",
+      "verdict": "PASS",
+      "case_note": "逐商品两期净额及差额、头部和其余贡献均已直接呈现；完整贡献对账，TopK没有隐藏未回答的对象。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H13-1/additional.json",
+      "verdict": "PASS",
+      "case_note": "前两次两SKU×两期×三日共12项逐日净额及日覆盖齐全。第三次只有T131的6项日事实，T132尚未查询时被全局预算发送前拒绝；保留不完整答复，不能计为完成日序列任务。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H13-2/additional.json",
+      "verdict": "PASS",
+      "case_note": "前两次两SKU×两期×三日共12项逐日净额及日覆盖齐全。第三次只有T131的6项日事实，T132尚未查询时被全局预算发送前拒绝；保留不完整答复，不能计为完成日序列任务。",
+      "failed_criteria": []
+    },
+    {
+      "receipt": "H13-3/additional.json",
+      "verdict": "FAIL",
+      "case_note": "前两次两SKU×两期×三日共12项逐日净额及日覆盖齐全。第三次只有T131的6项日事实，T132尚未查询时被全局预算发送前拒绝；保留不完整答复，不能计为完成日序列任务。",
+      "failed_criteria": [
+        "business_conclusions",
+        "required_sections_complete"
+      ]
+    }
+  ],
+  "unexecuted_cases": [
+    "H14",
+    "H15",
+    "H16",
+    "H17",
+    "H18",
+    "H19",
+    "H20"
+  ]
+}

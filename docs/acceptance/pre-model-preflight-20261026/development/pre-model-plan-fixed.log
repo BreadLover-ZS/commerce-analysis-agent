@@ -1,0 +1,33 @@
+.......................................F                                 [100%]----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+____ test_insufficient_frozen_capacity_blocks_before_credentials_or_output _____
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-141/test_insufficient_froze...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-141/test_insufficient_frozen_capac0/paid'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10911bfe0>
+
+    async def test_insufficient_frozen_capacity_blocks_before_credentials_or_output(
+        prepared_inputs, monkeypatch
+    ):
+        from evaluations import diagnosis
+    
+        directory, _, prior = prepared_inputs
+        monkeypatch.setattr(planning, "REQUEST_RESERVATION", 9000000)
+        plan = freeze(prepared_inputs)
+        assert not plan["budget"]["proposed_limit_estimated_sufficient"]
+        assert planning.check(directory)["validation_passed"]
+    
+        def no_credentials(*args):
+            pytest.fail("Insufficient formal capacity must fail before credentials")
+    
+        monkeypatch.setattr(diagnosis, "live_configuration", no_credentials)
+>       with pytest.raises(ValueError, match="冻结预算估计不足"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: '冻结预算估计不足'
+E         Actual message: '当前正式入口须使用schema4冻结语义侧表，禁止省略或降级'
+
+tests/test_diagnosis_plan.py:319: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_diagnosis_plan.py::test_insufficient_frozen_capacity_blocks_before_credentials_or_output
+1 failed, 39 passed in 21.49s

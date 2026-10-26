@@ -1,0 +1,57 @@
+{
+  "checks": 12,
+  "passed": 12,
+  "formal_packet_executions": 0,
+  "provider_requests": 0,
+  "network_attempts": 0,
+  "rows": [
+    {
+      "mutation": "question",
+      "rejected": true
+    },
+    {
+      "mutation": "raw_sales",
+      "rejected": true
+    },
+    {
+      "mutation": "target_only_boundary",
+      "rejected": true
+    },
+    {
+      "mutation": "missing_required_item",
+      "rejected": true
+    },
+    {
+      "mutation": "wrong_runtime",
+      "rejected": true
+    },
+    {
+      "mutation": "wrong_fixed_runtime",
+      "rejected": true
+    },
+    {
+      "mutation": "daily_scope",
+      "rejected": true
+    },
+    {
+      "mutation": "author_integer",
+      "rejected": true
+    },
+    {
+      "mutation": "author_unit",
+      "rejected": true
+    },
+    {
+      "mutation": "author_daily",
+      "rejected": true
+    },
+    {
+      "mutation": "budget_limit",
+      "rejected": true
+    },
+    {
+      "mutation": "unknown_assertion",
+      "rejected": true
+    }
+  ]
+}

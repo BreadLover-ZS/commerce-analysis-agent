@@ -1,0 +1,129 @@
+FFFFF                                                                    [100%]----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+_ test_negative_constraints_are_not_made_positive_obligations[\u5206\u522b\u5217\u51fa\u4e24\u671f\u652f\u4ed8\u91d1\u989d\u548c\u9000\u6b3e\u91d1\u989d\uff0c\u4e0d\u8981\u89e3\u91ca\u539f\u56e0\u3002-expected0] _
+
+query = '分别列出两期支付金额和退款金额，不要解释原因。', expected = set()
+
+    @pytest.mark.parametrize(
+        "query,expected",
+        [
+            ("分别列出两期支付金额和退款金额，不要解释原因。", set()),
+            ("不要逐一解释原因，只需分别列出支付金额和退款金额。", set()),
+            ("逐一讨论退款和数据质量，不讨论支付原因。", {"refund_drivers", "data_quality"}),
+            ("分别解释商品组合和退款；不要讨论数据质量。", {"product_mix", "refund_drivers"}),
+        ],
+    )
+    def test_negative_constraints_are_not_made_positive_obligations(query, expected):
+>       assert required_explanations({"objective": query, "answer_version": 6}) == expected
+E       AssertionError: assert {'refund_driv...ales_drivers'} == set()
+E         
+E         Extra items in the left set:
+E         'sales_drivers'
+E         'refund_drivers'
+E         Use -v to get more diff
+
+tests/test_pre_model_preflight.py:21: AssertionError
+_ test_negative_constraints_are_not_made_positive_obligations[\u4e0d\u8981\u9010\u4e00\u89e3\u91ca\u539f\u56e0\uff0c\u53ea\u9700\u5206\u522b\u5217\u51fa\u652f\u4ed8\u91d1\u989d\u548c\u9000\u6b3e\u91d1\u989d\u3002-expected1] _
+
+query = '不要逐一解释原因，只需分别列出支付金额和退款金额。', expected = set()
+
+    @pytest.mark.parametrize(
+        "query,expected",
+        [
+            ("分别列出两期支付金额和退款金额，不要解释原因。", set()),
+            ("不要逐一解释原因，只需分别列出支付金额和退款金额。", set()),
+            ("逐一讨论退款和数据质量，不讨论支付原因。", {"refund_drivers", "data_quality"}),
+            ("分别解释商品组合和退款；不要讨论数据质量。", {"product_mix", "refund_drivers"}),
+        ],
+    )
+    def test_negative_constraints_are_not_made_positive_obligations(query, expected):
+>       assert required_explanations({"objective": query, "answer_version": 6}) == expected
+E       AssertionError: assert {'refund_driv...ales_drivers'} == set()
+E         
+E         Extra items in the left set:
+E         'sales_drivers'
+E         'refund_drivers'
+E         Use -v to get more diff
+
+tests/test_pre_model_preflight.py:21: AssertionError
+_ test_negative_constraints_are_not_made_positive_obligations[\u9010\u4e00\u8ba8\u8bba\u9000\u6b3e\u548c\u6570\u636e\u8d28\u91cf\uff0c\u4e0d\u8ba8\u8bba\u652f\u4ed8\u539f\u56e0\u3002-expected2] _
+
+query = '逐一讨论退款和数据质量，不讨论支付原因。', expected = {'data_quality', 'refund_drivers'}
+
+    @pytest.mark.parametrize(
+        "query,expected",
+        [
+            ("分别列出两期支付金额和退款金额，不要解释原因。", set()),
+            ("不要逐一解释原因，只需分别列出支付金额和退款金额。", set()),
+            ("逐一讨论退款和数据质量，不讨论支付原因。", {"refund_drivers", "data_quality"}),
+            ("分别解释商品组合和退款；不要讨论数据质量。", {"product_mix", "refund_drivers"}),
+        ],
+    )
+    def test_negative_constraints_are_not_made_positive_obligations(query, expected):
+>       assert required_explanations({"objective": query, "answer_version": 6}) == expected
+E       AssertionError: assert {'data_qualit...ales_drivers'} == {'data_qualit...fund_drivers'}
+E         
+E         Extra items in the left set:
+E         'sales_drivers'
+E         Use -v to get more diff
+
+tests/test_pre_model_preflight.py:21: AssertionError
+_ test_negative_constraints_are_not_made_positive_obligations[\u5206\u522b\u89e3\u91ca\u5546\u54c1\u7ec4\u5408\u548c\u9000\u6b3e\uff1b\u4e0d\u8981\u8ba8\u8bba\u6570\u636e\u8d28\u91cf\u3002-expected3] _
+
+query = '分别解释商品组合和退款；不要讨论数据质量。', expected = {'product_mix', 'refund_drivers'}
+
+    @pytest.mark.parametrize(
+        "query,expected",
+        [
+            ("分别列出两期支付金额和退款金额，不要解释原因。", set()),
+            ("不要逐一解释原因，只需分别列出支付金额和退款金额。", set()),
+            ("逐一讨论退款和数据质量，不讨论支付原因。", {"refund_drivers", "data_quality"}),
+            ("分别解释商品组合和退款；不要讨论数据质量。", {"product_mix", "refund_drivers"}),
+        ],
+    )
+    def test_negative_constraints_are_not_made_positive_obligations(query, expected):
+>       assert required_explanations({"objective": query, "answer_version": 6}) == expected
+E       AssertionError: assert {'data_qualit...fund_drivers'} == {'product_mix...fund_drivers'}
+E         
+E         Extra items in the left set:
+E         'data_quality'
+E         Use -v to get more diff
+
+tests/test_pre_model_preflight.py:21: AssertionError
+_______ test_formal_entry_refuses_missing_frozen_plan_before_credentials _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1123d4320>
+
+    async def test_formal_entry_refuses_missing_frozen_plan_before_credentials(monkeypatch):
+        def forbidden(*args, **kwargs):
+            pytest.fail("credentials were reached before formal admission")
+    
+        monkeypatch.setattr(diagnosis, "live_configuration", forbidden)
+        with pytest.raises(ValueError, match="冻结"):
+>           await diagnosis.evaluate(
+                SimpleNamespace(frozen_plan=None, final_holdout=True, split="holdout", mode="live")
+            )
+
+tests/test_pre_model_preflight.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+evaluations/diagnosis.py:511: in evaluate
+    configuration = live_configuration(args)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (namespace(frozen_plan=None, final_holdout=True, split='holdout', mode='live'),)
+kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       pytest.fail("credentials were reached before formal admission")
+E       Failed: credentials were reached before formal admission
+
+tests/test_pre_model_preflight.py:26: Failed
+=========================== short test summary info ============================
+FAILED tests/test_pre_model_preflight.py::test_negative_constraints_are_not_made_positive_obligations[\u5206\u522b\u5217\u51fa\u4e24\u671f\u652f\u4ed8\u91d1\u989d\u548c\u9000\u6b3e\u91d1\u989d\uff0c\u4e0d\u8981\u89e3\u91ca\u539f\u56e0\u3002-expected0]
+FAILED tests/test_pre_model_preflight.py::test_negative_constraints_are_not_made_positive_obligations[\u4e0d\u8981\u9010\u4e00\u89e3\u91ca\u539f\u56e0\uff0c\u53ea\u9700\u5206\u522b\u5217\u51fa\u652f\u4ed8\u91d1\u989d\u548c\u9000\u6b3e\u91d1\u989d\u3002-expected1]
+FAILED tests/test_pre_model_preflight.py::test_negative_constraints_are_not_made_positive_obligations[\u9010\u4e00\u8ba8\u8bba\u9000\u6b3e\u548c\u6570\u636e\u8d28\u91cf\uff0c\u4e0d\u8ba8\u8bba\u652f\u4ed8\u539f\u56e0\u3002-expected2]
+FAILED tests/test_pre_model_preflight.py::test_negative_constraints_are_not_made_positive_obligations[\u5206\u522b\u89e3\u91ca\u5546\u54c1\u7ec4\u5408\u548c\u9000\u6b3e\uff1b\u4e0d\u8981\u8ba8\u8bba\u6570\u636e\u8d28\u91cf\u3002-expected3]
+FAILED tests/test_pre_model_preflight.py::test_formal_entry_refuses_missing_frozen_plan_before_credentials
+5 failed in 0.82s

@@ -500,7 +500,7 @@ async def test_v3_single_sku_equivalence_requires_complete_bound_decomposition()
     from evaluations.diagnosis_runtime import admit, collect, execute, new_task, sandbox
 
     case = load_cases(split="development", case_ids=["D12"])[0][0]
-    with sandbox() as (settings, repo, user, other):
+    with sandbox(diagnosis_runtime="v3") as (settings, repo, user, other):
         conversation, bundle, _ = admit(repo, user, other, case)
         task = new_task(repo, user, conversation, bundle, case.query, "additional")
         await execute(repo, settings)

@@ -1,0 +1,29 @@
+{
+  "implementation_sha256": "6b103760a814247dfadd03ab3edf5fbc21591c41351eb54267dc64735d92ec90",
+  "live_files": 248,
+  "source_copies": [
+    {
+      "manifest": "evaluations/results/diagnosis-v16-plan-feasibility-20261026-01/baseline-implementation.json",
+      "files": 235,
+      "implementation_sha256": "1bb3bbb8302c4bc5c471dec6d1193636222734c384cb967d07ed74dcb5b85db7",
+      "changed": 0
+    },
+    {
+      "manifest": "evaluations/results/diagnosis-v16-local-20261026-01/delivery-source.json",
+      "files": 244,
+      "implementation_sha256": "99530b7b82574e9e610a657f330199c3f21508c7b0d1305d3f9b0048274be62b",
+      "changed": 0
+    },
+    {
+      "manifest": "evaluations/results/pre-model-preflight-20261026-01/implementation.json",
+      "files": 248,
+      "implementation_sha256": "6b103760a814247dfadd03ab3edf5fbc21591c41351eb54267dc64735d92ec90",
+      "changed": 0
+    }
+  ],
+  "original_v15_files_checked": 199,
+  "original_v15_files_changed": 0,
+  "prior_v16_evidence_checksums_verified": 34,
+  "credentials_included": false,
+  "provider_requests": 0
+}

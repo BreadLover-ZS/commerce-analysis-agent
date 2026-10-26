@@ -24,6 +24,8 @@ from app.diagnosis.contracts import (
     V12,
     V13,
     V14,
+    V15,
+    V16,
     extended_objectives,
     is_extended,
     tool_schemas,
@@ -100,6 +102,11 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
     expected = RUNTIME_VERSIONS.get(task["graph_version"])
     if expected is None or any(task[k] != v for k, v in expected.items()):
         raise UnsupportedGraphVersion()
+    if (
+        task["graph_version"] == V16["graph_version"]
+        and task["parameters"].get("accounting_protocol") != 2
+    ):
+        raise UnsupportedGraphVersion()
     proposal_schema = StepProposal
     propose_fn, prompt_fn, gaps_fn, objectives_fn = (
         demo_proposal,
@@ -110,10 +117,10 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
     findings_fn, information_fn = observations, information_digest
     unsupported_fn, extensions_fn = unsupported_question, extended_objectives
     v3 = task["graph_version"] in {
-        v["graph_version"] for v in (V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14)
+        v["graph_version"] for v in (V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16)
     }
     v4 = task["graph_version"] in {
-        v["graph_version"] for v in (V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14)
+        v["graph_version"] for v in (V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16)
     }
     if is_extended(task):
         from app.diagnosis import planner_v2, validation_v2
@@ -139,7 +146,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         prompt_fn = planner_v4.prompt
         computable_fn = planner_v4.computable_gap_tools
     if task["graph_version"] in {
-        v["graph_version"] for v in (V5, V6, V7, V8, V9, V10, V11, V12, V13, V14)
+        v["graph_version"] for v in (V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16)
     }:
         from app.diagnosis import planner_v5
 
@@ -158,6 +165,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         V12["graph_version"],
         V13["graph_version"],
         V14["graph_version"],
+        V15["graph_version"],
+        V16["graph_version"],
     }:
         from app.diagnosis import planner_v7
 
@@ -174,6 +183,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         V12["graph_version"],
         V13["graph_version"],
         V14["graph_version"],
+        V15["graph_version"],
+        V16["graph_version"],
     }:
         from app.diagnosis import planner_v8
 
@@ -185,6 +196,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         V12["graph_version"],
         V13["graph_version"],
         V14["graph_version"],
+        V15["graph_version"],
+        V16["graph_version"],
     }:
         from app.diagnosis import planner_v9
 
@@ -228,6 +241,24 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         objectives_fn, unsupported_fn = planner_v14.objectives, planner_v14.unsupported_question
         scope_fn = planner_v14.initial_scope
 
+    v15 = task["graph_version"] in {V15["graph_version"], V16["graph_version"]}
+    if v15:
+        from app.diagnosis import planner_v10, planner_v15
+        from app.diagnosis.completion_v15 import completion
+        from app.diagnosis.proposals_v3 import correction
+        from app.diagnosis.proposals_v3 import proposal_schema as schema_factory
+
+        proposal_schema = schema_factory(task)
+        propose_fn, prompt_fn = planner_v15.demo_proposal, planner_v15.prompt
+        if task["graph_version"] == V16["graph_version"]:
+            from app.diagnosis.planner_v16 import prompt as prompt_fn
+        gaps_fn, computable_fn = planner_v15.missing_coverage, planner_v15.computable_gap_tools
+        objectives_fn, unsupported_fn = planner_v15.objectives, planner_v15.unsupported_question
+        scope_fn = planner_v15.initial_scope
+        from app.diagnosis.reporting import report_contract
+
+        findings_fn = report_contract(task)[1]
+
     schemas = tool_schemas(task)
     gateway, store = DiagnosisToolGateway(repo, ctx), DiagnosisStore(repo)
     if task["mode"] == "demo" and not (
@@ -266,7 +297,8 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             "objective": task["query"],
             "scope": (
                 scope_fn(task["query"], data["bundle"], data["sales_payload"]["products"])
-                if task["graph_version"] == V14["graph_version"]
+                if task["graph_version"]
+                in {V14["graph_version"], V15["graph_version"], V16["graph_version"]}
                 else scope_fn(task["query"], data["bundle"])
             ),
             "plan_version": 1,
@@ -309,7 +341,7 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         one_period_covered = task["graph_version"] == V14[
             "graph_version"
         ] and planner_v14.single_period_covered(task["query"], result)
-        if one_period_covered:
+        if v15 or one_period_covered:
             pass
         elif result["coverage"]["current"]["observed_records"] == 0:
             value.update(stop_reason="no_evidence", open_questions=["本期没有可核对的已记录事实"])
@@ -345,6 +377,14 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
 
     async def propose(state):
         data = await snapshot()
+        if (
+            v15
+            and data["task"]["metrics"].get("usage_complete") is not False
+            and not planner_v15.planner_v14.ambiguous_entity(task["query"], state["scope"])
+        ):
+            done = completion(task["query"], data["evidence"], state["scope"], data["steps"])
+            if done["status"] in {"fulfilled", "boundary_explained"}:
+                return {"stop_reason": "evidence_gap" if done["data_gaps"] else "target_covered"}
         if (
             task["graph_version"]
             in {V12["graph_version"], V13["graph_version"], V14["graph_version"]}
@@ -383,7 +423,13 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                         prompt_fn(
                             data["task"]
                             if task["graph_version"]
-                            in {V12["graph_version"], V13["graph_version"], V14["graph_version"]}
+                            in {
+                                V12["graph_version"],
+                                V13["graph_version"],
+                                V14["graph_version"],
+                                V15["graph_version"],
+                                V16["graph_version"],
+                            }
                             else task,
                             data["bundle"],
                             state["scope"],
@@ -402,6 +448,11 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                 )
                 return {"stop_reason": reason}
             model_call_id = result["call_id"]
+            if result["status"] == "NOT_SENT":
+                return {
+                    "stop_reason": "model_budget",
+                    "open_questions": ["模型请求因预算在发送前停止，剩余义务未完成"],
+                }
             if result["status"] == "UNKNOWN" or not result["usage_complete"]:
                 return {
                     "stop_reason": "usage_unknown",
@@ -427,12 +478,19 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
             V12["graph_version"],
             V13["graph_version"],
             V14["graph_version"],
+            V15["graph_version"],
+            V16["graph_version"],
         }:
             proposal = planner_v10.public_proposal(proposal)
         step = await asyncio.to_thread(store.put_step, ctx, sequence, proposal, model_call_id)
         if invalid:
             step = await update(
-                sequence, status="REJECTED", assessment={"error_code": "invalid_decision"}
+                sequence,
+                status="REJECTED",
+                assessment={
+                    "error_code": "invalid_decision",
+                    **({"correction": correction(result.get("error_code"))} if v15 else {}),
+                },
             )
         return {"sequence": sequence, "current_step": step, "steps": [*data["steps"], step]}
 
@@ -447,12 +505,35 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                 step = await update(
                     sequence,
                     status="REJECTED",
-                    assessment={"error_code": "unbound_rule_interpretation"},
+                    assessment={
+                        "error_code": "unbound_rule_interpretation",
+                        **(
+                            {
+                                "correction": correction(
+                                    "unbound_rule_interpretation", data["evidence"]
+                                )
+                            }
+                            if v15
+                            else {}
+                        ),
+                    },
                 )
                 return {"current_step": step}
         if proposal["action"] == "stop":
             data = await snapshot()
-            missing = gaps_fn(task["query"], data["evidence"], state["scope"])
+            missing = (
+                gaps_fn(
+                    task["query"],
+                    data["evidence"],
+                    state["scope"],
+                    [
+                        {**s, "status": "SUCCEEDED"} if s["sequence"] == sequence else s
+                        for s in data["steps"]
+                    ],
+                )
+                if v15
+                else gaps_fn(task["query"], data["evidence"], state["scope"])
+            )
             reason = proposal["stop_reason"]
             if reason == "target_covered" and missing:
                 if v4:
@@ -572,7 +653,11 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         data = await snapshot()
         step = next(s for s in data["steps"] if s["sequence"] == state["sequence"])
         current = [e for e in data["evidence"] if e["id"] in step["evidence_ids"]]
-        new = [information_fn(e["payload"]) for e in current if e["payload"]["status"] == "ok"]
+        new = [
+            information_fn(e["payload"])
+            for e in current
+            if e["payload"]["status"] in ({"ok", "incomparable", "empty"} if v15 else {"ok"})
+        ]
         fresh = bool(set(new) - set(state["seen_information"]))
         no_information = 0 if fresh else state["no_information_count"] + 1
         findings = findings_fn(ctx.task_id, data["evidence"], data["steps"])
@@ -644,6 +729,20 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
                     )
                     else "target_covered"
                 )
+        if (
+            v15
+            and not stop
+            and data["task"]["metrics"].get("usage_complete") is not False
+            and not planner_v15.pending_computable(
+                task["query"], data["evidence"], state["scope"], data["steps"]
+            )
+        ):
+            stop = (
+                "evidence_gap"
+                if gaps_fn(task["query"], data["evidence"], state["scope"], data["steps"])
+                or display_gaps(task, data["evidence"], state["scope"])
+                else "target_covered"
+            )
         if stop:
             assessment["next_action"] = "stop"
         step = await update(state["sequence"], assessment=assessment)
@@ -722,7 +821,11 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         data = await snapshot()
         findings = findings_fn(ctx.task_id, data["evidence"], data["steps"])
         await asyncio.to_thread(store.save_findings, ctx, findings)
-        missing = gaps_fn(task["query"], data["evidence"], state["scope"])
+        missing = (
+            gaps_fn(task["query"], data["evidence"], state["scope"], data["steps"])
+            if v15
+            else gaps_fn(task["query"], data["evidence"], state["scope"])
+        )
         questions = list(dict.fromkeys(state.get("open_questions", []) + missing))
         try:
             report = make_report(

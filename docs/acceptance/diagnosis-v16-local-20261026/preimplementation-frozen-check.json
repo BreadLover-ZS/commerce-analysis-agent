@@ -1,0 +1,27 @@
+{
+  "recorded_at": "2026-10-25T18:33:05.477010+00:00",
+  "status": "PLAN_EVIDENCE_ONLY_NOT_IMPLEMENTED_NOT_RELEASED",
+  "checks": {
+    "implementation_fingerprint_and_file_set_unchanged": true,
+    "snapshot_matches_235_frozen_files": true,
+    "protected_199_historical_files_unchanged": true,
+    "snapshot_excludes_env_credentials": true,
+    "sdk_10_plan_checks_passed_without_network": true,
+    "report_5_plan_checks_passed_without_tasks": true
+  },
+  "implementation_sha256": "1bb3bbb8302c4bc5c471dec6d1193636222734c384cb967d07ed74dcb5b85db7",
+  "implementation_files": 235,
+  "protected_history_files": 199,
+  "source_changed": [],
+  "snapshot_changed": [],
+  "history_changed": [],
+  "plan_feasibility_checks_passed": 15,
+  "planned_regression_categories": 35,
+  "regression_categories_executed": 0,
+  "new_provider_requests": 0,
+  "new_task_executions": 0,
+  "historical_reconciliation": "NOT_IMPLEMENTED_CANONICAL_AUDIT_REMAINS_BLOCKED",
+  "business_fix_implemented": false,
+  "g6_release_eligible": false,
+  "g7_excluded": true
+}

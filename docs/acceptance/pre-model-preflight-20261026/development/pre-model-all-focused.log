@@ -1,0 +1,279 @@
+........................................................................ [ 28%]
+........................................................................ [ 56%]
+..................................................................F...F. [ 84%]
+...F----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+_ test_complete_v4_freeze_and_admission_recomputes_ancestral_input_provenance __
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_complete_v4_freeze...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_complete_v4_freeze_and_ad0/paid'))
+
+    def test_complete_v4_freeze_and_admission_recomputes_ancestral_input_provenance(prepared_inputs):
+        directory, cases, prior = packet(prepared_inputs)
+        before = {p.name: p.read_bytes() for p in prior.iterdir()}
+>       plan, _ = planning.freeze(cases, directory, prior, 8000000, prior)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_pre_model_plan.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cases_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_complete_v4_freeze_and_ad0/plan/cases.json')
+directory = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_complete_v4_freeze_and_ad0/plan')
+charge_from = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_complete_v4_freeze_and_ad0/paid')
+proposed_limit = 8000000
+reference_round = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_complete_v4_freeze_and_ad0/paid')
+used_cases = (), reconciliation = None
+
+    def freeze(
+        cases_path,
+        directory,
+        charge_from,
+        proposed_limit,
+        reference_round,
+        used_cases=(),
+        *,
+        reconciliation=None,
+    ):
+        cases_path, directory, charge_from = map(Path, (cases_path, directory, charge_from))
+        # Keep plan material outside the implementation fingerprint to avoid a
+        # circular hash: manifest -> implementation -> manifest.
+        if directory.resolve().is_relative_to(ROOT / "evaluations") and "results" not in (
+            directory.resolve().relative_to(ROOT).parts
+        ):
+            raise ValueError("冻结目录请使用docs/acceptance或evaluations/results，避免循环指纹")
+        if cases_path.resolve().parent != directory.resolve():
+            raise ValueError("题包须和冻结manifest保存在同一目录")
+        used_inputs, prior_files = set(), []
+        for path in used_cases:
+            old, _ = load_cases(path)
+            used_inputs.update(input_hash(c) for c in old)
+            prior_files.append({"file": str(path), "sha256": file_hash(path)})
+        cases, contract = validate_cases(cases_path, used_inputs)
+        history = reconcile_history(charge_from, reconciliation=reconciliation)
+        semantic_file = directory / "semantic-contract.json"
+        semantic = json.loads(semantic_file.read_bytes()) if semantic_file.exists() else {}
+        if semantic.get("schema_version") == 4:
+            ancestor_inputs, ancestor_files = historical_question_sources(charge_from, used_cases)
+            used_inputs.update(ancestor_inputs)
+            prior_files = [
+                {"file": name, "sha256": checksum}
+                for name, checksum in sorted(
+                    {
+                        **{str(Path(row["file"]).resolve()): row["sha256"] for row in prior_files},
+                        **ancestor_files,
+                    }.items()
+                )
+            ]
+            cases, contract = validate_cases(cases_path, used_inputs)
+        reference_meta = json.loads((Path(reference_round) / "run.json").read_bytes())
+        reference_summary = json.loads((Path(reference_round) / "summary.json").read_bytes())
+        reference_history = prior_spend(
+            reference_round,
+            provider=history["provider"],
+            endpoint=history["endpoint"],
+            model=history["model"],
+            token_limit=reference_meta["max_total_tokens"],
+            require_stopped=False,
+        )
+        if (
+            reference_meta.get("planned", {}).get("split") != "holdout"
+            or reference_summary.get("executed_runs") != contract["total_tasks"]
+            or reference_summary.get("stopped") is not None
+        ):
+>           raise ValueError("预算参考须为同规模完整正式轮")
+E           ValueError: 预算参考须为同规模完整正式轮
+
+evaluations/diagnosis_plan.py:301: ValueError
+_ test_removing_prior_input_hashes_from_manifest_does_not_reenable_reused_cases _
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_removing_prior_inp...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_removing_prior_input_hash0/paid'))
+
+    def test_removing_prior_input_hashes_from_manifest_does_not_reenable_reused_cases(prepared_inputs):
+        directory, cases, prior = packet(prepared_inputs)
+>       plan, _ = planning.freeze(cases, directory, prior, 8000000, prior)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_pre_model_plan.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cases_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_removing_prior_input_hash0/plan/cases.json')
+directory = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_removing_prior_input_hash0/plan')
+charge_from = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_removing_prior_input_hash0/paid')
+proposed_limit = 8000000
+reference_round = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_removing_prior_input_hash0/paid')
+used_cases = (), reconciliation = None
+
+    def freeze(
+        cases_path,
+        directory,
+        charge_from,
+        proposed_limit,
+        reference_round,
+        used_cases=(),
+        *,
+        reconciliation=None,
+    ):
+        cases_path, directory, charge_from = map(Path, (cases_path, directory, charge_from))
+        # Keep plan material outside the implementation fingerprint to avoid a
+        # circular hash: manifest -> implementation -> manifest.
+        if directory.resolve().is_relative_to(ROOT / "evaluations") and "results" not in (
+            directory.resolve().relative_to(ROOT).parts
+        ):
+            raise ValueError("冻结目录请使用docs/acceptance或evaluations/results，避免循环指纹")
+        if cases_path.resolve().parent != directory.resolve():
+            raise ValueError("题包须和冻结manifest保存在同一目录")
+        used_inputs, prior_files = set(), []
+        for path in used_cases:
+            old, _ = load_cases(path)
+            used_inputs.update(input_hash(c) for c in old)
+            prior_files.append({"file": str(path), "sha256": file_hash(path)})
+        cases, contract = validate_cases(cases_path, used_inputs)
+        history = reconcile_history(charge_from, reconciliation=reconciliation)
+        semantic_file = directory / "semantic-contract.json"
+        semantic = json.loads(semantic_file.read_bytes()) if semantic_file.exists() else {}
+        if semantic.get("schema_version") == 4:
+            ancestor_inputs, ancestor_files = historical_question_sources(charge_from, used_cases)
+            used_inputs.update(ancestor_inputs)
+            prior_files = [
+                {"file": name, "sha256": checksum}
+                for name, checksum in sorted(
+                    {
+                        **{str(Path(row["file"]).resolve()): row["sha256"] for row in prior_files},
+                        **ancestor_files,
+                    }.items()
+                )
+            ]
+            cases, contract = validate_cases(cases_path, used_inputs)
+        reference_meta = json.loads((Path(reference_round) / "run.json").read_bytes())
+        reference_summary = json.loads((Path(reference_round) / "summary.json").read_bytes())
+        reference_history = prior_spend(
+            reference_round,
+            provider=history["provider"],
+            endpoint=history["endpoint"],
+            model=history["model"],
+            token_limit=reference_meta["max_total_tokens"],
+            require_stopped=False,
+        )
+        if (
+            reference_meta.get("planned", {}).get("split") != "holdout"
+            or reference_summary.get("executed_runs") != contract["total_tasks"]
+            or reference_summary.get("stopped") is not None
+        ):
+>           raise ValueError("预算参考须为同规模完整正式轮")
+E           ValueError: 预算参考须为同规模完整正式轮
+
+evaluations/diagnosis_plan.py:301: ValueError
+_ test_verified_append_only_certificate_is_bound_through_freeze_check_and_guard _
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_on...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/paid'))
+unsent_previous = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/previous')
+tmp_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0')
+
+    def test_verified_append_only_certificate_is_bound_through_freeze_check_and_guard(
+        prepared_inputs, unsent_previous, tmp_path
+    ):
+        directory, cases, reference = packet(prepared_inputs)
+        root = unsent_previous
+        meta = json.loads((root / "run.json").read_bytes())
+        meta.update(provider="DeepSeek", endpoint="https://api.deepseek.com", model="deepseek-flash")
+        content = (reference / "cases-source.json").read_bytes()
+        (root / "cases-source.json").write_bytes(content)
+        meta["cases_file_sha256"] = hashlib.sha256(content).hexdigest()
+        (root / "run.json").write_text(json.dumps(meta))
+        record = json.loads((root / "case-1/agent.json").read_bytes())
+        for call in record["model_invocations"]:
+            call["model_version"] = "deepseek-flash"
+        record["provider_trace"][0]["attempt_identity"]["model_version"] = "deepseek-flash"
+        journal = [
+            json.loads(line) for line in (root / "budget-journal.jsonl").read_bytes().splitlines()
+        ]
+        journal[-1]["attempt_identity"]["model_version"] = "deepseek-flash"
+        proof = record["events"][0]["data"]["proof"]
+        proof["event"] = copy.deepcopy(journal[-1])
+        proof["event_sha256"] = fingerprint(journal[-1])
+        (root / "budget-journal.jsonl").write_text("".join(json.dumps(row) + "\n" for row in journal))
+        (root / "case-1/agent.json").write_text(json.dumps(record))
+        cert = candidate(root)
+        path = tmp_path / "certificate.json"
+        path.write_text(json.dumps(cert))
+        original = {p.name: p.read_bytes() for p in root.rglob("*") if p.is_file()}
+>       plan, _ = planning.freeze(cases, directory, root, 2000000, reference, reconciliation=path)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_pre_model_plan.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cases_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/plan/cases.json')
+directory = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/plan')
+charge_from = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/previous')
+proposed_limit = 2000000
+reference_round = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/paid')
+used_cases = ()
+reconciliation = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-143/test_verified_append_only_cert0/certificate.json')
+
+    def freeze(
+        cases_path,
+        directory,
+        charge_from,
+        proposed_limit,
+        reference_round,
+        used_cases=(),
+        *,
+        reconciliation=None,
+    ):
+        cases_path, directory, charge_from = map(Path, (cases_path, directory, charge_from))
+        # Keep plan material outside the implementation fingerprint to avoid a
+        # circular hash: manifest -> implementation -> manifest.
+        if directory.resolve().is_relative_to(ROOT / "evaluations") and "results" not in (
+            directory.resolve().relative_to(ROOT).parts
+        ):
+            raise ValueError("冻结目录请使用docs/acceptance或evaluations/results，避免循环指纹")
+        if cases_path.resolve().parent != directory.resolve():
+            raise ValueError("题包须和冻结manifest保存在同一目录")
+        used_inputs, prior_files = set(), []
+        for path in used_cases:
+            old, _ = load_cases(path)
+            used_inputs.update(input_hash(c) for c in old)
+            prior_files.append({"file": str(path), "sha256": file_hash(path)})
+        cases, contract = validate_cases(cases_path, used_inputs)
+        history = reconcile_history(charge_from, reconciliation=reconciliation)
+        semantic_file = directory / "semantic-contract.json"
+        semantic = json.loads(semantic_file.read_bytes()) if semantic_file.exists() else {}
+        if semantic.get("schema_version") == 4:
+            ancestor_inputs, ancestor_files = historical_question_sources(charge_from, used_cases)
+            used_inputs.update(ancestor_inputs)
+            prior_files = [
+                {"file": name, "sha256": checksum}
+                for name, checksum in sorted(
+                    {
+                        **{str(Path(row["file"]).resolve()): row["sha256"] for row in prior_files},
+                        **ancestor_files,
+                    }.items()
+                )
+            ]
+            cases, contract = validate_cases(cases_path, used_inputs)
+        reference_meta = json.loads((Path(reference_round) / "run.json").read_bytes())
+        reference_summary = json.loads((Path(reference_round) / "summary.json").read_bytes())
+        reference_history = prior_spend(
+            reference_round,
+            provider=history["provider"],
+            endpoint=history["endpoint"],
+            model=history["model"],
+            token_limit=reference_meta["max_total_tokens"],
+            require_stopped=False,
+        )
+        if (
+            reference_meta.get("planned", {}).get("split") != "holdout"
+            or reference_summary.get("executed_runs") != contract["total_tasks"]
+            or reference_summary.get("stopped") is not None
+        ):
+>           raise ValueError("预算参考须为同规模完整正式轮")
+E           ValueError: 预算参考须为同规模完整正式轮
+
+evaluations/diagnosis_plan.py:301: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_pre_model_plan.py::test_complete_v4_freeze_and_admission_recomputes_ancestral_input_provenance
+FAILED tests/test_pre_model_plan.py::test_removing_prior_input_hashes_from_manifest_does_not_reenable_reused_cases
+FAILED tests/test_pre_model_plan.py::test_verified_append_only_certificate_is_bound_through_freeze_check_and_guard
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+3 failed, 217 passed in 3.56s

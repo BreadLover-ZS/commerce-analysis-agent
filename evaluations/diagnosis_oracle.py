@@ -406,7 +406,11 @@ def numeric_errors(sales, bundle, tool, arguments, result, inventory=None):
 def fixed_numeric_errors(sales, bundle, result):
     """Check the legacy baseline independently using the same raw input contract."""
     try:
-        skus = bundle["allowed_skus"]
+        skus = (
+            result["scope"]["skus"]
+            if result.get("answer_version") in {4, 5, 6}
+            else bundle["allowed_skus"]
+        )
         now, coverage = raw_totals(sales, skus, bundle["period"])
         before, prior_coverage = raw_totals(sales, skus, bundle["comparison_period"])
         comparable = all(
@@ -455,7 +459,7 @@ def fixed_numeric_errors(sales, bundle, result):
                     ),
                     "percent",
                 )
-        if result.get("answer_version") in {2, 3}:
+        if result.get("answer_version") in {2, 3, 4, 5, 6}:
             if prior_coverage["observed_records"]:
                 for key in ("net_revenue", "refund_amount", "paid_units", "refunded_units"):
                     put(
@@ -473,6 +477,13 @@ def fixed_numeric_errors(sales, bundle, result):
                     )
             if comparable:
                 put("paid_units_delta", now["paid_units"] - before["paid_units"], "count")
+        if result.get("answer_version") in {4, 5, 6} and prior_coverage["observed_records"]:
+            put(
+                "comparison_gross_revenue",
+                before["gross_revenue"],
+                "CNY",
+                period=bundle["comparison_period"],
+            )
         for dimension, column in (("products", "sku"), ("categories", "category")):
             groups = {}
             for product in sales["products"]:
@@ -489,27 +500,48 @@ def fixed_numeric_errors(sales, bundle, result):
                 if comparable:
                     put(delta_key, delta, "CNY", entity)
                 parts = {}
-                if result.get("answer_version") == 3:
+                if result.get("answer_version") in {3, 4, 5, 6}:
                     periods = {
                         "current": bundle["period"],
                         "comparison": bundle["comparison_period"],
                     }
-                    for metric in ("net_revenue", "gross_revenue", "refund_amount"):
+                    for metric in (
+                        (
+                            "net_revenue",
+                            "gross_revenue",
+                            "refund_amount",
+                            "paid_units",
+                            "refunded_units",
+                        )
+                        if result.get("answer_version") in {4, 5, 6}
+                        else ("net_revenue", "gross_revenue", "refund_amount")
+                    ):
                         for part, span in periods.items():
                             value, cov = raw_totals(sales, members, span)
                             if cov["observed_records"]:
                                 component_key = f"{dimension}.{index}.{metric}.{part}"
-                                put(component_key, value[metric], "CNY", entity, period=span)
+                                put(
+                                    component_key,
+                                    value[metric],
+                                    "count" if metric.endswith("units") else "CNY",
+                                    entity,
+                                    period=span,
+                                )
                                 parts[f"{metric}.{part}"] = component_key
                         if comparable:
                             component_key = f"{dimension}.{index}.{metric}.delta"
-                            put(component_key, current[metric] - previous[metric], "CNY", entity)
+                            put(
+                                component_key,
+                                current[metric] - previous[metric],
+                                "count" if metric.endswith("units") else "CNY",
+                                entity,
+                            )
                             parts[f"{metric}.delta"] = component_key
                 values.append(
                     {
                         **(
                             {"component_fact_keys": parts}
-                            if result.get("answer_version") == 3
+                            if result.get("answer_version") in {3, 4, 5, 6}
                             else {}
                         ),
                         "entity": entity,

@@ -2,7 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -47,9 +47,34 @@ class Settings(BaseSettings):
     diagnosis_wait_ttl_seconds: int = Field(86400, ge=60, le=604800)
     diagnosis_inventory_max_age_days: int = Field(7, ge=0, le=365)
     diagnosis_runtime: Literal[
-        "legacy", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"
-    ] = "v14"
-    commerce_review_answer_version: Literal[1, 2, 3] = 3
+        "legacy",
+        "v3",
+        "v4",
+        "v5",
+        "v6",
+        "v7",
+        "v8",
+        "v9",
+        "v10",
+        "v11",
+        "v12",
+        "v13",
+        "v14",
+        "v15",
+        "v16",
+    ] = "v16"
+    commerce_review_answer_version: Literal[1, 2, 3, 4, 5, 6] = 6
+
+    @field_validator("commerce_review_answer_version", mode="before")
+    @classmethod
+    def review_version_from_environment(cls, value):
+        # Environment variables are strings; Literal[int] does not coerce them.
+        # Preserve the closed version set rather than accepting arbitrary ints.
+        return (
+            int(value)
+            if isinstance(value, str) and value in {"1", "2", "3", "4", "5", "6"}
+            else value
+        )
 
     @model_validator(mode="after")
     def validate_deployment(self):

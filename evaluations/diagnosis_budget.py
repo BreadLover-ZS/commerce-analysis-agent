@@ -24,7 +24,15 @@ def valid_usage(usage):
 
 
 def prior_spend(
-    directory, *, provider, endpoint, model, token_limit, require_stopped=True, _seen=()
+    directory,
+    *,
+    provider,
+    endpoint,
+    model,
+    token_limit,
+    require_stopped=True,
+    _seen=(),
+    reconciliation=None,
 ):
     """Reconcile the complete immutable ancestry, never just the most recent sends."""
     if directory is None:
@@ -84,6 +92,7 @@ def prior_spend(
             token_limit=meta["prior_paid_budget"].get("max_total_tokens", token_limit),
             require_stopped=False,
             _seen=(*_seen, root),
+            reconciliation=parent.get("reconciliation"),
         )
         if (
             type(base.get("max_total_tokens", token_limit)) is not int
@@ -93,6 +102,11 @@ def prior_spend(
             or meta["prior_paid_budget"]["provider_requests"] != base["provider_requests"]
         ):
             raise ValueError("历史预算链引用或扣费已变化")
+    amendment = None
+    if reconciliation is not None:
+        from evaluations.diagnosis_reconciliation import verify_certificate
+
+        amendment = verify_certificate(root, reconciliation)
     rows = read("progress.jsonl", lines=True)
     # A new implementation/plan may carry charges, never old quality evidence.
     # Resuming that experiment later keeps its accounting prefix separate too.
@@ -113,8 +127,24 @@ def prior_spend(
     for row in rows:
         record = read(row["receipt"])
         metrics = record.get("task", {}).get("metrics", {})
-        if record.get("measurement") != row or metrics.get("usage_complete") is not True:
+        amended = amendment is not None and row["receipt"] == amendment["receipt"]
+        if record.get("measurement") != row or (
+            metrics.get("usage_complete") is not True and not amended
+        ):
             raise ValueError("前轮任务用量未知或进度与回执不一致，禁止付费重试")
+        parameters = record.get("task", {}).get("parameters", {})
+        if (
+            record.get("task", {}).get("graph_version")
+            in {"diagnosis-v16", "commerce-review-bundle-v5", "commerce-review-bundle-v6"}
+            and parameters.get("accounting_protocol") != 2
+        ):
+            raise ValueError("新版本任务缺少计量协议v2")
+        if parameters.get("accounting_protocol") == 2:
+            from evaluations.diagnosis_reconciliation import validate_record_accounting
+
+            validate_record_accounting(
+                record, root, meta["run_id"], amendment["identity"]["call_id"] if amended else None
+            )
         if row.get("provider_requests") != len(record.get("provider_trace", [])):
             raise ValueError("前轮逐任务HTTP请求数不一致")
         for key in ("input_tokens", "output_tokens"):
@@ -176,7 +206,12 @@ def prior_spend(
             reserved = 0
             settled += 1
         elif kind == "denied_before_send" and not reserved:
-            pass
+            if event.get("protocol") == 2 and (
+                event.get("sequence") != sent
+                or event.get("attempt_admissions") != 0
+                or event.get("run_id") != meta["run_id"]
+            ):
+                raise ValueError("发送前拒绝身份或HTTP序号不一致")
         else:
             raise ValueError("前轮存在未知用量或不支持的journal事件，禁止付费重试")
         if (
@@ -206,7 +241,12 @@ def prior_spend(
         "provider_requests": sent,
         "max_total_tokens": token_limit,
         "ancestry_depth": base.get("ancestry_depth", 0) + 1,
-        "prior_run": {"directory": str(root), "run_id": meta["run_id"], "files_sha256": files},
+        "prior_run": {
+            "directory": str(root),
+            "run_id": meta["run_id"],
+            "files_sha256": files,
+            **({"reconciliation": amendment} if amendment else {}),
+        },
         "_meta": meta,
         "_rows": rows,
         "_traces": traces,

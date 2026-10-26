@@ -1,0 +1,15 @@
+{
+  "run_id": "a5a95b5b-cb87-4fdd-beab-b43fea8cc1c2",
+  "model_execution_source_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "grading_implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "original_summary_sha256": "b290f17b337fc2126b12b7985680590b5f9a7e9d65cfe1afef17d07a69484a41",
+  "raw_receipts_modified": false,
+  "new_model_requests": 0,
+  "accounting": {
+    "known_tokens": 9768379,
+    "provider_requests": 1441,
+    "ancestry_fully_reconciled": true
+  },
+  "records": 96,
+  "all_original_grading_unchanged": true
+}

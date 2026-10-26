@@ -1,0 +1,84 @@
+Isolated PostgreSQL version: 16.2
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 28%]
+........................................................................ [ 35%]
+........................................................................ [ 42%]
+........................................................................ [ 49%]
+........................................................................ [ 56%]
+........................................................................ [ 64%]
+........................................................................ [ 71%]
+........................................................................ [ 78%]
+................................................................F....... [ 85%]
+........................................................................ [ 92%]
+........................................................................ [ 99%]
+....                                                                     [100%]
+=================================== FAILURES ===================================
+___________ test_keepalive_body_cannot_extend_absolute_task_deadline ___________
+
+setup = (Settings(app_env='test', agent_mode='live', database_url='sqlite:////private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200...ject at 0x1159bfc20>, <app.storage.models.User object at 0x1134ac890>, <app.storage.models.User object at 0x1134afa70>)
+
+    async def test_keepalive_body_cannot_extend_absolute_task_deadline(setup):
+        """Real local HTTP: periodic bytes reset read inactivity, never finish the JSON."""
+        settings, repo, *_ = setup
+        settings.agent_mode, settings.llm_model = "live", "offline"
+        settings.openai_api_key = SecretStr("offline-keepalive-test")
+        settings.model_read_timeout_seconds = 1
+        writers, handlers, chunks = set(), set(), []
+    
+        async def keepalive(reader, writer):
+            handler = asyncio.current_task()
+            writers.add(writer)
+            handlers.add(handler)
+            try:
+                headers = await reader.readuntil(b"\r\n\r\n")
+                length = next(
+                    int(line.split(b":", 1)[1])
+                    for line in headers.split(b"\r\n")
+                    if line.lower().startswith(b"content-length:")
+                )
+                await reader.readexactly(length)
+                writer.write(
+                    b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
+                    b"Transfer-Encoding: chunked\r\nConnection: close\r\n\r\n"
+                )
+                while True:
+                    writer.write(b"1\r\n\n\r\n")
+                    await writer.drain()
+                    chunks.append(1)
+                    await asyncio.sleep(0.1)
+            except (ConnectionError, asyncio.IncompleteReadError):
+                pass
+            finally:
+                writers.discard(writer)
+                handlers.discard(handler)
+                writer.close()
+                with suppress(ConnectionError):
+                    await writer.wait_closed()
+    
+        server = await asyncio.start_server(keepalive, "127.0.0.1", 0)
+        model = None
+        try:
+            port = server.sockets[0].getsockname()[1]
+            settings.openai_base_url = f"http://127.0.0.1:{port}/v1"
+            task = new_task(setup, sources=["documents"])
+            ctx = repo.claim()
+            with repo.session() as db:
+                db.get(Task, task["id"]).deadline_at = utcnow() + timedelta(seconds=2)
+                db.commit()
+            model = model_from_settings(settings)
+            async with checkpoint_store(settings) as saver:
+                await asyncio.wait_for(Worker(repo, settings, saver, model).process(ctx), timeout=5)
+            done = repo.get_task(task["id"])
+            assert len(chunks) >= 10  # Receiving for longer than the one-second read timeout.
+>           assert done["status"] == "failed" and done["error_code"] == "runtime_budget"
+E           AssertionError: assert ('running' == 'failed'
+E             
+E             - failed
+E             + running)
+
+tests/test_model_timeouts.py:206: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_model_timeouts.py::test_keepalive_body_cannot_extend_absolute_task_deadline
+1 failed, 1011 passed in 230.18s (0:03:50)

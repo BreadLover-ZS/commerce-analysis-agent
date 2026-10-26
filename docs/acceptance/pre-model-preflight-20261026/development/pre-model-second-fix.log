@@ -1,0 +1,41 @@
+........EE----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+==================================== ERRORS ====================================
+_ ERROR at setup of test_conditional_missing_assertions_do_not_reject_complete_authorized_subset _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x1092450d0>, _basetemp=PosixPath...r/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-138'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def receipt(tmp_path_factory):
+        root = tmp_path_factory.mktemp("g6-receipt") / "run"
+        args = parser().parse_args(
+            ["run", "--split", "development", "--case-id", "D01", "--output", str(root)]
+        )
+        summary = asyncio.run(evaluate(args))
+>       assert summary["all_automatic_passed"]
+E       assert False
+
+tests/test_diagnosis_evaluation.py:115: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"case_id": "D01", "repeat": 1, "group": "fixed", "automatic_passed": false, "provider_requests": 0}
+{"case_id": "D01", "repeat": 1, "group": "agent", "automatic_passed": true, "provider_requests": 0}
+_ ERROR at setup of test_cli_runs_real_pair_and_retains_versions_artifacts_and_pending_review _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x1092450d0>, _basetemp=PosixPath...r/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-138'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def receipt(tmp_path_factory):
+        root = tmp_path_factory.mktemp("g6-receipt") / "run"
+        args = parser().parse_args(
+            ["run", "--split", "development", "--case-id", "D01", "--output", str(root)]
+        )
+        summary = asyncio.run(evaluate(args))
+>       assert summary["all_automatic_passed"]
+E       assert False
+
+tests/test_diagnosis_evaluation.py:115: AssertionError
+=========================== short test summary info ============================
+ERROR tests/test_diagnosis_evaluation.py::test_conditional_missing_assertions_do_not_reject_complete_authorized_subset
+ERROR tests/test_diagnosis_evaluation.py::test_cli_runs_real_pair_and_retains_versions_artifacts_and_pending_review
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 2 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+8 passed, 2 errors in 1.80s

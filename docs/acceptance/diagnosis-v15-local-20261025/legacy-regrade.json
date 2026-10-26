@@ -1,0 +1,14 @@
+[
+  {
+    "run": "diagnosis-v11-h01-h20-live-20261023-01",
+    "checked": 96,
+    "passed": 89,
+    "changes": []
+  },
+  {
+    "run": "diagnosis-v14-h01-h20-live-20261025-01",
+    "checked": 96,
+    "passed": 83,
+    "changes": []
+  }
+]

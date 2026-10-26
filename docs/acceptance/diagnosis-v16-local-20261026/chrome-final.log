@@ -1,0 +1,44 @@
+$ playwright test --reporter=line
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "<frozen runpy>", line 198, in _run_module_as_main
+[WebServer]   File "<frozen runpy>", line 88, in _run_code
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/app/cli.py", line 65, in <module>
+
+[WebServer]     main()
+
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/app/cli.py", line 27, in main
+[WebServer]     settings = get_settings()
+[WebServer]                ^^^^^^^^^^^^^^
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/app/core/config.py", line 107, in get_settings
+[WebServer]     return Settings()
+[WebServer]            ^^^^^^^^^^
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pydantic_settings/main.py", line 247, in __init__
+
+[WebServer]     super().__init__(**__pydantic_self__.__class__._settings_build_values(sources, init_kwargs))
+
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pydantic/main.py", line 263, in __init__
+
+[WebServer]     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+[WebServer]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer] pydantic_core._pydantic_core.ValidationError: 1 validation error for Settings
+[WebServer] commerce_review_answer_version
+[WebServer]   Input should be 1, 2, 3, 4 or 5 [type=literal_error, input_value='5', input_type=str]
+[WebServer]     For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/scripts/dev_backend.py", line 75, in <module>
+
+[WebServer]     main()
+[WebServer]   File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/scripts/dev_backend.py", line 36, in main
+
+[WebServer]     subprocess.run([sys.executable, "-m", "app.cli", "init"], env=env, check=True)
+[WebServer]   File "/Users/zzds/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+
+[WebServer]     raise CalledProcessError(retcode, process.args,
+
+[WebServer] subprocess.CalledProcessError: Command '['/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/bin/python', '-m', 'app.cli', 'init']' returned non-zero exit status 1.
+
+Error: Process from config.webServer was not able to start. Exit code: 1
+
+[ELIFECYCLE] Command failed with exit code 1.

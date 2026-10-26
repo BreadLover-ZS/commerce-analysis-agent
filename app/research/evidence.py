@@ -122,7 +122,7 @@ def review_direction_issues(text, payload):
     return issues
 
 
-def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
+def validate_report(report: ResearchReport, evidence: list[dict], *, model_stopped=False) -> dict:
     evidence, _ = authoritative_evidence(evidence)
     by_id = {e["id"]: e for e in evidence}
     issues, seen = [], set()
@@ -131,6 +131,20 @@ def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
         issues.append("章节缺失、重复或顺序错误")
     if is_review:
         expected = commerce_review_report(evidence, [])
+        if any(e["payload"].get("answer_version") in {5, 6} for e in evidence):
+            from app.commerce.review_report_v5 import explanation_completion
+
+            checked = explanation_completion(report.model_copy(deep=True), evidence)
+            expected_claim = next(
+                c for s in expected.sections for c in s.claims if c.id == "review-answer-completion"
+            )
+            expected_claim.text = next(
+                c.text for s in checked.sections for c in s.claims if c.id == expected_claim.id
+            )
+        if model_stopped and any(e["payload"].get("answer_version") in {5, 6} for e in evidence):
+            from app.commerce.review_report_v5 import stopped_report
+
+            expected = stopped_report(expected)
         for actual, required in zip(report.sections[:3], expected.sections[:3]):
             if actual.model_dump() != required.model_dump():
                 issues.append("经营复盘的确定性事实章节被修改或遗漏")
@@ -150,10 +164,15 @@ def validate_report(report: ResearchReport, evidence: list[dict]) -> dict:
                 c.model_dump() for c in baseline
             ]:
                 issues.append("经营解读中的确定性观察被修改或遗漏")
-            allowed = set(allowed_hypotheses(payload).values())
+            options = allowed_hypotheses(payload)
+            if payload.get("answer_version") == 6:
+                from app.commerce.explanation_contract_v6 import allowed as scoped_options
+
+                options = scoped_options(payload, options)
+            allowed = set(options.values())
             if any(c.text not in allowed for c in actual[len(baseline) :]):
                 issues.append("经营解释超出当前证据允许的待验证假设目录")
-        if payload.get("answer_version") == 3:
+        if payload.get("answer_version") in {3, 4, 5, 6}:
             from app.commerce.review_actions import ACTIONS
 
             if any(
@@ -366,6 +385,15 @@ def deterministic_report(evidence: list[dict], gaps: list[str]) -> ResearchRepor
 
 
 def commerce_review_report(evidence, gaps):
+    source = next(e for e in evidence if e["payload"].get("review_profile") == "commerce_review")
+    if source["payload"].get("answer_version") in {4, 5, 6}:
+        from app.commerce.review_report_v4 import build_report
+
+        if source["payload"].get("answer_version") in {5, 6}:
+            from app.commerce.review_report_v5 import build_report
+
+        return build_report(evidence, gaps)
+
     sections = {name: [] for name in REVIEW_SECTIONS}
     source = next(e for e in evidence if e["payload"].get("review_profile") == "commerce_review")
     payload, eid = source["payload"], source["id"]

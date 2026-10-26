@@ -1,0 +1,24 @@
+{
+  "provider_requests": 0,
+  "task_executions": 0,
+  "history": "evaluations/results/diagnosis-v15-h01-h20-live-20261026-01",
+  "status": "PASS_READ_ONLY_PROVENANCE",
+  "unique_business_inputs": 207,
+  "source_files": {
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v15-h01-h20-live-20261026-01/cases-source.json": "fcf82071d20bc26ecfd7fa7bd22046b4d89c79cb47978ba235f0c6c6a2866cb9",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v14-h01-h20-live-20261025-01/cases-source.json": "cc3cdca4670e13fb39b5e962a5a15b92c2718aa2f2f90e771edf24739b12d51a",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v11-h01-h20-live-20261023-01/cases-source.json": "02aa2a3b04c267caf5a222f9b61d47df362b9a0dccd0b63f22ad915f7e6073c8",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v10-h01-h20-live-20261022-01/cases-source.json": "48b8c6e2d0c27b1b177e423b8e2efdd70b0697b0236d63d5dc74493dd2d13ded",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v9-h61-h80-live-20261022-01/cases-source.json": "e4f877932b1acad2e6d0775f5827e56d42a38d1b2e0eba5c23baf1dca649e6b7",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v9-repair-verify-live-20261021-01/cases-source.json": "aaece0f7fa11f85d53e62a83252657ed14064b353e115f60736f3fe991978375",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v9-fresh-holdout-live-20261021-01/cases-source.json": "84f65dc6d3cf73ea8af61727e7073685bfcbac62a48eac1af3d2cf9c69f62f06",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v9-development-live-20261021-01/cases-source.json": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v8-development-live-20261021-01/cases-source.json": "2df37e445d2c7dd12b1c67aa45b1bbd17ba7b2d5282f6d850be1af0a7d101ff7",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v7-fresh-holdout-live-20261020-01/cases-source.json": "cb668da39386f46af300b925bac2dae8a3247582efc0a96e3aa8a776730812fe",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v7-rule-live-20261020-01/cases-source.json": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v6-rule-live-20261020-01/cases-source.json": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v5-supplemental-live-20261020-01/cases-source.json": "1718e45fc053c93f94d92b9e837f418adc4048d6f427f21586654dde37a6383b",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v5-development-live-20261020-01/cases-source.json": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866",
+    "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/diagnosis_cases.json": "944d24f429cae1065843200ec5cb3e78096baca1ed8b7a45e4d2e15d8c394866"
+  }
+}

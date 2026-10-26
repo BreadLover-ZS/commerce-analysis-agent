@@ -1,0 +1,17 @@
+{
+  "reviewer": "Codex code-author AI",
+  "evaluated_model": "DeepSeek deepseek-flash",
+  "independent_of_task_model": true,
+  "organizational_independence": false,
+  "human_business_acceptance": false,
+  "legacy_reviewer_kind_enum_only": "independent_external_reviewer",
+  "reviewed_receipts": 75,
+  "raw_fact_check": "Raw business rows, independent frozen integer author matrix and every-receipt evidence/ref/unit/period audit",
+  "limitations": [
+    "Truncated at75/96 by unchanged cumulative hard token budget.",
+    "H03 fixed missing reports are FAIL, not scored as bound correct facts.",
+    "H13 third incomplete daily answer is FAIL; Task UNKNOWN flag preserved despite proven pre-send budget denial.",
+    "H14-H20 including inventory and rule critical cases are UNTESTED.",
+    "No business/grader changes or additional paid retry."
+  ]
+}

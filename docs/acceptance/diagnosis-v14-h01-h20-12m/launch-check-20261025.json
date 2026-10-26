@@ -1,0 +1,13 @@
+{
+  "guard_run_passed": true,
+  "provider_requests": 0,
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "git_head": "62d98051982c4a8a277df6cb88fe37030185241a",
+  "cumulative_limit": 12000000,
+  "full_tasks": 96,
+  "official_sources": [
+    "https://api-docs.deepseek.com/quick_start/pricing/",
+    "https://api-docs.deepseek.com/guides/json_mode/"
+  ],
+  "compatibility": "Official 1M context and JSON Output confirmed; existing max_tokens=3000/max_retries=0/thinking disabled retained; no provider smoke call."
+}

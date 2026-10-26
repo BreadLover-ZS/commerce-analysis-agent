@@ -153,6 +153,10 @@ async def test_worker_total_deadline_cancels_request_before_longer_read_timeout(
 async def test_keepalive_body_cannot_extend_absolute_task_deadline(setup):
     """Real local HTTP: periodic bytes reset read inactivity, never finish the JSON."""
     settings, repo, *_ = setup
+    # Isolate the two-second absolute deadline from the fixture's independent
+    # five-second lease. Full-suite GC/SDK cleanup must not turn this into a
+    # lease-takeover test; the outer five-second timeout stays unchanged.
+    settings.lease_seconds = 30
     settings.agent_mode, settings.llm_model = "live", "offline"
     settings.openai_api_key = SecretStr("offline-keepalive-test")
     settings.model_read_timeout_seconds = 1

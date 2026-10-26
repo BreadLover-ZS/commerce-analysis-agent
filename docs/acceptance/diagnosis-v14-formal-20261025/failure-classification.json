@@ -1,0 +1,112 @@
+{
+  "automatic_failures": {
+    "H02-3/agent.json": {
+      "category": "actual_missing_answer_rejected_unbound_rule_interpretations",
+      "failed_automatic_assertions": [
+        "expected_outcome",
+        "ratio_is_not_amount_change",
+        "required_capabilities"
+      ],
+      "stop_reason": "invalid_decision"
+    },
+    "H03-1/agent.json": {
+      "category": "frozen_tool_path_equivalence_mismatch",
+      "failed_automatic_assertions": [
+        "required_capabilities"
+      ],
+      "stop_reason": "target_covered"
+    },
+    "H03-2/agent.json": {
+      "category": "frozen_tool_path_equivalence_mismatch",
+      "failed_automatic_assertions": [
+        "required_capabilities"
+      ],
+      "stop_reason": "target_covered"
+    },
+    "H03-3/agent.json": {
+      "category": "frozen_tool_path_equivalence_mismatch",
+      "failed_automatic_assertions": [
+        "required_capabilities"
+      ],
+      "stop_reason": "target_covered"
+    },
+    "H06-1/agent.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H06-2/agent.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H06-3/agent.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H07-1/agent.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H07-2/agent.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H07-3/agent.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H17-1/additional.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    },
+    "H17-2/additional.json": {
+      "category": "actual_missing_answer_rejected_unbound_rule_interpretations",
+      "failed_automatic_assertions": [
+        "expected_outcome",
+        "inventory_snapshot_disclosed",
+        "missing_lead_has_no_threshold_comparison",
+        "paid_units_is_proxy_not_outbound",
+        "required_capabilities"
+      ],
+      "stop_reason": "invalid_decision"
+    },
+    "H17-3/additional.json": {
+      "category": "gap_outcome_vs_target_only_stop_conflict",
+      "failed_automatic_assertions": [
+        "expected_outcome"
+      ],
+      "stop_reason": "evidence_gap"
+    }
+  },
+  "counts": {
+    "actual_missing_answer_rejected_unbound_rule_interpretations": 2,
+    "frozen_tool_path_equivalence_mismatch": 3,
+    "gap_outcome_vs_target_only_stop_conflict": 8
+  },
+  "strict_author_display_failures": [
+    "H03-1/fixed.json",
+    "H03-2/fixed.json",
+    "H03-3/fixed.json"
+  ],
+  "scope": "Classification only; original frozen scores not modified; no counterfactual paid runs."
+}

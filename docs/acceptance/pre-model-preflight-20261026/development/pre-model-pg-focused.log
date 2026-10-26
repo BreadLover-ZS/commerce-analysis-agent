@@ -1,0 +1,35 @@
+Traceback (most recent call last):
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/scripts/test_embedded_postgres.py", line 54, in <module>
+    main()
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/scripts/test_embedded_postgres.py", line 17, in main
+    server = pgserver.get_server(Path(directory) / "pgdata", cleanup_mode="stop")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pgserver/postgres_server.py", line 291, in get_server
+    return PostgresServer(pgdata, cleanup_mode=cleanup_mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pgserver/postgres_server.py", line 61, in __init__
+    with self._lock:
+         ^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/fasteners/process_lock.py", line 166, in __enter__
+    gotten = self.acquire()
+             ^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/fasteners/process_lock.py", line 144, in acquire
+    self._do_open()
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/fasteners/process_lock.py", line 114, in _do_open
+    self.lockfile = open(self.path, 'a')
+                    ^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted: b'/Users/zzds/Library/Caches/TemporaryItems/python_PostgresServer/.lockfile'
+Exception ignored in atexit callback: <bound method PostgresServer._cleanup of <pgserver.postgres_server.PostgresServer object at 0x108b92c00>>
+Traceback (most recent call last):
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pgserver/postgres_server.py", line 204, in _cleanup
+    with self._lock:
+         ^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/fasteners/process_lock.py", line 166, in __enter__
+    gotten = self.acquire()
+             ^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/fasteners/process_lock.py", line 144, in acquire
+    self._do_open()
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/fasteners/process_lock.py", line 114, in _do_open
+    self.lockfile = open(self.path, 'a')
+                    ^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted: b'/Users/zzds/Library/Caches/TemporaryItems/python_PostgresServer/.lockfile'

@@ -1,0 +1,703 @@
+{
+  "planned": {
+    "case_ids": [
+      "H01",
+      "H02",
+      "H03",
+      "H04",
+      "H05",
+      "H06",
+      "H07",
+      "H08",
+      "H09",
+      "H10",
+      "H11",
+      "H12",
+      "H13",
+      "H14",
+      "H15",
+      "H16",
+      "H17",
+      "H18",
+      "H19",
+      "H20"
+    ],
+    "split": "holdout",
+    "repeats": 3,
+    "mode": "live"
+  },
+  "executed_runs": 96,
+  "stopped": null,
+  "groups": {
+    "additional": {
+      "runs": 24,
+      "independent_cases": 8,
+      "automatic_contract_rate": 0.875,
+      "positive_automatic_completion_rate": 0.875,
+      "critical_automatic_rate": 1.0,
+      "all_planned_repeats_correct_case_rate": 0.875,
+      "p95_seconds_nearest_rank": 4.4704,
+      "tool_calls": 80,
+      "model_calls": 39,
+      "input_tokens": 219770,
+      "output_tokens": 4915,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "clarify": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "daily": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "document_injection": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "excluded_per_sku_counts": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "inventory_no_lead": {
+          "runs": 6,
+          "automatic_contract_rate": 0.5
+        },
+        "per_sku_refund_counts": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "rules_conflict": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "agent": {
+      "runs": 36,
+      "independent_cases": 12,
+      "automatic_contract_rate": 0.7222222222222222,
+      "positive_automatic_completion_rate": 0.6666666666666666,
+      "critical_automatic_rate": null,
+      "all_planned_repeats_correct_case_rate": 0.6666666666666666,
+      "p95_seconds_nearest_rank": 5.7186,
+      "tool_calls": 103,
+      "model_calls": 36,
+      "input_tokens": 217412,
+      "output_tokens": 5302,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "category": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "conversion": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "denominator": {
+          "runs": 3,
+          "automatic_contract_rate": 0.6666666666666666
+        },
+        "flat_offset": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "missing": {
+          "runs": 3,
+          "automatic_contract_rate": 0.0
+        },
+        "new": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "no_prior": {
+          "runs": 3,
+          "automatic_contract_rate": 0.0
+        },
+        "offset": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "offset_top1": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "profit": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "refund_up": {
+          "runs": 3,
+          "automatic_contract_rate": 0.0
+        },
+        "zero": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    },
+    "fixed": {
+      "runs": 36,
+      "independent_cases": 12,
+      "automatic_contract_rate": 1.0,
+      "positive_automatic_completion_rate": 1.0,
+      "critical_automatic_rate": null,
+      "all_planned_repeats_correct_case_rate": 1.0,
+      "p95_seconds_nearest_rank": 7.7357,
+      "tool_calls": 36,
+      "model_calls": 78,
+      "input_tokens": 693562,
+      "output_tokens": 14268,
+      "known_usage_rate": 1.0,
+      "known_cost_rate": 0.0,
+      "total_estimated_cost": null,
+      "facets": {
+        "category": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "conversion": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "denominator": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "flat_offset": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "missing": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "new": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "no_prior": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "offset": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "offset_top1": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "profit": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "refund_up": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        },
+        "zero": {
+          "runs": 3,
+          "automatic_contract_rate": 1.0
+        }
+      }
+    }
+  },
+  "common_paired_contracts": [
+    {
+      "case_id": "H01",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H01",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H01",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H02",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H02",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H02",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H03",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H03",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H03",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H04",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H04",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H04",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H05",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H05",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H05",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H06",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H06",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H06",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H07",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H07",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H07",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": false
+    },
+    {
+      "case_id": "H08",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H08",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H08",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H09",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H09",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H09",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H10",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H10",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H10",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H11",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H11",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H11",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H12",
+      "repeat": 1,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H12",
+      "repeat": 2,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    },
+    {
+      "case_id": "H12",
+      "repeat": 3,
+      "same_bundle": true,
+      "same_budget": true,
+      "same_model_configuration": true,
+      "same_final_scope": true,
+      "fixed_automatic_passed": true,
+      "agent_automatic_passed": true
+    }
+  ],
+  "all_automatic_passed": false,
+  "business_quality_rate": null,
+  "independent_review_status": "PENDING",
+  "release_eligible": false,
+  "default_entrypoint": "commerce_review",
+  "scope": "Automatic contracts/raw-record facts only. Gates are separate from model quality. Repeats are not independent cases; no Agent benefit is inferred.",
+  "run_id": "a5a95b5b-cb87-4fdd-beab-b43fea8cc1c2",
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "provider_requests": 1441,
+  "provider_requests_this_run": 153,
+  "token_budget": {
+    "max_total_tokens": 12000000,
+    "known_tokens": 9768379,
+    "unresolved_reserved_tokens": 0,
+    "upper_bound_charged_tokens": 9768379,
+    "request_context_ceiling": 1048576,
+    "denied_reason": null
+  },
+  "prior_paid_budget": {
+    "known_tokens": 8613150,
+    "provider_requests": 1288,
+    "max_total_tokens": 10000000,
+    "ancestry_depth": 18,
+    "prior_run": {
+      "directory": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/diagnosis-v11-h01-h20-live-20261023-01",
+      "run_id": "72b96f39-5e04-42d2-8bf4-cceb77fa3c1f",
+      "files_sha256": {
+        "run.json": "51c667aac829590a00a0f79b4307365108adb62ee81b32e9729cd5815269f284",
+        "summary.json": "e4e4b382448f4933c72428dffb059a60064f34fd62241d0e723ad3485ebeab4a",
+        "progress.jsonl": "cecdaa9e04ebb8751fb618fb9b526e71f95452c28e551dc712ca4f9ca905a3cb",
+        "H01-1/fixed.json": "69c88313a0432da0a40eb7fd718f526cd47a3403a79be3bd272bdc5016fdab12",
+        "H01-1/agent.json": "ba8d341225c48ac9fff8309e85e3e35d80419efdf9f582374675c50267257214",
+        "H01-2/fixed.json": "394f5358c531152faaefc40681fc740641435b1510ce0b68c5dcc20e446748d6",
+        "H01-2/agent.json": "230ee25b1bad16bed94df78abcf5daf382c6ab530ff561a2cc430f7b3d82427d",
+        "H01-3/fixed.json": "b4b6677d2dca3edaf0dce0e66dbdb29904bbffb6608967800a32c66b9533d898",
+        "H01-3/agent.json": "7bbd1891302095e68080283b73859e5c46a3678b2a27c8d1826aecfff6bbb14f",
+        "H02-1/fixed.json": "44a61d9f2833dd01ea037785ba50c3996688ad13c8e9eeecd62262af4046bd28",
+        "H02-1/agent.json": "4c165fbd6bf018b8ff2746f89ec68b396d4004f3bfed6e22145e503e16d80413",
+        "H02-2/fixed.json": "e30921c730648e417b512ae12e0de134aa89ec4486aef4083b44785906aca7bb",
+        "H02-2/agent.json": "4daddcba2641b1e5a4784331e4a1358b04f44c078079ae5437dd465d3b9675c9",
+        "H02-3/fixed.json": "6892489b2026269af461923d39ff197909b024cf1fd5d86ea84acb875b4665e2",
+        "H02-3/agent.json": "4176898b7b49dd73fe4fef70b1896df464dadcc1ec077d009747ae04fbd4648e",
+        "H03-1/fixed.json": "79ce2aaa71cc54be98d81e0f4036bb88a5c5b48d59efcfe480bc382f46888f24",
+        "H03-1/agent.json": "119b20d87de078583b375c862832aabd0c06e9137e595f64755453302f5ea02c",
+        "H03-2/fixed.json": "f697af2a988b586406d2c57401c764e5901f9b4e3fdbc976e9846156c034fbd2",
+        "H03-2/agent.json": "2fe984123bfb43e4fb6ad61bd127354ada0727c9c86ac09c181f540aba29cddc",
+        "H03-3/fixed.json": "10bd0663f4d33d4b11d0c9b839ca6d2f13677c4226ccda570bd3f29659d84601",
+        "H03-3/agent.json": "17c1a602e33dde3b51d423e87e267bf2ea58fca8e2ae860ae353f6b57ec32d99",
+        "H04-1/fixed.json": "f8153e424fa077e88692ba8edfa556d1fdc5de972b1e517718c9ab2023f9d14d",
+        "H04-1/agent.json": "cfc8760cfc0539f3987c9a01701014abd3d193ef358b34ca8e5c3f6149c53d8d",
+        "H04-2/fixed.json": "c7a04418d922cad68c174fad50ac7073d1369fbddd7b6aaffe49fa302091ce91",
+        "H04-2/agent.json": "9898e0351381c6f3a6898952ebc71725e7e9f25d35b299fc98bf6d33a4f52a14",
+        "H04-3/fixed.json": "61c916ff96ef9afc83a99ac8523cf870d6b94802a152d1c103743e833887d605",
+        "H04-3/agent.json": "efeff3ae8263fa37555de0a998d5658c8243162a806e12633b31bc13046c5870",
+        "H05-1/fixed.json": "69f5c9d3fc4bac39209a3f2a10f6aca98fb55e7b1136b050c18889953b32bd25",
+        "H05-1/agent.json": "a1d16a5b1037a43d3eb7fe7af388d1cf6a3449a8e9a2fa62415d6d1d672fe0ce",
+        "H05-2/fixed.json": "f0addab87d5d380b404b2662348da532f423298c4f5be3611579465010e27dde",
+        "H05-2/agent.json": "65986a5f3cb7efcb489ec45f58cebad3c29cb8fc379f13e5a6536c62e4f8ef55",
+        "H05-3/fixed.json": "528253ca61511628bddd338b698a1f1dcb7a7125c0e3508c952377882e754044",
+        "H05-3/agent.json": "37840a84ba872e5fecbd86856996eca6cf539c16ec6e70aeeb3f8e291d2dab43",
+        "H06-1/fixed.json": "95bd0b4bd071f973edc7382c36f2faf62145eaef150867195728fe913a666936",
+        "H06-1/agent.json": "f20a16218989d3d998e866ca8dd89d3365a287ad7fa141453e90fde0af751f9d",
+        "H06-2/fixed.json": "ee65a2c8adaa0f9f8a0fcf8edf3d459d628a6b39d0b29e392c7f6574b48b6638",
+        "H06-2/agent.json": "f269a14b902f84babe08abccb3ac3f2d2fbe1793bf318875d7c834b85a6f0453",
+        "H06-3/fixed.json": "af60ef6f69ded37243d4d4a76d236d203e057621e779b03c3a1d534ce58ffdcf",
+        "H06-3/agent.json": "635c1e3d71d8f9c7f5923528dde4a977a587886ffcf924fc06f846187fec7a33",
+        "H07-1/fixed.json": "c3dcbb98d600116b270f03b4092c03cb45aae595fef6b3635c58a01910dd3838",
+        "H07-1/agent.json": "520231dde2f70749d8f351db4d512038e262f3de686a3cc1c0e36503fd12adaa",
+        "H07-2/fixed.json": "41b1b75e3df7cc774e154f23b4dedad5145de9e7839126caf3a280833df48e33",
+        "H07-2/agent.json": "28615703898fc9d8ab2c6b33d402b88321bed6f7b7b028bf98c4159897f6e166",
+        "H07-3/fixed.json": "520d25431a238b1609bf8941b6e219e06132ba801dd7270222f37984eae6ca15",
+        "H07-3/agent.json": "321169ce7bd56d281e0ae6cd63bf635ad74adf46d1798ad3f9db892b464a78e4",
+        "H08-1/fixed.json": "0c50069a57c3ee74ac4a95778406d5de9443a037cd41acc7a902ca6f17178cd9",
+        "H08-1/agent.json": "1f31bda27f1e771ad7df4935c814e5436247e82a1058328ba2afe944e21eb4a8",
+        "H08-2/fixed.json": "92c539e5c3214a39fae9b07d06632c2f1f509e8acd7bc36e876f87218ce41d8f",
+        "H08-2/agent.json": "59fbad4ba54226a3e5c6a14572ed3d0cf71fd472aa16b80a684023c8cef026d4",
+        "H08-3/fixed.json": "7c786be8eaca9e1c2b72740c950707a10f5ee28f63f85d6524a503ab8aaea3a0",
+        "H08-3/agent.json": "03ae11266eb7ba9e63306004bacc5e64cf3ca4a3bcfe3b8ab4ca186e5b4fbe62",
+        "H09-1/fixed.json": "f9b74c4c575306cad7cb6c83324fa5898147ace58f10b3ead29ceaa0cf3c1aa6",
+        "H09-1/agent.json": "286314c69ce33eef2035a42d9e33d742d168d0e61344408906d1309c651cfd88",
+        "H09-2/fixed.json": "11acddb2980e4d25c96d12dd17562eaf6d0f8e85c736c544ee8abb371a5497e6",
+        "H09-2/agent.json": "49ebb8d79e7c39610d27b08a4083bdecacf4b0e5a5aea54ebb4d2dc9eaec6702",
+        "H09-3/fixed.json": "c6b68765f2e08c36c3514c029af992d22efa7aee528641049f1f2c0778608330",
+        "H09-3/agent.json": "37e0e9395f067bfd26fee099a48d49692a971c483cceca3bfb72332483df302b",
+        "H10-1/fixed.json": "bd387254c4420f8a8eb1bac7bd1b5003d21487c2d713c5436feaf3488bfed915",
+        "H10-1/agent.json": "40d53667f08ca0d91ce726eef57b5fe22db3e5eb8a8faf73f45cb03c51d40c3f",
+        "H10-2/fixed.json": "63988b78b9b1c4a7f8109d95b336e9dc1df19bdc63112d490a16d67cf03bbcc1",
+        "H10-2/agent.json": "bddb28877dce4a22611caaccb6d3432454b24bfac35141d8a27a5662edecca54",
+        "H10-3/fixed.json": "299ba8e9f0a98c31c40376da0d422733045070f104b389c8d49546802df12cca",
+        "H10-3/agent.json": "27f9a6c1e422625378a785e1a52cc70f29b007d7c3910e53adbd17f8862f0404",
+        "H11-1/fixed.json": "ece2af2c69273382c348b6d01b06258326471474535816795317c6491939bf48",
+        "H11-1/agent.json": "59802551074045aeecc9d356443e8e823803a0aafdfb2a6ad759e4a16634ab5d",
+        "H11-2/fixed.json": "f2fed4a544298169919627e28c9861d8536ca5a9ea5d79b6ae3725c502fc2c45",
+        "H11-2/agent.json": "614f450a5ef800ff19b76d34b6d6d8a0f88f1544fb67776eaa332479ff924703",
+        "H11-3/fixed.json": "ba8034f0f34d1d1e99838a1ca2893fec31a322ab058b117a5a3913bbd7521d02",
+        "H11-3/agent.json": "33b3a8320c09251387d429083cef6cbdc267e485da083d9bb4ec366d97ec7268",
+        "H12-1/fixed.json": "48901b33c2a85ec5b05c310487392cdf8f94ee83369a29e53add5cb7e45316a4",
+        "H12-1/agent.json": "f1e841ed489164435660f7a05a4e5252e8da7dbd32fc44493f18265416cd32aa",
+        "H12-2/fixed.json": "8f892f6d9fa0c5c0f298240bcbad0e2b7b0e908b933cca3d84a32157dcc2ba97",
+        "H12-2/agent.json": "c6f4ac2ceaebab3bad264cf54546a47d0ed56579ad994a36856975d1951d12be",
+        "H12-3/fixed.json": "4a551444c34373a7e35424c201dd4b245702e7a27c429f445aa5f7d724cf5f14",
+        "H12-3/agent.json": "cbd76b1cb0e4133999d6c4c441e40ba4bab48c06201660d1bb3abe0e94cd7d87",
+        "H13-1/additional.json": "76f1d8e3ee7ded7c60e1644ee890d881fc3ca1c88882fe4f2ad3fe8f652d3d3a",
+        "H13-2/additional.json": "f94e116c6636ee5601ba166940b0db362d297e4a7a9eb623c62d19fc2ae14029",
+        "H13-3/additional.json": "c413f4f0a4588d105e02c9c240673480e9a5947f92167b8d80be12a9562fda88",
+        "H14-1/additional.json": "a7aae5212e3272caa28a4bef968e5dab1fcfdc972884e658686710c5708b4620",
+        "H14-2/additional.json": "0d12bc09a8d97373a50fa41f137fba3e8fb726cce832c7406f89821b808fa5ee",
+        "H14-3/additional.json": "9e6cc480448af350b907ad19b30f493da3e80273fc7df07faaf4f1918bb88a89",
+        "H15-1/additional.json": "342ada9264e8fabf18a7420b68991213cad9ea395251b30d5b828b92b459b425",
+        "H15-2/additional.json": "eeeda816f3d9b0736272d04a03719b7dada06dca09e2749351e4c02802f4e4ad",
+        "H15-3/additional.json": "60f82b91c4d326b081e7d0ff0874154cab5894190fe93b12d407e1facda1ebdb",
+        "H16-1/additional.json": "bbbfba112ced8cf6f44af6e5ed7ed60ce0a9626fc671115f284bec660acbbf49",
+        "H16-2/additional.json": "408b5eea480f9b3d6dac4dac1b206799f1641be93fcf76180a4d75ff9bf71d58",
+        "H16-3/additional.json": "283e00f2cb8d6cf3aa078bdc988446f64ef461cede4138133a09456ab9253e9d",
+        "H17-1/additional.json": "e24c6fa59f49801a7c5ed9640b238d7a2f637b11e4bd4c1900a02f37446aa75a",
+        "H17-2/additional.json": "fe061b6606e520d6d0abd16ce533cdb5642d6f092dae79eccade762f45f27706",
+        "H17-3/additional.json": "1359e3c24e7a5346f292d97c14a83b484ef2d7543baa5a70b541d58f85141771",
+        "H18-1/additional.json": "acb5b311608a2f55bf19c61a65e951be7cecc482110f951c2760464ee39773f9",
+        "H18-2/additional.json": "bca7a0a9ab09aea18fd79f08f09c92327d932c000f06abf3da9cd99e17c321a7",
+        "H18-3/additional.json": "a602e2f9346f7eb00bafc3291cf20324964f2334b83836ee6540385daa1da87d",
+        "H19-1/additional.json": "52db86a4c955cb2c5bbc8dee2f3cb95466dcf1cda262c6f6fd7b2bc927d729a6",
+        "H19-2/additional.json": "fd684993b1b64fd508bdfaab8da01b8a8334747a0dd819d2694f9905083c129a",
+        "H19-3/additional.json": "409fc4d6fdfb5dcdfe7ad8eea5dde5149a4d71c9911dbf61a6d0930aadd8b6b4",
+        "H20-1/additional.json": "07bef6c18c02e29adaf084073f94aab66dd4457919376c922b99578b3c1c9bf6",
+        "H20-2/additional.json": "2d671a4dbc686146118e13e753a3a6a3faf8a868bd61e9f324e3c47ea50e55d6",
+        "H20-3/additional.json": "b5f3536a024b9eadeb0c3377e74b8eb9ff135e4c31044afc06c314e2be6d3555",
+        "budget-journal.jsonl": "483c624813dedbf4595c8351140d00d893bb69284d3774929077caa8f64dbc8d"
+      }
+    }
+  }
+}

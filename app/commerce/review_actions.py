@@ -29,6 +29,11 @@ ACTIONS = {
 
 
 def action_catalog(payload):
+    if payload.get("answer_version") == 6:
+        from app.commerce.explanation_contract_v6 import contract
+
+        if not contract(payload.get("objective", ""))["recommendations_allowed"]:
+            return {}
     skus = payload.get("scope", {}).get("skus", [])
     return {
         key: {"precondition_id": condition, "scope_skus": skus, "text": text}

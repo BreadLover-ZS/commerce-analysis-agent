@@ -1,0 +1,276 @@
+{
+  "source": "docs/acceptance/diagnosis-v12-h01-h20/cases.json",
+  "source_sha256": "115659f2201871b57a9765d0f0d27fe50debb06ba3d66dd871136d98f9e7f0d7",
+  "author": "AI code author, not external blind acceptance",
+  "model_or_graph_executions_during_authoring": 0,
+  "origins": [
+    {
+      "case_id": "H01",
+      "source_case": "H01",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W011": "T011",
+        "W012": "T012"
+      },
+      "added_skus": [
+        "T013"
+      ],
+      "input_hash": "e9cd0db8e5e1d42dbc1c570eb64cc7f3fb821c28173022a421f5016ab9e4047f"
+    },
+    {
+      "case_id": "H02",
+      "source_case": "H02",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W021": "T021",
+        "W022": "T022"
+      },
+      "added_skus": [],
+      "input_hash": "6935c73f5cbfa7142852ec160f6b5cd7e65ac3cdc49687c8be3cf9471b1a1e95"
+    },
+    {
+      "case_id": "H03",
+      "source_case": "H03",
+      "scale_factor": 3,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W031": "T031",
+        "W032": "T032"
+      },
+      "added_skus": [],
+      "input_hash": "30f42377318b8d548ea7117cb62e6551edc11cac6a74964835d30099e2a9e898"
+    },
+    {
+      "case_id": "H04",
+      "source_case": "H04",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W041": "T041",
+        "W042": "T042"
+      },
+      "added_skus": [],
+      "input_hash": "cf2e5934ba6621a63ff6f4edd7da1d660090585ed3c7ac87d133f9b772c1e1ec"
+    },
+    {
+      "case_id": "H05",
+      "source_case": "H05",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W051": "T051",
+        "W052": "T052"
+      },
+      "added_skus": [],
+      "input_hash": "03043f18d6df4e2587efa18ce5b065f2a497d58a54290ad4f059bfea21675bc9"
+    },
+    {
+      "case_id": "H06",
+      "source_case": "H06",
+      "scale_factor": 3,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W061": "T061",
+        "W062": "T062"
+      },
+      "added_skus": [],
+      "input_hash": "c8bbce84218bba59973413298645b8dd9b9c45c6b4bf2a97ab8fdd8144106905"
+    },
+    {
+      "case_id": "H07",
+      "source_case": "H07",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W071": "T071",
+        "W072": "T072"
+      },
+      "added_skus": [],
+      "input_hash": "725b509ef72a734f980b2846edc252fe369132c17816e390e1930d66d9854dc8"
+    },
+    {
+      "case_id": "H08",
+      "source_case": "H08",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W081": "T081",
+        "W082": "T082"
+      },
+      "added_skus": [],
+      "input_hash": "a5f4b1729fbedf3c27b5f893564cea7fe196b6edbde81affd5056bc52d06f1cd"
+    },
+    {
+      "case_id": "H09",
+      "source_case": "H09",
+      "scale_factor": 3,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W091": "T091",
+        "W092": "T092"
+      },
+      "added_skus": [],
+      "input_hash": "4f6df682639af67c921654314010746bb648b03f6657eab45c10f83f3889e900"
+    },
+    {
+      "case_id": "H10",
+      "source_case": "H10",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W101": "T101",
+        "W102": "T102"
+      },
+      "added_skus": [],
+      "input_hash": "112c2936a661d06025f6800eb1fc14e0e1f686bf714c5e6e140079ae075f1a7e"
+    },
+    {
+      "case_id": "H11",
+      "source_case": "H11",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W111": "T111",
+        "W112": "T112"
+      },
+      "added_skus": [],
+      "input_hash": "9fa0bca15baf53c8ac84cd6e96e1db7d398555a872cfc93302f345e49edfb5e2"
+    },
+    {
+      "case_id": "H12",
+      "source_case": "H12",
+      "scale_factor": 3,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W121": "T121",
+        "W122": "T122"
+      },
+      "added_skus": [],
+      "input_hash": "2d8e5d8af3a8da3d52e9ec957a647a0cf24b0e4bf2dd5c3b375b7b3e17d8d8bf"
+    },
+    {
+      "case_id": "H13",
+      "source_case": "H13",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W131": "T131",
+        "W132": "T132"
+      },
+      "added_skus": [],
+      "input_hash": "bb44a8668fe400dd0c2d693e62b9211002f39832a2f77584a59171fa27412ddb"
+    },
+    {
+      "case_id": "H14",
+      "source_case": "H14",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W141": "T141",
+        "W142": "T142"
+      },
+      "added_skus": [],
+      "input_hash": "dec8fa2f76bdee51259501886e1267f46d01b1f4decb79f5a8c342528bcb3070"
+    },
+    {
+      "case_id": "H15",
+      "source_case": "H15",
+      "scale_factor": 3,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W151": "T151",
+        "W152": "T152"
+      },
+      "added_skus": [],
+      "input_hash": "07fbe13170fc7a0e83b571ae3da8a3bbc9ed59a9ae2b4f900bb45cc54c5412de"
+    },
+    {
+      "case_id": "H16",
+      "source_case": "H16",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W161": "T161",
+        "W162": "T162"
+      },
+      "added_skus": [],
+      "input_hash": "b79dabe3e4fdc9001643e0ba63bd99190601a0709c8adca813d44fc2e7359f4f"
+    },
+    {
+      "case_id": "H17",
+      "source_case": "H17",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W171": "T171",
+        "W172": "T172"
+      },
+      "added_skus": [],
+      "input_hash": "42a809466a00ecbc74ca76702acf5dad825cfa5c9181345baf7f64e735e68dbb"
+    },
+    {
+      "case_id": "H18",
+      "source_case": "H18",
+      "scale_factor": 3,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W181": "T181",
+        "W182": "T182"
+      },
+      "added_skus": [],
+      "input_hash": "14298a423e13c3a962b5f7181b71d6c5e4a9c384ab523b3ccc2f1948605a9f2f"
+    },
+    {
+      "case_id": "H19",
+      "source_case": "H19",
+      "scale_factor": 4,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W191": "T191",
+        "W192": "T192"
+      },
+      "added_skus": [],
+      "input_hash": "da8c0f5372d0bf86384d8b118f5603d8849179688a71f2f6e8affb0d1e6677dc"
+    },
+    {
+      "case_id": "H20",
+      "source_case": "H20",
+      "scale_factor": 5,
+      "date_shift_days": 61,
+      "sku_mapping": {
+        "W201": "T201",
+        "W202": "T202"
+      },
+      "added_skus": [],
+      "input_hash": "a5b6a742d5d39d561ed209f143ed8cb4951d617cddb86b5b67dc098a409b87ae"
+    }
+  ],
+  "executed_receipts_checked": 1842,
+  "distinct_executed_data_hashes": 189,
+  "exact_reuse": false,
+  "input_hashes": [
+    "e9cd0db8e5e1d42dbc1c570eb64cc7f3fb821c28173022a421f5016ab9e4047f",
+    "6935c73f5cbfa7142852ec160f6b5cd7e65ac3cdc49687c8be3cf9471b1a1e95",
+    "30f42377318b8d548ea7117cb62e6551edc11cac6a74964835d30099e2a9e898",
+    "cf2e5934ba6621a63ff6f4edd7da1d660090585ed3c7ac87d133f9b772c1e1ec",
+    "03043f18d6df4e2587efa18ce5b065f2a497d58a54290ad4f059bfea21675bc9",
+    "c8bbce84218bba59973413298645b8dd9b9c45c6b4bf2a97ab8fdd8144106905",
+    "725b509ef72a734f980b2846edc252fe369132c17816e390e1930d66d9854dc8",
+    "a5f4b1729fbedf3c27b5f893564cea7fe196b6edbde81affd5056bc52d06f1cd",
+    "4f6df682639af67c921654314010746bb648b03f6657eab45c10f83f3889e900",
+    "112c2936a661d06025f6800eb1fc14e0e1f686bf714c5e6e140079ae075f1a7e",
+    "9fa0bca15baf53c8ac84cd6e96e1db7d398555a872cfc93302f345e49edfb5e2",
+    "2d8e5d8af3a8da3d52e9ec957a647a0cf24b0e4bf2dd5c3b375b7b3e17d8d8bf",
+    "bb44a8668fe400dd0c2d693e62b9211002f39832a2f77584a59171fa27412ddb",
+    "dec8fa2f76bdee51259501886e1267f46d01b1f4decb79f5a8c342528bcb3070",
+    "07fbe13170fc7a0e83b571ae3da8a3bbc9ed59a9ae2b4f900bb45cc54c5412de",
+    "b79dabe3e4fdc9001643e0ba63bd99190601a0709c8adca813d44fc2e7359f4f",
+    "42a809466a00ecbc74ca76702acf5dad825cfa5c9181345baf7f64e735e68dbb",
+    "14298a423e13c3a962b5f7181b71d6c5e4a9c384ab523b3ccc2f1948605a9f2f",
+    "da8c0f5372d0bf86384d8b118f5603d8849179688a71f2f6e8affb0d1e6677dc",
+    "a5b6a742d5d39d561ed209f143ed8cb4951d617cddb86b5b67dc098a409b87ae"
+  ],
+  "limitations": "Synthetic development-family variants. New hashes do not establish semantic independence. H14 replaces the flat-daily case with excluded-object/count coverage; H13 retains multi-SKU daily coverage."
+}

@@ -33,6 +33,36 @@ FAULTS = {
     "unknown_usage",
 }
 VERSION_CONTRACTS = {
+    "commerce-review-bundle-v6": {
+        "graph_version": "commerce-review-bundle-v6",
+        "schema_version": "1",
+        "prompt_version": "commerce-review-v6",
+        "tool_registry_version": "commerce-review-bundle-v6",
+    },
+    "diagnosis-v16": {
+        "graph_version": "diagnosis-v16",
+        "schema_version": "4",
+        "prompt_version": "diagnosis-v16",
+        "tool_registry_version": "6",
+    },
+    "commerce-review-bundle-v5": {
+        "graph_version": "commerce-review-bundle-v5",
+        "schema_version": "1",
+        "prompt_version": "commerce-review-v5",
+        "tool_registry_version": "commerce-review-bundle-v5",
+    },
+    "diagnosis-v15": {
+        "graph_version": "diagnosis-v15",
+        "schema_version": "4",
+        "prompt_version": "diagnosis-v15",
+        "tool_registry_version": "6",
+    },
+    "commerce-review-bundle-v4": {
+        "graph_version": "commerce-review-bundle-v4",
+        "schema_version": "1",
+        "prompt_version": "commerce-review-v4",
+        "tool_registry_version": "commerce-review-bundle-v4",
+    },
     "diagnosis-v14": {
         "graph_version": "diagnosis-v14",
         "schema_version": "3",
@@ -433,7 +463,7 @@ def single_sku_decomposition(business, sources, report):
     )
 
 
-def grade(case, bundle, run):
+def grade(case, bundle, run, *, semantic_contract=None):
     """All declared assertions must be recognized and evaluated; unknown fails closed."""
     expected = case.expected
     declared = set(expected.required_assertions)
@@ -523,6 +553,18 @@ def grade(case, bundle, run):
         reason = (
             fixed or not expected.stop_reasons or report.get("stop_reason") in expected.stop_reasons
         )
+        if (
+            task.get("graph_version") in {"diagnosis-v15", "diagnosis-v16"}
+            and not semantic_contract
+        ):
+            from evaluations.diagnosis_request_checks_v3 import boundary_request, reported_status
+
+            if (
+                boundary_request(case.query)
+                and reported_status(report) == "boundary_explained"
+                and report.get("stop_reason") == "evidence_gap"
+            ):
+                reason = True
         checks["expected_outcome"] = terminal and bool(reason)
         if case.execution == "diagnostic":
             checks["valid_report"] = bool(report) and bool(
@@ -549,6 +591,8 @@ def grade(case, bundle, run):
                     "diagnosis-v12",
                     "diagnosis-v13",
                     "diagnosis-v14",
+                    "diagnosis-v15",
+                    "diagnosis-v16",
                 }
                 and not independent
                 and (
@@ -557,6 +601,28 @@ def grade(case, bundle, run):
                 )
             ):
                 supported.add("rank_contributors")
+            if task.get("graph_version") in {
+                "diagnosis-v15",
+                "diagnosis-v16",
+                "commerce-review-bundle-v4",
+                "commerce-review-bundle-v5",
+                "commerce-review-bundle-v6",
+            }:
+                import re
+
+                from evaluations.diagnosis_request_checks_v3 import amount_identity
+
+                if (
+                    not independent
+                    and not re.search(r"占比|退款率|分母|退款件数", business["query"])
+                    and amount_identity(
+                        business,
+                        report,
+                        sources,
+                        report.get("scope", {}).get("skus", case.scope_skus),
+                    )
+                ):
+                    supported.add("analyze_refunds")
             checks["required_capabilities"] = set(expected.required_tools) <= supported
             expected_scope = (
                 [case.harness.clarification_choice]
@@ -564,12 +630,13 @@ def grade(case, bundle, run):
                 else case.scope_skus
             )
             if (
-                task.get("graph_version") in {"diagnosis-v13", "diagnosis-v14"}
+                task.get("graph_version")
+                in {"diagnosis-v13", "diagnosis-v14", "diagnosis-v15", "diagnosis-v16"}
                 and not case.harness.clarification_choice
             ):
                 from evaluations.diagnosis_request_checks import expected_entities
 
-                if task.get("graph_version") == "diagnosis-v14":
+                if task.get("graph_version") in {"diagnosis-v14", "diagnosis-v15", "diagnosis-v16"}:
                     from evaluations.diagnosis_request_checks_v2 import (
                         expected_entities as v2_entities,
                     )
@@ -597,12 +664,18 @@ def grade(case, bundle, run):
                     and p["scope"]["skus"]
                     == (
                         expected_scope
-                        if task.get("graph_version") in {"diagnosis-v13", "diagnosis-v14"}
+                        if task.get("graph_version")
+                        in {"diagnosis-v13", "diagnosis-v14", "diagnosis-v15", "diagnosis-v16"}
                         else case.scope_skus
                     )
                     and "net_revenue.current" in p["fact_catalog"]
                 ]
-                if task.get("graph_version") in {"diagnosis-v13", "diagnosis-v14"}:
+                if task.get("graph_version") in {
+                    "diagnosis-v13",
+                    "diagnosis-v14",
+                    "diagnosis-v15",
+                    "diagnosis-v16",
+                }:
                     current_values, current_coverage = raw_totals(
                         business["sales"], expected_scope, business["period"]
                     )
@@ -842,6 +915,42 @@ def grade(case, bundle, run):
             else expected_scope
         )
         v13_checks = v2_completion(business, report, sources, selected)
+        checks.update(v13_checks)
+    if (
+        task.get("graph_version")
+        in {
+            "diagnosis-v15",
+            "diagnosis-v16",
+            "commerce-review-bundle-v4",
+            "commerce-review-bundle-v5",
+            "commerce-review-bundle-v6",
+        }
+        and case.execution == "diagnostic"
+    ):
+        from evaluations.diagnosis_request_checks_v3 import completion_checks as v3_completion
+
+        selected = (
+            [case.harness.clarification_choice]
+            if case.harness.clarification_choice
+            else expected_scope
+        )
+        v13_checks = v3_completion(business, report, sources, selected)
+        from evaluations.diagnosis_request_checks_v3 import boundary_request, reported_status
+
+        rule = (semantic_contract or {}).get("cases", {}).get(case.case_id, {})
+        statuses = rule.get("answer_statuses") or (
+            ["boundary_explained"]
+            if expected.positive
+            and boundary_request(case.query)
+            and (
+                report.get("gap_records")
+                or any(p.get("answer_completion", {}).get("data_gaps") for p in sources)
+            )
+            else ["fulfilled"]
+            if expected.outcome == "report"
+            else ["incomplete"]
+        )
+        v13_checks["v15_expected_answer_status"] = reported_status(report) in statuses
         checks.update(v13_checks)
     mandatory = declared | {"expected_outcome"} | set(v13_checks)
     if case.execution == "diagnostic":

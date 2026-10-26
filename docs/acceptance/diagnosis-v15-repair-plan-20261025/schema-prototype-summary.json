@@ -1,0 +1,171 @@
+{
+  "status": "MINIMAL_SCHEMA_FEASIBILITY_ONLY_NOT_PRODUCTION_REPAIR",
+  "passed": 13,
+  "failed": 0,
+  "provider_requests": 0,
+  "checks": [
+    {
+      "check": "sales_tool",
+      "passed": true,
+      "accepted": true,
+      "expected": true,
+      "safe_errors": null
+    },
+    {
+      "check": "sales_tool_forbids_annotation",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "extra_forbidden",
+          "loc": [
+            "tool",
+            "rule_interpretations"
+          ],
+          "msg": "Extra inputs are not permitted"
+        }
+      ]
+    },
+    {
+      "check": "document_tool",
+      "passed": true,
+      "accepted": true,
+      "expected": true,
+      "safe_errors": null
+    },
+    {
+      "check": "document_tool_forbids_annotation",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "extra_forbidden",
+          "loc": [
+            "tool",
+            "rule_interpretations"
+          ],
+          "msg": "Extra inputs are not permitted"
+        }
+      ]
+    },
+    {
+      "check": "sales_stop_forbids_annotation",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "extra_forbidden",
+          "loc": [
+            "stop",
+            "rule_interpretations"
+          ],
+          "msg": "Extra inputs are not permitted"
+        }
+      ]
+    },
+    {
+      "check": "document_stop_allows_structural_annotation",
+      "passed": true,
+      "accepted": true,
+      "expected": true,
+      "safe_errors": null
+    },
+    {
+      "check": "document_stop_requires_nonempty_refs",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "too_short",
+          "loc": [
+            "stop",
+            "rule_interpretations",
+            0,
+            "references"
+          ],
+          "msg": "List should have at least 1 item after validation, not 0"
+        }
+      ]
+    },
+    {
+      "check": "document_stop_forbids_verified",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "literal_error",
+          "loc": [
+            "stop",
+            "rule_interpretations",
+            0,
+            "status"
+          ],
+          "msg": "Input should be 'unverified'"
+        }
+      ]
+    },
+    {
+      "check": "clarify_forbids_annotation",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "extra_forbidden",
+          "loc": [
+            "clarify",
+            "rule_interpretations"
+          ],
+          "msg": "Extra inputs are not permitted"
+        }
+      ]
+    },
+    {
+      "check": "unknown_action",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "union_tag_invalid",
+          "loc": [],
+          "msg": "Input tag 'execute_sql' found using 'action' does not match any of the expected tags: 'tool', 'stop', 'clarify'"
+        }
+      ]
+    },
+    {
+      "check": "extra_field",
+      "passed": true,
+      "accepted": false,
+      "expected": false,
+      "safe_errors": [
+        {
+          "type": "extra_forbidden",
+          "loc": [
+            "tool",
+            "run_arbitrary_url"
+          ],
+          "msg": "Extra inputs are not permitted"
+        }
+      ]
+    },
+    {
+      "check": "sales_schema_does_not_expose_rule_fields_or_reference_types",
+      "passed": true
+    },
+    {
+      "check": "same_frozen_sources_schema_hash_stable",
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "No provider JSON reliability measured.",
+    "DocumentStop still requires server-side exact quote/source/ownership validation.",
+    "Full proposal fields, saved-version routing, bounded correction and durable replay need implementation tests."
+  ]
+}

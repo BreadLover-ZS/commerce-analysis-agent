@@ -1,0 +1,16 @@
+$ tsc -b && vite build
+vite v7.3.3 building client environment for production...
+(node:32710) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+transforming...
+✓ 1449 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                         0.93 kB │ gzip:   0.51 kB
+dist/assets/antd-vendor-BdOndhxL.css    2.94 kB │ gzip:   1.19 kB
+dist/assets/index-L_nayqNy.css         25.24 kB │ gzip:   6.41 kB
+dist/assets/vendor-BhUOUv-y.js         25.99 kB │ gzip:   9.29 kB
+dist/assets/index-Blrp8seu.js          64.50 kB │ gzip:  20.43 kB
+dist/assets/react-vendor-DZycUP_J.js  193.01 kB │ gzip:  60.50 kB
+dist/assets/antd-vendor-D3B5Cmq_.js   435.95 kB │ gzip: 138.56 kB
+✓ built in 1.24s

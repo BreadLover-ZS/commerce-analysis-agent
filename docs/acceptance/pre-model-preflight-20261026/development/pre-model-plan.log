@@ -1,0 +1,167 @@
+.........................FFF----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+___________ test_actual_run_arguments_are_bound_to_frozen_plan[None] ___________
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/test_actual_run_argumen...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/test_actual_run_arguments_are_0/paid'))
+mismatch = None
+
+    @pytest.mark.parametrize("mismatch", [None, "cases", "mode", "subset", "limit", "resume", "cap"])
+    def test_actual_run_arguments_are_bound_to_frozen_plan(prepared_inputs, mismatch):
+        directory, cases, prior = prepared_inputs
+        freeze(prepared_inputs)
+        args = SimpleNamespace(
+            frozen_plan=directory,
+            cases=cases,
+            charge_paid_run=prior,
+            prior_paid_run=None,
+            mode="live",
+            split="holdout",
+            repeats=3,
+            final_holdout=True,
+            case_ids=None,
+            max_paid_requests=None,
+            max_total_tokens=8000000,
+            provider="DeepSeek",
+            endpoint="https://api.deepseek.com",
+            model="deepseek-flash",
+        )
+        if mismatch == "cases":
+            args.cases = DEFAULT_CASES
+        elif mismatch == "mode":
+            args.mode = "demo"
+        elif mismatch == "subset":
+            args.case_ids = ["H01"]
+        elif mismatch == "limit":
+            args.max_total_tokens = 9000000
+        elif mismatch == "resume":
+            args.prior_paid_run = prior
+        elif mismatch == "cap":
+            args.max_paid_requests = 2
+        if mismatch is None:
+>           planning.guard_run(args)
+
+tests/test_diagnosis_plan.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = namespace(frozen_plan=PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/te...uests=None, max_total_tokens=8000000, provider='DeepSeek', endpoint='https://api.deepseek.com', model='deepseek-flash')
+
+    def guard_run(args):
+        """Bind the actual CLI to its frozen plan; --allow-paid remains mandatory."""
+        directory = Path(args.frozen_plan)
+        plan = json.loads((directory / "manifest.json").read_bytes())
+        supplied = getattr(args, "prior_reconciliation", None)
+        frozen_certificate = plan.get("history", {}).get("reconciliation")
+        if (supplied is None) != (frozen_certificate is None):
+            raise ValueError("运行更正证书必须显式提供并与冻结计划一致")
+        check(directory, args.charge_paid_run, reconciliation=supplied)
+        from evaluations.diagnosis_runtime import EvaluationSettings
+    
+        current = EvaluationSettings(_env_file=None)
+        if current.commerce_review_answer_version == 6:
+            path = directory / "semantic-contract.json"
+            if not path.is_file() or json.loads(path.read_bytes()).get("schema_version") != 4:
+>               raise ValueError("当前正式入口须使用schema4冻结语义侧表，禁止省略或降级")
+E               ValueError: 当前正式入口须使用schema4冻结语义侧表，禁止省略或降级
+
+evaluations/diagnosis_plan.py:356: ValueError
+__________ test_actual_run_arguments_are_bound_to_frozen_plan[cases] ___________
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/test_actual_run_argumen...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/test_actual_run_arguments_are_1/paid'))
+mismatch = 'cases'
+
+    @pytest.mark.parametrize("mismatch", [None, "cases", "mode", "subset", "limit", "resume", "cap"])
+    def test_actual_run_arguments_are_bound_to_frozen_plan(prepared_inputs, mismatch):
+        directory, cases, prior = prepared_inputs
+        freeze(prepared_inputs)
+        args = SimpleNamespace(
+            frozen_plan=directory,
+            cases=cases,
+            charge_paid_run=prior,
+            prior_paid_run=None,
+            mode="live",
+            split="holdout",
+            repeats=3,
+            final_holdout=True,
+            case_ids=None,
+            max_paid_requests=None,
+            max_total_tokens=8000000,
+            provider="DeepSeek",
+            endpoint="https://api.deepseek.com",
+            model="deepseek-flash",
+        )
+        if mismatch == "cases":
+            args.cases = DEFAULT_CASES
+        elif mismatch == "mode":
+            args.mode = "demo"
+        elif mismatch == "subset":
+            args.case_ids = ["H01"]
+        elif mismatch == "limit":
+            args.max_total_tokens = 9000000
+        elif mismatch == "resume":
+            args.prior_paid_run = prior
+        elif mismatch == "cap":
+            args.max_paid_requests = 2
+        if mismatch is None:
+            planning.guard_run(args)
+        else:
+>           with pytest.raises(ValueError, match="运行参数"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: '运行参数'
+E             Actual message: '当前正式入口须使用schema4冻结语义侧表，禁止省略或降级'
+
+tests/test_diagnosis_plan.py:225: AssertionError
+___________ test_actual_run_arguments_are_bound_to_frozen_plan[mode] ___________
+
+prepared_inputs = (PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/test_actual_run_argumen...ivate/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-140/test_actual_run_arguments_are_2/paid'))
+mismatch = 'mode'
+
+    @pytest.mark.parametrize("mismatch", [None, "cases", "mode", "subset", "limit", "resume", "cap"])
+    def test_actual_run_arguments_are_bound_to_frozen_plan(prepared_inputs, mismatch):
+        directory, cases, prior = prepared_inputs
+        freeze(prepared_inputs)
+        args = SimpleNamespace(
+            frozen_plan=directory,
+            cases=cases,
+            charge_paid_run=prior,
+            prior_paid_run=None,
+            mode="live",
+            split="holdout",
+            repeats=3,
+            final_holdout=True,
+            case_ids=None,
+            max_paid_requests=None,
+            max_total_tokens=8000000,
+            provider="DeepSeek",
+            endpoint="https://api.deepseek.com",
+            model="deepseek-flash",
+        )
+        if mismatch == "cases":
+            args.cases = DEFAULT_CASES
+        elif mismatch == "mode":
+            args.mode = "demo"
+        elif mismatch == "subset":
+            args.case_ids = ["H01"]
+        elif mismatch == "limit":
+            args.max_total_tokens = 9000000
+        elif mismatch == "resume":
+            args.prior_paid_run = prior
+        elif mismatch == "cap":
+            args.max_paid_requests = 2
+        if mismatch is None:
+            planning.guard_run(args)
+        else:
+>           with pytest.raises(ValueError, match="运行参数"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: '运行参数'
+E             Actual message: '当前正式入口须使用schema4冻结语义侧表，禁止省略或降级'
+
+tests/test_diagnosis_plan.py:225: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_diagnosis_plan.py::test_actual_run_arguments_are_bound_to_frozen_plan[None]
+FAILED tests/test_diagnosis_plan.py::test_actual_run_arguments_are_bound_to_frozen_plan[cases]
+FAILED tests/test_diagnosis_plan.py::test_actual_run_arguments_are_bound_to_frozen_plan[mode]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+3 failed, 25 passed in 11.16s

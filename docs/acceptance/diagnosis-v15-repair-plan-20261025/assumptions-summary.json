@@ -1,0 +1,331 @@
+{
+  "status": "PLAN_ASSUMPTIONS_CONFIRMED_ON_V14_NOT_REPAIRED",
+  "checks": [
+    {
+      "check": "H02_schema_accepts_invalid_semantic_annotation",
+      "passed": true,
+      "evidence": "structurally accepted; all quote references unbound"
+    },
+    {
+      "check": "H02_original_sequence_validation",
+      "passed": true,
+      "evidence": {
+        "passed": true,
+        "errors": [],
+        "semantic_status": "program_verified",
+        "report_hash": "0f54f11de0fda4e2814cfce8c87d495db1ba8180586b386dde9b205f46e1ca5d",
+        "numeric_truth": "recomputed_from_bound_source",
+        "rule_semantics": "unverified",
+        "rule_quotes": "recomputed_literal_match"
+      }
+    },
+    {
+      "check": "H02_original_sequence_stop",
+      "passed": true,
+      "evidence": "invalid_decision"
+    },
+    {
+      "check": "H02_rejection_feedback_has_no_typed_correction",
+      "passed": true,
+      "evidence": [
+        {
+          "error_code": "unbound_rule_interpretation",
+          "new_information": false,
+          "finding_refs": [],
+          "hypothesis_status": "insufficient",
+          "next_action": "propose"
+        },
+        {
+          "error_code": "unbound_rule_interpretation",
+          "new_information": false,
+          "finding_refs": [],
+          "hypothesis_status": "insufficient",
+          "next_action": "propose"
+        },
+        {
+          "error_code": "unbound_rule_interpretation",
+          "new_information": false,
+          "finding_refs": [],
+          "hypothesis_status": "insufficient",
+          "next_action": "stop"
+        }
+      ]
+    },
+    {
+      "check": "H02_clean_proposal_control_validation",
+      "passed": true,
+      "evidence": {
+        "passed": true,
+        "errors": [],
+        "semantic_status": "program_verified",
+        "report_hash": "a6cc27a7d46ab8a166550c77d8cf6e98bd9fb626a5a2502a45c531d73b60f85b",
+        "numeric_truth": "recomputed_from_bound_source",
+        "rule_semantics": "unverified",
+        "rule_quotes": "recomputed_literal_match"
+      }
+    },
+    {
+      "check": "H02_clean_proposal_control_stop",
+      "passed": true,
+      "evidence": "target_covered"
+    },
+    {
+      "check": "H02_clean_control_tool_executes",
+      "passed": true,
+      "evidence": "analyze_refunds"
+    },
+    {
+      "check": "H17_schema_accepts_invalid_semantic_annotation",
+      "passed": true,
+      "evidence": "structurally accepted; all quote references unbound"
+    },
+    {
+      "check": "H17_original_sequence_validation",
+      "passed": true,
+      "evidence": {
+        "passed": true,
+        "errors": [],
+        "semantic_status": "program_verified",
+        "report_hash": "d04716c184c59e7bf2fb579885103cbd609a91358a6bbfdd00cec87520ea8ea8",
+        "numeric_truth": "recomputed_from_bound_source",
+        "rule_semantics": "unverified",
+        "rule_quotes": "recomputed_literal_match"
+      }
+    },
+    {
+      "check": "H17_original_sequence_stop",
+      "passed": true,
+      "evidence": "invalid_decision"
+    },
+    {
+      "check": "H17_rejection_feedback_has_no_typed_correction",
+      "passed": true,
+      "evidence": [
+        {
+          "error_code": "unbound_rule_interpretation",
+          "new_information": false,
+          "finding_refs": [],
+          "hypothesis_status": "insufficient",
+          "next_action": "propose"
+        },
+        {
+          "error_code": "unbound_rule_interpretation",
+          "new_information": false,
+          "finding_refs": [],
+          "hypothesis_status": "insufficient",
+          "next_action": "stop"
+        }
+      ]
+    },
+    {
+      "check": "H17_clean_proposal_control_validation",
+      "passed": true,
+      "evidence": {
+        "passed": true,
+        "errors": [],
+        "semantic_status": "program_verified",
+        "report_hash": "500e076ba314b61090af2f85729d5c1a0b81186ae04f9c344c7eca26f9725184",
+        "numeric_truth": "recomputed_from_bound_source",
+        "rule_semantics": "unverified",
+        "rule_quotes": "recomputed_literal_match"
+      }
+    },
+    {
+      "check": "H17_clean_proposal_control_stop",
+      "passed": true,
+      "evidence": "evidence_gap"
+    },
+    {
+      "check": "H17_clean_control_tool_executes",
+      "passed": true,
+      "evidence": "inventory_risk"
+    },
+    {
+      "check": "H03_numeric_witness_present_despite_capability_fail",
+      "passed": true,
+      "evidence": "nine same-scope, same-period CNY values reconcile; frozen capability still FAIL"
+    },
+    {
+      "check": "H03_reject_wrong_value",
+      "passed": true,
+      "evidence": "scratch copy only; original receipt untouched"
+    },
+    {
+      "check": "H03_reject_wrong_unit",
+      "passed": true,
+      "evidence": "scratch copy only; original receipt untouched"
+    },
+    {
+      "check": "H03_reject_wrong_scope",
+      "passed": true,
+      "evidence": "scratch copy only; original receipt untouched"
+    },
+    {
+      "check": "H03_reject_wrong_period",
+      "passed": true,
+      "evidence": "scratch copy only; original receipt untouched"
+    },
+    {
+      "check": "H03_reject_missing_refund_comparison",
+      "passed": true,
+      "evidence": "scratch copy only; original receipt untouched"
+    },
+    {
+      "check": "H06_gap_target_only_collision",
+      "passed": true,
+      "evidence": {
+        "outcome": "gap",
+        "net_cents": 97145600,
+        "comparison_net_cents": 194291200,
+        "delta_cents": null,
+        "comparable": false,
+        "required_tools": [],
+        "forbidden_metrics": [
+          "profit",
+          "conversion_rate",
+          "roi",
+          "cohort_refund_rate"
+        ],
+        "critical": false,
+        "positive": true,
+        "baseline_capability": "common",
+        "http_status": null,
+        "task_statuses": [
+          "succeeded",
+          "degraded"
+        ],
+        "stop_reasons": [
+          "target_covered"
+        ],
+        "required_assertions": [
+          "immutable_source_versions",
+          "facts_match_raw_records",
+          "bounded_execution",
+          "missing_is_not_zero",
+          "no_full_attribution_when_incomparable"
+        ],
+        "accepted_conclusions": [
+          "仅按固定版本和记账事实报告；未获资料支持的业务原因保持未证实。"
+        ],
+        "forbidden_conclusions": [
+          "把净销售额称作利润。",
+          "把记账期退款件数占比称作最终订单退款率。",
+          "没有证据却声称已证明质量、服务或流量原因。"
+        ]
+      }
+    },
+    {
+      "check": "H07_gap_target_only_collision",
+      "passed": true,
+      "evidence": {
+        "outcome": "gap",
+        "net_cents": 285168600,
+        "comparison_net_cents": 0,
+        "delta_cents": null,
+        "comparable": false,
+        "required_tools": [],
+        "forbidden_metrics": [
+          "profit",
+          "conversion_rate",
+          "roi",
+          "cohort_refund_rate"
+        ],
+        "critical": false,
+        "positive": true,
+        "baseline_capability": "common",
+        "http_status": null,
+        "task_statuses": [
+          "succeeded",
+          "degraded"
+        ],
+        "stop_reasons": [
+          "target_covered"
+        ],
+        "required_assertions": [
+          "immutable_source_versions",
+          "facts_match_raw_records",
+          "bounded_execution",
+          "missing_is_not_zero",
+          "no_full_attribution_when_incomparable"
+        ],
+        "accepted_conclusions": [
+          "仅按固定版本和记账事实报告；未获资料支持的业务原因保持未证实。"
+        ],
+        "forbidden_conclusions": [
+          "把净销售额称作利润。",
+          "把记账期退款件数占比称作最终订单退款率。",
+          "没有证据却声称已证明质量、服务或流量原因。"
+        ]
+      }
+    },
+    {
+      "check": "H17_gap_target_only_collision",
+      "passed": true,
+      "evidence": {
+        "outcome": "gap",
+        "net_cents": 940667200,
+        "comparison_net_cents": 1088107200,
+        "delta_cents": -147440000,
+        "comparable": true,
+        "required_tools": [
+          "inventory_risk"
+        ],
+        "forbidden_metrics": [
+          "profit",
+          "conversion_rate",
+          "roi",
+          "cohort_refund_rate"
+        ],
+        "critical": false,
+        "positive": true,
+        "baseline_capability": "additional",
+        "http_status": null,
+        "task_statuses": [
+          "succeeded",
+          "degraded"
+        ],
+        "stop_reasons": [
+          "target_covered"
+        ],
+        "required_assertions": [
+          "immutable_source_versions",
+          "facts_match_raw_records",
+          "bounded_execution",
+          "inventory_snapshot_disclosed",
+          "paid_units_is_proxy_not_outbound",
+          "missing_lead_has_no_threshold_comparison"
+        ],
+        "accepted_conclusions": [
+          "仅按固定版本和记账事实报告；未获资料支持的业务原因保持未证实。"
+        ],
+        "forbidden_conclusions": [
+          "把净销售额称作利润。",
+          "把记账期退款件数占比称作最终订单退款率。",
+          "没有证据却声称已证明质量、服务或流量原因。"
+        ]
+      }
+    },
+    {
+      "check": "fixed_H03_fact_projection_omits_available_prior_gross",
+      "passed": true,
+      "evidence": "raw calculation has the amount; fact catalog and report do not"
+    },
+    {
+      "check": "network_attempts_zero",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "check": "source_unchanged",
+      "passed": true,
+      "evidence": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c"
+    }
+  ],
+  "passed": 26,
+  "failed": 0,
+  "worker_tasks": 4,
+  "new_provider_requests": 0,
+  "network_attempts": 0,
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "scope": "Used v14 inputs only; SDK protocol stubs and experimental numeric witness; no v15 implementation or model-quality result"
+}

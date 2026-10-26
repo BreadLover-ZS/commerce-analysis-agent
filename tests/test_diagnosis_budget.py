@@ -455,7 +455,7 @@ async def test_accounting_only_cli_uses_new_worker_results_and_old_charges(
     assert run_meta["paid_request_limit"] == 13  # One prior + this Task's hard 12.
     assert not (output / "case-1").exists()
     current = json.loads((output / "D10-1/additional.json").read_text())
-    assert current["task"]["graph_version"] == "diagnosis-v14"
+    assert current["task"]["graph_version"] == "diagnosis-v16"
     assert current["provider_trace"][0]["sequence"] == 2
     reconciled = prior_spend(
         output,

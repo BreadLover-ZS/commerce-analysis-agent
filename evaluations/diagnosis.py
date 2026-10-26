@@ -122,6 +122,8 @@ class RequestBudget:
         context_ceiling=None,
         journal=None,
         initial_spent_tokens=0,
+        protocol=1,
+        run_id=None,
     ):
         self.limit, self.sent, self.blocked = limit, 0, False
         self.traces = []
@@ -146,6 +148,7 @@ class RequestBudget:
         self.reserved_tokens = 0
         self.denied_reason = None
         self.journal = journal
+        self.protocol, self.run_id = protocol, run_id or str(uuid4())
 
     def event(self, kind, **fields):
         if self.journal is not None:
@@ -176,10 +179,55 @@ class RequestBudget:
             "denied_reason": self.denied_reason,
         }
 
+    def deny_before_send(self, reason, *, next_reservation=0):
+        from app.core.model_boundary import (
+            CURRENT_ATTEMPT,
+            BeforeProviderSendDenied,
+            fingerprint,
+        )
+
+        self.denied_reason, self.blocked = reason, True
+        attempt = CURRENT_ATTEMPT.get() if self.protocol == 2 else None
+        fields = {"reason": reason, "next_reservation": next_reservation}
+        if attempt is not None:
+            fields.update(
+                protocol=2,
+                run_id=self.run_id,
+                attempt_identity=attempt.identity,
+                attempt_admissions=attempt.admissions,
+                sequence=self.sent,
+            )
+        self.event("denied_before_send", **fields)
+        if (
+            attempt is not None
+            and self.journal is not None
+            and not attempt.admissions
+            and not self.reserved_tokens
+        ):
+            event = {
+                "event": "denied_before_send",
+                "spent_tokens": self.spent_tokens,
+                "reserved_tokens": self.reserved_tokens,
+                **fields,
+            }
+            proof = {
+                "event": event,
+                "event_sha256": fingerprint(event),
+                "journal": str(self.journal.resolve()),
+            }
+            attempt.denial = proof
+            raise BeforeProviderSendDenied(proof, attempt.marker)
+        raise RuntimeError(
+            "evaluation_paid_request_budget_exhausted"
+            if reason == "paid_request_limit_or_unknown_usage"
+            else "evaluation_token_budget_capacity"
+            if reason == "token_budget_capacity"
+            else "evaluation_" + reason
+        )
+
     async def before_send(self, request):
         if self.blocked or self.sent >= self.limit:
-            self.denied_reason = self.denied_reason or "paid_request_limit_or_unknown_usage"
-            raise RuntimeError("evaluation_paid_request_budget_exhausted")
+            self.deny_before_send(self.denied_reason or "paid_request_limit_or_unknown_usage")
         if request.method != "POST" or not request.url.path.endswith("/chat/completions"):
             raise RuntimeError("evaluation_unexpected_provider_route")
         body = json.loads(request.content)
@@ -194,13 +242,21 @@ class RequestBudget:
             # never pretend a character/token estimator is a hard billing bound.
             reservation = self.context_ceiling + output_limit
             if self.spent_tokens + self.reserved_tokens + reservation > self.token_limit:
-                self.denied_reason, self.blocked = "token_budget_capacity", True
-                self.event(
-                    "denied_before_send", reason=self.denied_reason, next_reservation=reservation
-                )
-                raise RuntimeError("evaluation_token_budget_capacity")
+                self.deny_before_send("token_budget_capacity", next_reservation=reservation)
+        from app.core.model_boundary import CURRENT_ATTEMPT
+
+        attempt = CURRENT_ATTEMPT.get() if self.protocol == 2 else None
+        identity = (
+            {"protocol": 2, "run_id": self.run_id, "attempt_identity": attempt.identity}
+            if attempt
+            else {}
+        )
         self.reserved_tokens += reservation
-        self.event("reserved_before_send", sequence=self.sent + 1, reservation=reservation)
+        self.event(
+            "reserved_before_send", sequence=self.sent + 1, reservation=reservation, **identity
+        )
+        if attempt:
+            attempt.admissions += 1
         self.traces.append(
             {
                 "sequence": self.sent + 1,
@@ -221,12 +277,18 @@ class RequestBudget:
                 },
                 "response": None,
                 "token_reservation": reservation,
+                **identity,
             }
         )
         request.extensions["evaluation_sequence"] = self.sent
         self.sent += 1
 
     async def after_response(self, response):
+        from app.core.model_boundary import CURRENT_ATTEMPT
+
+        attempt = CURRENT_ATTEMPT.get() if self.protocol == 2 else None
+        if attempt:
+            attempt.provider_usage_valid = False
         # Read/JSON failures also leave usage unresolved; block before parsing.
         self.blocked = True
         entry = self.traces[response.request.extensions["evaluation_sequence"]]
@@ -246,6 +308,8 @@ class RequestBudget:
                 self.token_limit is None or usage["total_tokens"] <= entry["token_reservation"]
             )
             if valid:
+                if attempt:
+                    attempt.provider_usage_valid = True
                 self.spent_tokens += usage["total_tokens"]
                 self.reserved_tokens -= entry["token_reservation"]
                 entry["known_tokens"] = usage["total_tokens"]
@@ -438,10 +502,18 @@ def summarize(rows, planned, *, stopped=None):
 
 
 async def evaluate(args):
+    if (
+        (getattr(args, "final_holdout", False) or getattr(args, "split", None) == "holdout")
+        and getattr(args, "mode", None) == "live"
+        and getattr(args, "frozen_plan", None) is None
+    ):
+        raise ValueError("保留集正式模型测试必须提供冻结计划，禁止提前读取凭据或发送HTTP")
     if getattr(args, "frozen_plan", None) is not None:
         from evaluations.diagnosis_plan import guard_run
 
         guard_run(args)
+    if getattr(args, "prior_reconciliation", None) is not None and not args.charge_paid_run:
+        raise ValueError("更正证书仅允许显式扣费承接，不允许拼接质量成绩")
     configuration = live_configuration(args)
     accounting_only = bool(args.charge_paid_run)
     prior_directory = args.charge_paid_run or args.prior_paid_run
@@ -461,6 +533,7 @@ async def evaluate(args):
         model=args.model,
         token_limit=prior_limit,
         require_stopped=not accounting_only,
+        reconciliation=getattr(args, "prior_reconciliation", None),
     )
     cases, case_hash = load_cases(args.cases, split=args.split, case_ids=args.case_ids)
     if not 1 <= args.repeats <= 10:
@@ -518,11 +591,14 @@ async def evaluate(args):
         for c in cases
     }
 
+    semantic_file = args.cases.with_name("semantic-contract.json")
+    semantic_contract = json.loads(semantic_file.read_bytes()) if semantic_file.exists() else None
+
     def safety_regrade(row, record):
         case = next(c for c in cases if c.case_id == row["case_id"])
         directory = Path(previous["prior_run"]["directory"]) / Path(row["receipt"]).parent
         bundle = json.loads((directory / "bundle.json").read_text())
-        return grade(case, bundle, record)
+        return grade(case, bundle, record, semantic_contract=semantic_contract)
 
     inherited_cases = (
         set()
@@ -553,6 +629,7 @@ async def evaluate(args):
         output / "run.json",
         {
             "run_id": run_id,
+            "accounting_protocol": 2,
             "created_at": datetime.now(UTC).isoformat(),
             "planned": planned,
             "implementation_sha256": fingerprint,
@@ -615,6 +692,8 @@ async def evaluate(args):
                 stream.write(json.dumps(row, ensure_ascii=False) + "\n")
     budget = RequestBudget(
         request_limit,
+        protocol=2,
+        run_id=run_id,
         max_total_tokens=args.max_total_tokens,
         context_ceiling=context_ceiling,
         journal=output / "budget-journal.jsonl",
@@ -694,7 +773,9 @@ async def evaluate(args):
                                 record = collect(repo, task["id"], group)
                                 if case.execution == "fault":
                                     record["harness_proof"] = proof
-                            grading = grade(case, bundle, record)
+                            grading = grade(
+                                case, bundle, record, semantic_contract=semantic_contract
+                            )
                         except Exception as exc:
                             # Error types only: SDK exceptions can contain secrets or provider text.
                             record = (
@@ -866,6 +947,9 @@ def parser():
         type=Path,
         help="仅承接历史扣费；新实现/新计划不继承旧Task与质量结果",
     )
+    run.add_argument(
+        "--prior-reconciliation", type=Path, help="显式核验追加式未发送更正证书，原始回执不改"
+    )
     run.add_argument("--input-price", type=float)
     run.add_argument("--output-price", type=float)
     review = commands.add_parser("review", allow_abbrev=False)
@@ -876,6 +960,9 @@ def parser():
     audit = commands.add_parser("audit", allow_abbrev=False)
     audit.add_argument("--run", type=Path, required=True)
     audit.add_argument("--output", type=Path, required=True)
+    audit.add_argument(
+        "--reconciliation", type=Path, help="显式追加式更正证书；缺省仍严格阻断UNKNOWN"
+    )
     return root
 
 
@@ -891,7 +978,7 @@ def main():
         elif args.command == "audit":
             from evaluations.diagnosis_audit import audit_run
 
-            result = audit_run(args.run)
+            result = audit_run(args.run, reconciliation=args.reconciliation)
             write(args.output, result)
             success = True
         else:

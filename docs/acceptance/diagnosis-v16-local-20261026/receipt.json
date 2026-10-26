@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-26",
+  "recorded_at": "2026-10-26T10:59:02.745863+08:00",
+  "status": "LOCAL_CODE_VALIDATION_PASS_HISTORICAL_ACCOUNTING_BLOCKED_REAL_MODEL_UNTESTED",
+  "plan": "docs/51-v16-repair-plan-and-confidence-gates-20261026.md",
+  "report": "docs/52-v16-repair-and-local-validation-20261026.md",
+  "git_head": "62d98051982c4a8a277df6cb88fe37030185241a",
+  "implementation_sha256": "99530b7b82574e9e610a657f330199c3f21508c7b0d1305d3f9b0048274be62b",
+  "implementation_files": 244,
+  "source_snapshot": "evaluations/results/diagnosis-v16-local-20261026-01/delivery-source-snapshot",
+  "credentials_included": false,
+  "diagnosis_version": "diagnosis-v16",
+  "fixed_version": "commerce-review-bundle-v5",
+  "request_contract": "answer-contract-v4",
+  "report_schema": 4,
+  "proposal_schema": "V3",
+  "tool_registry": 6,
+  "accounting_protocol": 2,
+  "local_code_validation": "PASS",
+  "postgres": {
+    "version": "16.2",
+    "passed": 1059,
+    "failed": 0,
+    "skipped": 0,
+    "external_network_guard": {
+      "external_attempts_blocked": 0,
+      "hosts": [],
+      "provider_requests": 0,
+      "loopback_and_unix_sockets_permitted": true
+    }
+  },
+  "chrome": {
+    "passed": 19,
+    "failed": 0,
+    "real_local_api": true,
+    "mode": "demo",
+    "diagnosis_runtime": "v16",
+    "fixed_answer_version": 5,
+    "serial_final": true,
+    "prior_interrupted_round_preserved": true
+  },
+  "frontend_build": "PASS",
+  "saved_h03_replay": {
+    "count": 3,
+    "selected": [
+      4,
+      4,
+      3
+    ],
+    "kept": [
+      3,
+      3,
+      3
+    ],
+    "omitted": [
+      1,
+      1,
+      0
+    ],
+    "json_md_pdf_consistent": true,
+    "scope": "REPORT_RECOMPOSITION_NOT_NEW_TASKS_OR_FORMAL_QUALITY"
+  },
+  "mutation_checks": {
+    "killed": 5,
+    "total": 5
+  },
+  "legacy_regrade": {
+    "checked": 267,
+    "changed": 0
+  },
+  "protected_original_v15_files": {
+    "checked": 199,
+    "changed": 0
+  },
+  "preserved_original_v15_source_files": 235,
+  "historical_reconciliation": {
+    "status": "RECONCILIATION_BLOCKED",
+    "reason": "historical_denial_has_no_unique_direct_attempt_binding",
+    "certificate": null,
+    "raw_records_modified": false,
+    "provider_requests": 0
+  },
+  "new_real_provider_requests": 0,
+  "new_paid_tokens": 0,
+  "cumulative_tokens": 10954662,
+  "cumulative_http_requests": 1576,
+  "cumulative_token_limit": 12000000,
+  "next_request_reservation": 1051576,
+  "next_request_capacity_deficit": 6238,
+  "raw_formal_scores_modified": false,
+  "original_formal_failures_preserved": 3,
+  "original_formal_unexecuted_preserved": 21,
+  "new_formal_packet_prepared": false,
+  "real_model_quality": "UNTESTED",
+  "g6_release_eligible": false,
+  "g7_excluded": true,
+  "committed": false,
+  "pushed": false
+}

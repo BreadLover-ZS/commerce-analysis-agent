@@ -1,0 +1,90 @@
+$ playwright test --reporter=line
+[WebServer] INFO:     Started server process [29154]
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8091 (Press CTRL+C to quit)
+
+[WebServer] (node:29185) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] $ vite --host 127.0.0.1 --port 5191 --strictPort
+
+[WebServer] (node:29205) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:29205) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+
+
+Running 19 tests using 1 worker
+
+(node:29221) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/19] e2e/commerce-review.spec.ts:4:1 › scenario preview, version binding, review, evidence and PDF
+[2/19] e2e/commerce-review.spec.ts:105:1 › invalid CSV shows row errors and missing data remains explicit
+[3/19] e2e/diagnosis.spec.ts:58:1 › same-input fixed comparison uses real API and survives refresh on mobile
+  1) e2e/diagnosis.spec.ts:58:1 › same-input fixed comparison uses real API and survives refresh on mobile 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByLabel('同输入流程对照', { exact: true })
+    Expected substring: "输入和口径已对齐"
+    Received string:    "同输入流程对照核对共同销售事实与执行开销；业务完成情况仍需逐项审查。固定流程记录9864cabd · 排队中创建同输入固定对照刷新对照打开固定流程记录创建对照会新增一项任务，沿用固定输入、问题及复核要求，使用当前运行模式。库存、规则和动态下钻的新增能力应单独核对。固定流程状态：排队中；报告尚未通过程序校验。输入版本：待核对实际两期：待核对最终范围：不同或尚未确定，金额不可直接比较运行模式：一致资源上限：一致存在尚未对齐的条件，请勿据此判断流程优劣。核对项固定流程经营诊断已记录净销售额（元）—1200.00可比较变化金额（元）不可比较-200.00工具执行04模型调用00Token00累计执行（秒）0.00.1本次为离线策略对照，不能证明真实模型效果。 费用未核验，不以0代替。单次耗时不代表稳定提速；正式分集配对及独立审查以评测回执为准。"
+    Timeout: 15000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 15000ms
+      - waiting for getByLabel('同输入流程对照', { exact: true })
+        8 × locator resolved to <section aria-label="同输入流程对照" class="panel diagnosis-comparison">…</section>
+          - unexpected value "同输入流程对照核对共同销售事实与执行开销；业务完成情况仍需逐项审查。固定流程记录9864cabd · 排队中创建同输入固定对照刷新对照打开固定流程记录创建对照会新增一项任务，沿用固定输入、问题及复核要求，使用当前运行模式。库存、规则和动态下钻的新增能力应单独核对。固定流程状态：排队中；报告尚未通过程序校验。输入版本：待核对实际两期：待核对最终范围：不同或尚未确定，金额不可直接比较运行模式：一致资源上限：一致存在尚未对齐的条件，请勿据此判断流程优劣。核对项固定流程经营诊断已记录净销售额（元）—1200.00可比较变化金额（元）不可比较-200.00工具执行04模型调用00Token00累计执行（秒）0.00.1本次为离线策略对照，不能证明真实模型效果。 费用未核验，不以0代替。单次耗时不代表稳定提速；正式分集配对及独立审查以评测回执为准。"
+
+
+      77 |   expect(fixed.parameters.bundle_id).toBe(original.parameters.bundle_id);
+      78 |   expect(fixed.parameters.budget).toEqual(original.parameters.budget);
+    > 79 |   await expect(panel).toContainText("输入和口径已对齐", { timeout: 15000 });
+         |                       ^
+      80 |   await expect(panel).toContainText("程序校验通过");
+      81 |   await expect(panel.getByLabel("对照一致性")).toContainText("最终范围：一致");
+      82 |   const netRow = panel.getByRole("row").filter({ hasText: "已记录净销售额" });
+        at /Users/zzds/Workspace/gitStore/commerce-analysis-agent/frontend/e2e/diagnosis.spec.ts:79:23
+
+    Error Context: test-results/diagnosis-same-input-fixed-e89a6--survives-refresh-on-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/diagnosis-same-input-fixed-e89a6--survives-refresh-on-mobile/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/diagnosis-same-input-fixed-e89a6--survives-refresh-on-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:29318) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/19] e2e/diagnosis.spec.ts:99:1 › comparison discloses narrowed clarification scope instead of equating totals
+[5/19] e2e/diagnosis.spec.ts:118:1 › sales diagnosis actual API, evidence, feedback, refresh and a new followup task
+[6/19] e2e/diagnosis.spec.ts:204:1 › stock and rule upload, persisted clarification, exact version review and PDF
+[7/19] e2e/diagnosis.spec.ts:284:1 › invalid comparison is retained as an error; pending clarification can be cancelled
+[8/19] e2e/diagnosis.spec.ts:312:1 › exact preflight is shown before task creation and changing input requires reconfirmation
+[9/19] e2e/diagnosis.spec.ts:360:1 › v15 answer completion and all nine amounts are visible with raw evidence
+[10/19] e2e/diagnostics.spec.ts:88:1 › new report citations open even when a parallel ledger read would be stale
+[11/19] e2e/diagnostics.spec.ts:130:1 › read timeout survives refresh, shows unknown usage, and never retries
+[12/19] e2e/diagnostics.spec.ts:169:3 › provider category authentication has an actionable message
+[13/19] e2e/diagnostics.spec.ts:169:3 › provider category rate_limit has an actionable message
+[14/19] e2e/diagnostics.spec.ts:169:3 › provider category connection has an actionable message
+[15/19] e2e/diagnostics.spec.ts:191:1 › terminal runtime limit takes precedence over earlier model timeout
+[16/19] e2e/diagnostics.spec.ts:206:1 › legacy and unknown diagnostic fields cannot invent a timeout phase
+[17/19] e2e/diagnostics.spec.ts:229:1 › research fallback is visible while its report remains readable
+[18/19] e2e/diagnostics.spec.ts:278:1 › v13 discloses all 27 gaps after expanding the complete list
+[19/19] e2e/workspace.spec.ts:4:1 › login, review, evidence, PDF, refresh and mobile layout
+  1 failed
+    e2e/diagnosis.spec.ts:58:1 › same-input fixed comparison uses real API and survives refresh on mobile 
+  18 passed (4.9m)
+[ELIFECYCLE] Command failed with exit code 1.

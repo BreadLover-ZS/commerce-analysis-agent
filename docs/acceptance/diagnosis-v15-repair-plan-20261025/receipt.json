@@ -1,0 +1,43 @@
+{
+  "status": "PLAN_READY_FOR_CONTROLLED_LOCAL_IMPLEMENTATION_NOT_A_REPAIR_RESULT",
+  "date": "2026-10-25",
+  "user_selected_completion_policy": "retain evidence_gap; separately verify boundary answer completeness; same required items for diagnosis and fixed review",
+  "baseline_commit": "62d98051982c4a8a277df6cb88fe37030185241a",
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "implementation_unchanged": true,
+  "root_assumption_checks": 26,
+  "minimal_schema_checks": 13,
+  "worker_protocol_stub_tasks": 4,
+  "provider_requests": 0,
+  "network_attempts_root_probe": 0,
+  "historical_96_receipts_unchanged": true,
+  "historical_formal_evidence_unchanged": true,
+  "budget_journal_unchanged": true,
+  "cumulative_provider_requests": 1441,
+  "cumulative_tokens": 9768379,
+  "authorized_cumulative_limit": 12000000,
+  "g7": "excluded",
+  "repair_implemented": false,
+  "v15_model_quality": "UNTESTED",
+  "pending": [
+    "Full proposal Schema/Prompt/correction implementation and SDK adapter",
+    "Answer completion and fixed v4 projection/renderer",
+    "Independent typed capability verification and grading version",
+    "Saved-version compatibility, PG/HTTP and Chrome integration",
+    "Fresh formal package then separately authorized real-model evaluation"
+  ],
+  "evidence_directory": "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01",
+  "raw_evidence_sha256": {
+    "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01/summary.json": "e8e02ab683847f27d5f3875426938ca4375a2b2881eb42d22860a21a7b8c077c",
+    "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01/schema-prototype-final.json": "bb06306829d098a92d6184510fb82893707f713be4138acc4f12472c3ec4b96e",
+    "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01/H02-original_sequence.json": "15bf2055c6dec6661a460844f9cf75ca4b5843b9e4e05d5161ef4e15ced8ded4",
+    "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01/H02-clean_proposal_control.json": "1184d58e6fca8fd1af6ccb7cca022e93540d8002b070b715512d002e9a3f6945",
+    "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01/H17-original_sequence.json": "4d94f838783ae79e01a747acd1cbe447e6b14120d1ea51df41a2e01c3f4267ed",
+    "evaluations/results/diagnosis-v15-plan-assumptions-20261025-01/H17-clean_proposal_control.json": "c543cfe0dcf49bf7651df46adbc4487efbf506836f047165d7344bcb215b3072"
+  },
+  "plan_sha256": "e4ac82e49ead9baf43540313cdeb207d2137cc0bda97d6bbb04e4f868a81bf4d",
+  "probe_sources_sha256": {
+    "probe_schema_shape.py": "ebe8f597b4d0dbb35fcec0be9f1785635df0e1e09f1aab426ffd52b297af4e5c",
+    "probe_assumptions.py": "98381c90b37ff27894d665a61ff99a2e3048846c11af53c9a407640bcdbc5c5f"
+  }
+}

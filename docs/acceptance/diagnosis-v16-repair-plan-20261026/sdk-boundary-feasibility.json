@@ -1,0 +1,71 @@
+{
+  "status": "PLAN_FEASIBILITY_ONLY_NOT_A_PRODUCTION_FIX",
+  "checks": {
+    "typed_denial_stays_in_sdk_cause_chain": true,
+    "callback_sees_same_typed_denial": true,
+    "outer_context_reaches_callback_and_hook": true,
+    "same_error_text_is_not_typed_proof": true,
+    "transport_timeout_is_distinct_and_not_unsent": true,
+    "success_has_single_transport_entry": true,
+    "assignment_validation_does_not_protect_list_append": true,
+    "model_instance_can_skip_revalidation": true,
+    "plain_dict_revalidation_rejects_oversize": true,
+    "real_network_attempts_zero": true
+  },
+  "passed": 10,
+  "sdk_scenarios": [
+    {
+      "mode": "typed",
+      "transport_entries": 0,
+      "request_hook_context": "attempt-typed",
+      "callback_start_context": "attempt-typed",
+      "outer_error_chain": [
+        "APIConnectionError",
+        "LocalDenied"
+      ],
+      "callback_error_chain": [
+        "APIConnectionError",
+        "LocalDenied"
+      ]
+    },
+    {
+      "mode": "string",
+      "transport_entries": 0,
+      "request_hook_context": "attempt-string",
+      "callback_start_context": "attempt-string",
+      "outer_error_chain": [
+        "APIConnectionError",
+        "RuntimeError"
+      ],
+      "callback_error_chain": [
+        "APIConnectionError",
+        "RuntimeError"
+      ]
+    },
+    {
+      "mode": "timeout",
+      "transport_entries": 1,
+      "request_hook_context": "attempt-timeout",
+      "callback_start_context": "attempt-timeout",
+      "outer_error_chain": [
+        "APITimeoutError",
+        "ReadTimeout"
+      ],
+      "callback_error_chain": [
+        "APITimeoutError",
+        "ReadTimeout"
+      ]
+    },
+    {
+      "mode": "ok",
+      "transport_entries": 1,
+      "request_hook_context": "attempt-ok",
+      "callback_start_context": "attempt-ok",
+      "outer_error_chain": [],
+      "callback_error_chain": []
+    }
+  ],
+  "provider_requests": 0,
+  "credentials_read": false,
+  "network_attempts": 0
+}

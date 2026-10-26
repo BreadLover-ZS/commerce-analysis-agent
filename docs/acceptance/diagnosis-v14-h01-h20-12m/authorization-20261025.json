@@ -1,0 +1,28 @@
+{
+  "recorded_at": "2026-10-25T08:11:19.820013+00:00",
+  "authorization_source": "User replied: 可以。开始吧; following explicit proposal for the v14 full 20-case/96-Task real-model run with cumulative cap increased from 10000000 to 12000000 tokens.",
+  "previous_cumulative_limit": 10000000,
+  "authorized_cumulative_limit": 12000000,
+  "known_tokens_at_authorization": 8613150,
+  "provider_requests_at_authorization": 1288,
+  "scope": "Full frozen v14 96-Task real-model run; raw-record audit, every-receipt author-side AI semantic review, ledger reconciliation and G6 decision. G7 excluded.",
+  "git_head": "62d98051982c4a8a277df6cb88fe37030185241a",
+  "implementation_sha256": "1ae1b105caeda30f3483e8f10edd1dbacbeaf17e3bb2035e02136771275c4a8c",
+  "cases_file_sha256": "cc3cdca4670e13fb39b5e962a5a15b92c2718aa2f2f90e771edf24739b12d51a",
+  "frozen_manifest_sha256": "518f4f62a0a6e97ff4002b414568bb4469258369ce27c893b4a974729d787a89",
+  "answer_obligations_sha256": "1bf010037c8d2e84ec610edddaeb2cc18730837ed525ab46196ad8d4510127f2",
+  "semantic_contract_sha256": "9c43fe050d466cb7b03b07180464e43eb68eca8188c64807317fec9216c63f1f",
+  "charge_from": "evaluations/results/diagnosis-v11-h01-h20-live-20261023-01",
+  "output": "evaluations/results/diagnosis-v14-h01-h20-live-20261025-01",
+  "provider": "DeepSeek",
+  "endpoint": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "monetary_cost": null,
+  "notes": [
+    "Carry all historical charges; inherit no prior quality results.",
+    "No paid retries, additional experiments, further cap increase or business/grader modifications during this run.",
+    "Original 10000000-token v14 preparation package stays byte-for-byte unchanged.",
+    "Token-based authorization; current cost depends on cache usage and pricing, no monetary amount claimed.",
+    "Pre-execution confidence 95% for the existing launch/accounting workflow; not a forecast of model quality."
+  ]
+}

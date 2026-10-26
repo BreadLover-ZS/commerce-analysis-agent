@@ -1,0 +1,42 @@
+{
+  "implementation_sha256": "99530b7b82574e9e610a657f330199c3f21508c7b0d1305d3f9b0048274be62b",
+  "scope": "SAVED_RESPONSE_COMPOSITION_ONLY_NOT_WORKER_OR_FORMAL_ACCEPTANCE",
+  "results": [
+    {
+      "receipt": "H03-1/fixed.json",
+      "original_sha256": "b92af4ffeb573a7907934a4ae456688fe08e2325db7cced34468d51374d49e18",
+      "selected": 4,
+      "kept": 3,
+      "omitted": 1,
+      "max_claims": 8,
+      "program_validation_passed": true,
+      "json_md_pdf_values_and_disclosure_agree": true,
+      "pdf_pages": 4
+    },
+    {
+      "receipt": "H03-2/fixed.json",
+      "original_sha256": "eedffb7eabe57836d898822d7bd3aa94e1243310fb5b4ff4572e6782cec103f7",
+      "selected": 4,
+      "kept": 3,
+      "omitted": 1,
+      "max_claims": 8,
+      "program_validation_passed": true,
+      "json_md_pdf_values_and_disclosure_agree": true,
+      "pdf_pages": 4
+    },
+    {
+      "receipt": "H03-3/fixed.json",
+      "original_sha256": "3bdb6b66099c5939a36550679d9d8a4c27740b5a3d507a9703e28cf9c6414063",
+      "selected": 3,
+      "kept": 3,
+      "omitted": 0,
+      "max_claims": 8,
+      "program_validation_passed": true,
+      "json_md_pdf_values_and_disclosure_agree": true,
+      "pdf_pages": 4
+    }
+  ],
+  "provider_requests": 0,
+  "task_executions": 0,
+  "original_receipts_modified": false
+}

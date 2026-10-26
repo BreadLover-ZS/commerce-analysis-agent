@@ -63,6 +63,13 @@ export interface DiagnosisReport {
   open_questions: string[];
   open_question_details?: string[];
   gap_summary?: { total: number; displayed: number; omitted: number };
+  answer_completion?: {
+    status: "fulfilled" | "boundary_explained" | "incomplete";
+    data_status: string;
+    remaining_work: string[];
+    omitted_items: string[];
+  };
+  gap_records?: { code: string; message: string; evidence_refs: string[] }[];
   request_contract?: Record<string, unknown>;
   request_obligations?: Record<string, unknown>[];
   recommendations: string[];

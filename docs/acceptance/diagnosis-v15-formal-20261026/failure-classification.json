@@ -1,0 +1,200 @@
+{
+  "automatic_failed": [
+    {
+      "receipt": "H03-1/fixed.json",
+      "receipt_sha256": "b92af4ffeb573a7907934a4ae456688fe08e2325db7cced34468d51374d49e18",
+      "case_id": "H03",
+      "repeat": 1,
+      "group": "fixed",
+      "task_status": "failed",
+      "error_code": "ValidationError",
+      "report_present": false,
+      "stop_reason": null,
+      "completion": null,
+      "automatic_passed": false,
+      "author_review": "FAIL",
+      "both_passed": false,
+      "failed_assertions": "expected_outcome|v15_completion_not_self_certified|v15_expected_answer_status|v15_required_values_displayed|valid_report",
+      "failure_class": "fixed_report_claim_capacity"
+    },
+    {
+      "receipt": "H03-2/fixed.json",
+      "receipt_sha256": "eedffb7eabe57836d898822d7bd3aa94e1243310fb5b4ff4572e6782cec103f7",
+      "case_id": "H03",
+      "repeat": 2,
+      "group": "fixed",
+      "task_status": "failed",
+      "error_code": "ValidationError",
+      "report_present": false,
+      "stop_reason": null,
+      "completion": null,
+      "automatic_passed": false,
+      "author_review": "FAIL",
+      "both_passed": false,
+      "failed_assertions": "expected_outcome|v15_completion_not_self_certified|v15_expected_answer_status|v15_required_values_displayed|valid_report",
+      "failure_class": "fixed_report_claim_capacity"
+    },
+    {
+      "receipt": "H13-3/additional.json",
+      "receipt_sha256": "87f2acb5e9a7c420f95e96d87ab335bce1c3f718a5fc5224199ea4d5118f058f",
+      "case_id": "H13",
+      "repeat": 3,
+      "group": "additional",
+      "task_status": "degraded",
+      "error_code": null,
+      "report_present": true,
+      "stop_reason": "usage_unknown",
+      "completion": "incomplete",
+      "automatic_passed": false,
+      "author_review": "FAIL",
+      "both_passed": false,
+      "failed_assertions": "expected_outcome|multi_sku_daily_covered|v15_expected_answer_status",
+      "failure_class": "pre_send_budget_denial_task_unknown"
+    }
+  ],
+  "unexecuted_tasks": [
+    {
+      "case_id": "H14",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H14",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H14",
+      "repeat": 3,
+      "group": "additional"
+    },
+    {
+      "case_id": "H15",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H15",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H15",
+      "repeat": 3,
+      "group": "additional"
+    },
+    {
+      "case_id": "H16",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H16",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H16",
+      "repeat": 3,
+      "group": "additional"
+    },
+    {
+      "case_id": "H17",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H17",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H17",
+      "repeat": 3,
+      "group": "additional"
+    },
+    {
+      "case_id": "H18",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H18",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H18",
+      "repeat": 3,
+      "group": "additional"
+    },
+    {
+      "case_id": "H19",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H19",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H19",
+      "repeat": 3,
+      "group": "additional"
+    },
+    {
+      "case_id": "H20",
+      "repeat": 1,
+      "group": "additional"
+    },
+    {
+      "case_id": "H20",
+      "repeat": 2,
+      "group": "additional"
+    },
+    {
+      "case_id": "H20",
+      "repeat": 3,
+      "group": "additional"
+    }
+  ],
+  "critical_cases_status": {
+    "H19": "UNTESTED",
+    "H20": "UNTESTED"
+  },
+  "root_causes": [
+    {
+      "id": "V15-F01",
+      "kind": "product_bug",
+      "receipts": [
+        "H03-1/fixed.json",
+        "H03-2/fixed.json"
+      ],
+      "cause": "Five mandatory program analysis claims plus four permitted model hypotheses exceed ReportSection.claims max8; list is mutated without immediate validation and later ResearchReport revalidation raises unhandled ValidationError. Three hypotheses total8 succeed in third repetition.",
+      "source": [
+        "app/commerce/review_report_v4.py",
+        "app/research/graph.py",
+        "app/research/schemas.py"
+      ],
+      "local_receipt_only_reproduction": "H03-fixed-claim-capacity-root-cause.json"
+    },
+    {
+      "id": "V15-F02",
+      "kind": "budget_guard_worked_task_classification_bug",
+      "receipts": [
+        "H13-3/additional.json"
+      ],
+      "cause": "Global before_send budget hook denies at spent10954662 + next reservation1051576 >12000000, then generic DiagnosisModelGateway exception path persists UNKNOWN despite no HTTP send. Six T132 daily facts remain unqueried.",
+      "standard_audit": "BLOCKED",
+      "task_ledger_rewritten": false,
+      "extra_paid_retry": false
+    },
+    {
+      "id": "V15-F03",
+      "kind": "unexecuted_not_quality_failure",
+      "tasks": 21,
+      "cause": "The run stops before H14-H20 due to the unchanged hard cumulative budget, so inventory/rules and critical cases remain UNTESTED."
+    }
+  ]
+}

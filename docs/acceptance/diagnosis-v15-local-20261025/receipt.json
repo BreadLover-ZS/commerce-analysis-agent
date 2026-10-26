@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-25",
+  "status": "LOCAL_REPAIR_AND_PREFLIGHT_PASS_REAL_MODEL_UNTESTED",
+  "plan": "docs/48-v15-repair-plan-and-confidence-gates-20261025.md",
+  "baseline_commit": "62d98051982c4a8a277df6cb88fe37030185241a",
+  "implementation_sha256": "1bb3bbb8302c4bc5c471dec6d1193636222734c384cb967d07ed74dcb5b85db7",
+  "implementation_files": 235,
+  "diagnosis_version": "diagnosis-v15",
+  "request_contract": "answer-contract-v4",
+  "proposal_schema": "V3 frozen-source discriminated union",
+  "report_schema": 4,
+  "tool_registry": 6,
+  "fixed_version": "commerce-review-bundle-v4",
+  "postgres": {
+    "version": "16.2",
+    "passed": 925,
+    "failed": 0,
+    "skipped": 0
+  },
+  "chrome": {
+    "passed": 19,
+    "real_api": true,
+    "paid_model": false
+  },
+  "focused_tests_passed": 51,
+  "offline_executions_passed": 59,
+  "used_q_local_replay_passed": 32,
+  "legacy_regrade": {
+    "v11_checked": 96,
+    "v14_checked": 96,
+    "changed": 0
+  },
+  "protected_historical_files": {
+    "checked": 40,
+    "changed": 0
+  },
+  "fresh_packet": {
+    "directory": "docs/acceptance/diagnosis-v15-h01-h20",
+    "cases": 20,
+    "planned_tasks": 96,
+    "executed": 0,
+    "metadata_tamper_controls": 12
+  },
+  "paid_model_requests_this_turn": 0,
+  "cumulative_tokens": 9768379,
+  "cumulative_provider_requests": 1441,
+  "authorized_token_limit": 12000000,
+  "budget_changed": false,
+  "g6_release_eligible": false,
+  "g7": "excluded",
+  "git_action": "not committed or pushed in this turn",
+  "raw_directory": "evaluations/results/diagnosis-v15-repair-20261025-01",
+  "verification_sha256": {
+    "docs/acceptance/diagnosis-v15-local-20261025/implementation.json": "74d045609506421e3da8b69450c7fd889281ec689d30bc1f7796ece12be59a15",
+    "docs/acceptance/diagnosis-v15-local-20261025/legacy-regrade.json": "bd114cf620c6c33bcbc57b90c1feeb4a472ec08587111e790ead135367a25ac6",
+    "docs/acceptance/diagnosis-v15-local-20261025/offline-summary.json": "68e91a3287a43fec29d21cd51bc37b901a1e709f5cd2720e2034ae43c7e71899",
+    "docs/acceptance/diagnosis-v15-local-20261025/chrome.log": "a88e16ed2b6f7579f7926669ea4bdb526ca20bc9b41567fc52824bb6cb5f211f",
+    "docs/acceptance/diagnosis-v15-local-20261025/postgres.log": "1654807a7e2305f0170d4c79dbb6bb8efb9dab23c4b50c9b7f60b33608f7f280",
+    "docs/acceptance/diagnosis-v15-local-20261025/replay.py": "983351672a5f865d19547fe001ec06b7f7a6f834e229152a10e9fb5676af6aeb",
+    "docs/acceptance/diagnosis-v15-local-20261025/used-q-replay-summary.json": "bb80d38a880cc1b74010872729b967da124d151fae2a0c116fe0688254aaaa7d",
+    "docs/acceptance/diagnosis-v15-local-20261025/focused.log": "c18df61f73f4b67c492b10859c96dd86b7b59decdc48186ce499d5b2e93c1e8c",
+    "docs/acceptance/diagnosis-v15-local-20261025/frontend-build.log": "3f5a285985d0e92e914928738d4700bd18ecd72509119f1d62f0e0b8a89d078e"
+  },
+  "limitations": [
+    "Protocol and SDK stubs verify control flow, not real-model correction probability or quality.",
+    "New synthetic packet remains unexecuted; a fresh separately authorized run and independent review are required for G6.",
+    "Bounded language recognition and report/context capacity remain product limits; incomplete output is not upgraded to fulfilled."
+  ]
+}

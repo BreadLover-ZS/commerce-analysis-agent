@@ -1,0 +1,51 @@
+{
+  "provider_requests": 0,
+  "task_executions": 0,
+  "business_code_modified": false,
+  "results": [
+    {
+      "receipt": "H03-1/fixed.json",
+      "baseline_analysis_claims": 5,
+      "selected_hypotheses": 4,
+      "combined_analysis_claims": 9,
+      "report_claim_limit": 8,
+      "local_revalidation_errors": [
+        {
+          "loc": [
+            "sections",
+            3,
+            "claims"
+          ],
+          "type": "too_long",
+          "message": "List should have at most 8 items after validation, not 9"
+        }
+      ]
+    },
+    {
+      "receipt": "H03-2/fixed.json",
+      "baseline_analysis_claims": 5,
+      "selected_hypotheses": 4,
+      "combined_analysis_claims": 9,
+      "report_claim_limit": 8,
+      "local_revalidation_errors": [
+        {
+          "loc": [
+            "sections",
+            3,
+            "claims"
+          ],
+          "type": "too_long",
+          "message": "List should have at most 8 items after validation, not 9"
+        }
+      ]
+    },
+    {
+      "receipt": "H03-3/fixed.json",
+      "baseline_analysis_claims": 5,
+      "selected_hypotheses": 3,
+      "combined_analysis_claims": 8,
+      "report_claim_limit": 8,
+      "local_revalidation_errors": []
+    }
+  ]
+}

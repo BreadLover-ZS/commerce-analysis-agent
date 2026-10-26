@@ -188,7 +188,13 @@ def test_budget_projection_preserves_spend_and_full_request_reservation():
 
 
 @pytest.mark.parametrize("mismatch", [None, "cases", "mode", "subset", "limit", "resume", "cap"])
-def test_actual_run_arguments_are_bound_to_frozen_plan(prepared_inputs, mismatch):
+def test_actual_run_arguments_are_bound_to_frozen_plan(prepared_inputs, mismatch, monkeypatch):
+    # This generic schema1 fixture exercises the frozen legacy argument contract.
+    # Current v6 admission has separate mandatory schema4 counterexamples.
+    monkeypatch.setattr(
+        "evaluations.diagnosis_runtime.EvaluationSettings",
+        lambda **kwargs: SimpleNamespace(diagnosis_runtime="v15", commerce_review_answer_version=4),
+    )
     directory, cases, prior = prepared_inputs
     freeze(prepared_inputs)
     args = SimpleNamespace(

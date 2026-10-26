@@ -285,6 +285,21 @@ export default function DiagnosisReportView({
             </section>
           </>
         )}
+        {report?.answer_completion && (
+          <Alert
+            type={
+              report.answer_completion.status === "incomplete"
+                ? "warning"
+                : "info"
+            }
+            message={`答复完成度：${{ fulfilled: "请求已答齐", boundary_explained: "缺口与限制已答齐，源数据仍不完整", incomplete: "请求尚未答齐" }[report.answer_completion.status]}`}
+            description={
+              report.answer_completion.remaining_work.length
+                ? `尚待完成 ${report.answer_completion.remaining_work.length} 项，请查看完整未完成清单。`
+                : undefined
+            }
+          />
+        )}
         <section className="report-section" aria-label="诊断步骤">
           <h3>诊断过程</h3>
           <ol className="diagnosis-step-list">

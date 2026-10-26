@@ -1,0 +1,67 @@
+...F.................................................................... [ 48%]
+...............................EE----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+==================================== ERRORS ====================================
+_ ERROR at setup of test_conditional_missing_assertions_do_not_reject_complete_authorized_subset _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x109aeba70>, _basetemp=PosixPath...r/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-137'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def receipt(tmp_path_factory):
+        root = tmp_path_factory.mktemp("g6-receipt") / "run"
+        args = parser().parse_args(
+            ["run", "--split", "development", "--case-id", "D01", "--output", str(root)]
+        )
+        summary = asyncio.run(evaluate(args))
+>       assert summary["all_automatic_passed"]
+E       assert False
+
+tests/test_diagnosis_evaluation.py:115: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"case_id": "D01", "repeat": 1, "group": "fixed", "automatic_passed": false, "provider_requests": 0}
+{"case_id": "D01", "repeat": 1, "group": "agent", "automatic_passed": true, "provider_requests": 0}
+_ ERROR at setup of test_cli_runs_real_pair_and_retains_versions_artifacts_and_pending_review _
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x109aeba70>, _basetemp=PosixPath...r/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-137'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope="module")
+    def receipt(tmp_path_factory):
+        root = tmp_path_factory.mktemp("g6-receipt") / "run"
+        args = parser().parse_args(
+            ["run", "--split", "development", "--case-id", "D01", "--output", str(root)]
+        )
+        summary = asyncio.run(evaluate(args))
+>       assert summary["all_automatic_passed"]
+E       assert False
+
+tests/test_diagnosis_evaluation.py:115: AssertionError
+=================================== FAILURES ===================================
+_ test_negative_constraints_are_not_made_positive_obligations[\u5206\u522b\u89e3\u91ca\u5546\u54c1\u7ec4\u5408\u548c\u9000\u6b3e\uff1b\u4e0d\u8981\u8ba8\u8bba\u6570\u636e\u8d28\u91cf\u3002-expected3] _
+
+query = '分别解释商品组合和退款；不要讨论数据质量。', expected = {'product_mix', 'refund_drivers'}
+
+    @pytest.mark.parametrize(
+        "query,expected",
+        [
+            ("分别列出两期支付金额和退款金额，不要解释原因。", set()),
+            ("不要逐一解释原因，只需分别列出支付金额和退款金额。", set()),
+            ("逐一讨论退款和数据质量，不讨论支付原因。", {"refund_drivers", "data_quality"}),
+            ("分别解释商品组合和退款；不要讨论数据质量。", {"product_mix", "refund_drivers"}),
+        ],
+    )
+    def test_negative_constraints_are_not_made_positive_obligations(query, expected):
+>       assert required_explanations({"objective": query, "answer_version": 6}) == expected
+E       AssertionError: assert set() == {'product_mix...fund_drivers'}
+E         
+E         Extra items in the right set:
+E         'refund_drivers'
+E         'product_mix'
+E         Use -v to get more diff
+
+tests/test_pre_model_preflight.py:21: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pre_model_preflight.py::test_negative_constraints_are_not_made_positive_obligations[\u5206\u522b\u89e3\u91ca\u5546\u54c1\u7ec4\u5408\u548c\u9000\u6b3e\uff1b\u4e0d\u8981\u8ba8\u8bba\u6570\u636e\u8d28\u91cf\u3002-expected3]
+ERROR tests/test_diagnosis_evaluation.py::test_conditional_missing_assertions_do_not_reject_complete_authorized_subset
+ERROR tests/test_diagnosis_evaluation.py::test_cli_runs_real_pair_and_retains_versions_artifacts_and_pending_review
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 102 passed, 2 errors in 13.61s

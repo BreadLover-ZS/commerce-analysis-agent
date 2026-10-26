@@ -119,3 +119,25 @@ async def test_postgres_v14_saved_contract_and_publication(setup):
     )
 
     await test_v14_bound_contract_and_publishing_survive_default_change(setup)
+
+
+async def test_postgres_v15_fixed4_saved_contract_and_worker(setup):
+    from tests.test_diagnosis_v15 import check_v15_and_fixed4_saved_admission
+
+    await check_v15_and_fixed4_saved_admission(setup)
+
+
+@pytest.mark.parametrize("limit", [1, 12])
+async def test_postgres_v15_model_output_checkpoint_recovery(setup, limit):
+    from tests.test_diagnosis_v14 import saved_response_recovery
+
+    await saved_response_recovery(setup, "v15", limit)
+
+
+@pytest.mark.parametrize("bad_action", [False, True])
+async def test_postgres_fixed4_model_review_and_fallback(setup, bad_action):
+    from tests.test_diagnosis_v15 import (
+        test_fixed4_model_context_full_review_and_fallback_keep_required_facts,
+    )
+
+    await test_fixed4_model_context_full_review_and_fallback_keep_required_facts(setup, bad_action)

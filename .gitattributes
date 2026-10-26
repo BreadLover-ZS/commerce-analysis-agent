@@ -1,2 +1,6 @@
 *.pdf binary
 *.docx binary
+
+# Acceptance records are checksum evidence; preserve their original bytes.
+docs/acceptance/**/*.log -text -whitespace
+docs/acceptance/**/*.csv -text whitespace=trailing-space,space-before-tab,cr-at-eol

@@ -1,0 +1,14 @@
+{
+  "reviewer": "Codex code author AI",
+  "evaluated_model": "DeepSeek deepseek-flash",
+  "independent_of_task_model": true,
+  "organizational_independence": false,
+  "human_business_acceptance": false,
+  "legacy_reviewer_kind_enum_only": "independent_external_reviewer",
+  "evidence_scope": "All 96 receipts, source/units/periods/display obligations, deduplicated visible statements with every occurrence retained, rejected proposals inspected separately, full numeric/accounting audit. No self-review verdict supplied by evaluated model.",
+  "scope_caveats": [
+    "Synthetic transformations of development families, not external blind acceptance.",
+    "Strict author numeric display matrix is stronger than H03 core delta question; preserve this mismatch, frozen automatic grades unchanged.",
+    "H13 full 12-day facts are in evidence; report renders 8 representative day facts with disclosure."
+  ]
+}

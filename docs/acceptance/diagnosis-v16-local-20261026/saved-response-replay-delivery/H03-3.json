@@ -1,0 +1,852 @@
+{
+  "scope": "OFFLINE_RECOMPOSITION_NOT_A_TASK_OR_FORMAL_SCORE",
+  "report": {
+    "title": "经营复盘报告",
+    "sections": [
+      {
+        "name": "经营表现",
+        "claims": [
+          {
+            "id": "review-summary",
+            "kind": "fact",
+            "text": "经营汇总：支付金额为 2123970.00 元（销量周期 2026-12-13 至 2026-12-13）。经营汇总：净销售额为 1622235.00 元（销量周期 2026-12-13 至 2026-12-13）。该指标未扣除经营成本，不能视为净利润。经营汇总：支付件数为 194220 件（销量周期 2026-12-13 至 2026-12-13）。经营汇总：净销售件数为 150645 件（销量周期 2026-12-13 至 2026-12-13）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "gross_revenue",
+                "value": "2123970.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "net_revenue",
+                "value": "1622235.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "paid_units",
+                "value": "194220",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "net_units",
+                "value": "150645",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-change",
+            "kind": "fact",
+            "text": "经营汇总：相对前期净销售额变化金额为 -128235.00 元（销量周期 2026-12-13 至 2026-12-13）。经营汇总：相对指定等长对比期净销售额变化率为 -7.33 %（销量周期 2026-12-13 至 2026-12-13）。经营汇总：相对前期支付金额变化为 249000.00 元（销量周期 2026-12-13 至 2026-12-13）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "net_revenue_delta",
+                "value": "-128235.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "net_revenue_change_pct",
+                "value": "-7.33",
+                "entity_id": "T031,T032",
+                "unit": "percent",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "gross_revenue_delta",
+                "value": "249000.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-comparison-net",
+            "kind": "fact",
+            "text": "经营汇总：对比期已记录净销售额为 1750470.00 元（销量周期 2026-11-12 至 2026-11-12）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "comparison_net_revenue",
+                "value": "1750470.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-v4-required-0",
+            "kind": "fact",
+            "text": "经营汇总：对比期已记录支付金额为 1874970.00 元（销量周期 2026-11-12 至 2026-11-12）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "comparison_gross_revenue",
+                "value": "1874970.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "变化贡献",
+        "claims": [
+          {
+            "id": "review-components-0-0",
+            "kind": "fact",
+            "text": "保温杯（T031）：本期已记录支付件数为 128235 件（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：对比期已记录支付件数为 128235 件（销量周期 2026-11-12 至 2026-11-12）。保温杯（T031）：支付件数变化贡献为 0 件（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：本期已记录退款件数为 43575 件（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：对比期已记录退款件数为 12450 件（销量周期 2026-11-12 至 2026-11-12）。保温杯（T031）：退款件数变化贡献为 31125 件（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：本期已记录净销售额为 747000.00 元（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：对比期已记录净销售额为 1124235.00 元（销量周期 2026-11-12 至 2026-11-12）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.paid_units.current",
+                "value": "128235",
+                "entity_id": "T031",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.paid_units.comparison",
+                "value": "128235",
+                "entity_id": "T031",
+                "unit": "count",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.paid_units.delta",
+                "value": "0",
+                "entity_id": "T031",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.refunded_units.current",
+                "value": "43575",
+                "entity_id": "T031",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.refunded_units.comparison",
+                "value": "12450",
+                "entity_id": "T031",
+                "unit": "count",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.refunded_units.delta",
+                "value": "31125",
+                "entity_id": "T031",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.net_revenue.current",
+                "value": "747000.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.net_revenue.comparison",
+                "value": "1124235.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-components-0-8",
+            "kind": "fact",
+            "text": "保温杯（T031）：净销售额变化贡献为 -377235.00 元（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：本期已记录支付金额为 1248735.00 元（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：对比期已记录支付金额为 1248735.00 元（销量周期 2026-11-12 至 2026-11-12）。保温杯（T031）：支付金额变化贡献为 0.00 元（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：本期已记录退款金额为 501735.00 元（销量周期 2026-12-13 至 2026-12-13）。保温杯（T031）：对比期已记录退款金额为 124500.00 元（销量周期 2026-11-12 至 2026-11-12）。保温杯（T031）：退款金额变化贡献为 377235.00 元（销量周期 2026-12-13 至 2026-12-13）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.net_revenue.delta",
+                "value": "-377235.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.gross_revenue.current",
+                "value": "1248735.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.gross_revenue.comparison",
+                "value": "1248735.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.gross_revenue.delta",
+                "value": "0.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.refund_amount.current",
+                "value": "501735.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.refund_amount.comparison",
+                "value": "124500.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.0.refund_amount.delta",
+                "value": "377235.00",
+                "entity_id": "T031",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-components-1-0",
+            "kind": "fact",
+            "text": "收纳包（T032）：本期已记录支付件数为 65985 件（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：对比期已记录支付件数为 65985 件（销量周期 2026-11-12 至 2026-11-12）。收纳包（T032）：支付件数变化贡献为 0 件（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：本期已记录退款件数为 0 件（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：对比期已记录退款件数为 0 件（销量周期 2026-11-12 至 2026-11-12）。收纳包（T032）：退款件数变化贡献为 0 件（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：本期已记录净销售额为 875235.00 元（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：对比期已记录净销售额为 626235.00 元（销量周期 2026-11-12 至 2026-11-12）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.paid_units.current",
+                "value": "65985",
+                "entity_id": "T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.paid_units.comparison",
+                "value": "65985",
+                "entity_id": "T032",
+                "unit": "count",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.paid_units.delta",
+                "value": "0",
+                "entity_id": "T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.refunded_units.current",
+                "value": "0",
+                "entity_id": "T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.refunded_units.comparison",
+                "value": "0",
+                "entity_id": "T032",
+                "unit": "count",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.refunded_units.delta",
+                "value": "0",
+                "entity_id": "T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.net_revenue.current",
+                "value": "875235.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.net_revenue.comparison",
+                "value": "626235.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-components-1-8",
+            "kind": "fact",
+            "text": "收纳包（T032）：净销售额变化贡献为 249000.00 元（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：本期已记录支付金额为 875235.00 元（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：对比期已记录支付金额为 626235.00 元（销量周期 2026-11-12 至 2026-11-12）。收纳包（T032）：支付金额变化贡献为 249000.00 元（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：本期已记录退款金额为 0.00 元（销量周期 2026-12-13 至 2026-12-13）。收纳包（T032）：对比期已记录退款金额为 0.00 元（销量周期 2026-11-12 至 2026-11-12）。收纳包（T032）：退款金额变化贡献为 0.00 元（销量周期 2026-12-13 至 2026-12-13）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.net_revenue.delta",
+                "value": "249000.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.gross_revenue.current",
+                "value": "875235.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.gross_revenue.comparison",
+                "value": "626235.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.gross_revenue.delta",
+                "value": "249000.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.refund_amount.current",
+                "value": "0.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.refund_amount.comparison",
+                "value": "0.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "products.1.refund_amount.delta",
+                "value": "0.00",
+                "entity_id": "T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "退款观察",
+        "claims": [
+          {
+            "id": "review-refund",
+            "kind": "fact",
+            "text": "经营汇总：退款金额为 501735.00 元（销量周期 2026-12-13 至 2026-12-13）。经营汇总：退款件数为 43575 件（销量周期 2026-12-13 至 2026-12-13）。经营汇总：按记账周期计算的退款件数占比为 22.44 %（销量周期 2026-12-13 至 2026-12-13）。经营汇总：相对前期退款金额变化为 377235.00 元（销量周期 2026-12-13 至 2026-12-13）。经营汇总：相对前期退款件数变化为 31125 件（销量周期 2026-12-13 至 2026-12-13）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refund_amount",
+                "value": "501735.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refunded_units",
+                "value": "43575",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refund_rate_pct",
+                "value": "22.44",
+                "entity_id": "T031,T032",
+                "unit": "percent",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refund_amount_delta",
+                "value": "377235.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refunded_units_delta",
+                "value": "31125",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-denominator-comparison",
+            "kind": "fact",
+            "text": "经营汇总：支付件数为 194220 件（销量周期 2026-12-13 至 2026-12-13）。经营汇总：对比期已记录支付件数为 194220 件（销量周期 2026-11-12 至 2026-11-12）。经营汇总：相对前期支付件数变化为 0 件（销量周期 2026-12-13 至 2026-12-13）。经营汇总：退款件数为 43575 件（销量周期 2026-12-13 至 2026-12-13）。经营汇总：对比期已记录退款件数为 12450 件（销量周期 2026-11-12 至 2026-11-12）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "paid_units",
+                "value": "194220",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "comparison_paid_units",
+                "value": "194220",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "paid_units_delta",
+                "value": "0",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refunded_units",
+                "value": "43575",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "comparison_refunded_units",
+                "value": "12450",
+                "entity_id": "T031,T032",
+                "unit": "count",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              }
+            ]
+          },
+          {
+            "id": "review-refund-comparison",
+            "kind": "fact",
+            "text": "经营汇总：退款金额为 501735.00 元（销量周期 2026-12-13 至 2026-12-13）。经营汇总：对比期已记录退款金额为 124500.00 元（销量周期 2026-11-12 至 2026-11-12）。经营汇总：按记账周期计算的退款件数占比为 22.44 %（销量周期 2026-12-13 至 2026-12-13）。经营汇总：对比期记账退款件数占比为 6.41 %（销量周期 2026-11-12 至 2026-11-12）。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": [
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refund_amount",
+                "value": "501735.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "comparison_refund_amount",
+                "value": "124500.00",
+                "entity_id": "T031,T032",
+                "unit": "CNY",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "refund_rate_pct",
+                "value": "22.44",
+                "entity_id": "T031,T032",
+                "unit": "percent",
+                "period_start": "2026-12-13",
+                "period_end": "2026-12-13",
+                "snapshot_as_of": null
+              },
+              {
+                "evidence_id": "E-2d90aba64e08a95d77b2341a",
+                "key": "comparison_refund_rate_pct",
+                "value": "6.41",
+                "entity_id": "T031,T032",
+                "unit": "percent",
+                "period_start": "2026-11-12",
+                "period_end": "2026-11-12",
+                "snapshot_as_of": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "经营解读",
+        "claims": [
+          {
+            "id": "review-finding-0",
+            "kind": "analysis",
+            "text": "本期净销售额较前期下降，需结合商品贡献核对变化来源。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-finding-1",
+            "kind": "analysis",
+            "text": "本期按记账周期计算的退款件数占比较前期增加，建议核对退款发生时间与原因。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-direct-answers",
+            "kind": "analysis",
+            "text": "商品启用前的日期不适用，不要求记录或补零；启用后每个适用日须有显式记录，零销量需零行，缺行不能当作零。本数据未提供成本、访客、曝光及订单关联：不能计算两期利润、转化率、广告ROI或同批订单最终退款率，也不能用净销售额变化率替代转化率。记账期退款件数占比以本周期退款件数为分子、支付件数为分母；两期分别计算，无订单关联不能当作最终订单退款率。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-amount-identity",
+            "kind": "analysis",
+            "text": "同范围完整两期金额对账：净销售额变化 = 支付金额变化 − 退款金额变化。上述直接展示的金额已按分核对，记账恒等式不证明业务因果。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-answer-completion",
+            "kind": "analysis",
+            "text": "答复完成度：请求已答齐。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-hypothesis-0",
+            "kind": "analysis",
+            "text": "待核对事项：应先核对记录完整性和统计口径，再讨论变化；数据来源与模拟标记必须保留，模拟场景不能证明真实业务效果。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-hypothesis-1",
+            "kind": "analysis",
+            "text": "待验证假设：退款相关变化可能涉及退款原因或跨期记账；需核对原订单周期、退款时间与售后明细，记账占比不能替代订单队列退款率。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-hypothesis-2",
+            "kind": "analysis",
+            "text": "待验证假设：支付金额变化可能与销量、成交单价或促销有关；需补充逐日销售、价格及活动记录，不能由汇总金额确定原因。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          }
+        ]
+      },
+      {
+        "name": "行动建议",
+        "claims": [
+          {
+            "id": "review-ai-recommendation-0",
+            "kind": "recommendation",
+            "text": "核对授权对象适用日期的原始记录与统计口径；缺失须追溯原始资料，不将缺失记录补为零。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-ai-recommendation-1",
+            "kind": "recommendation",
+            "text": "核对原订单周期、退款发生日期和原因资料；记账退款件数占比不等于同批订单最终退款率。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-ai-recommendation-2",
+            "kind": "recommendation",
+            "text": "补充价格、活动与逐日记录以核对待验证原因；变化贡献只描述记账关系，不证明因果。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          },
+          {
+            "id": "review-ai-recommendation-3",
+            "kind": "recommendation",
+            "text": "补充成本与费用口径后再计算利润；净销售额未扣成本，不能当作利润。",
+            "evidence_ids": [
+              "E-2d90aba64e08a95d77b2341a"
+            ],
+            "metrics": []
+          }
+        ]
+      }
+    ],
+    "limitations": [
+      "本报告使用可复现模拟经营数据，不代表真实业务效果",
+      "本报告绑定输入组合 abc2dfdd-5729-465d-a75f-e060fc3052a3，只计算其中2个授权SKU；完整范围见证据scope.skus。"
+    ]
+  },
+  "composition": {
+    "version": 1,
+    "narrative": {
+      "analysis": [
+        "data_quality",
+        "refund_drivers",
+        "sales_drivers"
+      ],
+      "recommendations": [
+        {
+          "action_id": "verify_records",
+          "precondition_id": "record_coverage",
+          "scope_skus": [
+            "T031",
+            "T032"
+          ]
+        },
+        {
+          "action_id": "verify_refund_timing",
+          "precondition_id": "accounting_refund",
+          "scope_skus": [
+            "T031",
+            "T032"
+          ]
+        },
+        {
+          "action_id": "verify_price_activity",
+          "precondition_id": "unverified_causality",
+          "scope_skus": [
+            "T031",
+            "T032"
+          ]
+        },
+        {
+          "action_id": "obtain_costs",
+          "precondition_id": "missing_costs",
+          "scope_skus": [
+            "T031",
+            "T032"
+          ]
+        }
+      ]
+    },
+    "gaps": [],
+    "selected": [
+      "data_quality",
+      "refund_drivers",
+      "sales_drivers"
+    ],
+    "kept": [
+      "data_quality",
+      "refund_drivers",
+      "sales_drivers"
+    ],
+    "omitted": [],
+    "required_explanations": [],
+    "unshown_required": [],
+    "reason": null,
+    "baseline_sha256": "e1f0aa96f483a0f7f6edef2310dbf7aa7948b41837ea3595d2b94ad709db80c8"
+  },
+  "validation": {
+    "passed": true,
+    "issues": [],
+    "semantic_status": "not_evaluated",
+    "fact_binding_version": 2,
+    "note": "实体、单位、周期与数字绑定检查不等于语义真实性保证；重要结论仍需人工核对"
+  }
+}

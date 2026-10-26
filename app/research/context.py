@@ -61,12 +61,12 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                 # Keep the full per-product ledger out of the model character budget.
                 chosen = {k for k in catalog if "." not in k}
                 dimensions = payload["dimensions"].values()
-                if payload.get("answer_version") == 3:
+                if payload.get("answer_version") in {3, 4, 5, 6}:
                     dimensions = [payload["dimensions"][payload["answer_contract"]["dimension"]]]
                 for entries in dimensions:
                     for entry in entries[:4]:
                         chosen.add(entry["delta_key"] or entry["fact_key"])
-                        if payload.get("answer_version") == 3:
+                        if payload.get("answer_version") in {3, 4, 5, 6}:
                             chosen.update(entry.get("component_fact_keys", {}).values())
                 catalog = {k: v for k, v in catalog.items() if k in chosen}
             item["excerpt"] = "权威事实见payload.fact_catalog；完整计算结果保存在证据账本。"
@@ -95,16 +95,22 @@ def evidence_package(evidence, query="", max_sources=18, max_chars=28000):
                         )
                     }
                 )
-            if payload.get("answer_version") == 3:
+            if payload.get("answer_version") in {3, 4, 5, 6}:
                 from app.commerce.review_actions import action_catalog
 
                 item["payload"].update(
-                    answer_version=3,
+                    answer_version=payload["answer_version"],
                     direct_answers=payload["direct_answers"],
                     answer_contract=payload["answer_contract"],
                     allowed_actions=action_catalog(payload),
                     scope=payload.get("scope", {}),
                 )
+                if payload.get("answer_version") == 6:
+                    from app.commerce.explanation_contract_v6 import contract
+
+                    item["payload"]["explanation_contract"] = contract(payload.get("objective", ""))
+            if payload.get("answer_version") in {4, 5, 6}:
+                item["payload"]["answer_completion"] = payload["answer_completion"]
             omitted = len(payload.get("items", [])) - len(kept_items)
             if omitted:
                 truncations.append({"id": source["id"], "omitted_inventory_items": omitted})

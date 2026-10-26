@@ -1,0 +1,9 @@
+unbounded_report KILLED
+clip_before_validation KILLED
+exception_text_means_zero KILLED
+all_errors_mean_unsent KILLED
+skip_unknown_without_certificate KILLED
+ignore_negative_polarity KILLED
+skip_final_report_revalidation KILLED
+omit_ancestral_freshness_check KILLED
+allow_formal_entry_without_plan KILLED

@@ -193,6 +193,9 @@ class Repository:
         with self.session() as db:
             # Serialize admission per user in PostgreSQL, including duplicates.
             db.scalar(select(User).where(User.id == user.id).with_for_update())
+            saved_request = db.scalar(
+                select(Task).where(Task.user_id == user.id, Task.idempotency_key == idempotency_key)
+            )
             versions = {}
             bundle_id = parent_task_id = None
             if request.profile == "commerce_diagnosis":
@@ -241,7 +244,12 @@ class Repository:
                     bundle_hash=bundle.bundle_hash,
                     **versions,
                 )
-                if versions["graph_version"] in {"diagnosis-v13", "diagnosis-v14"}:
+                if versions["graph_version"] in {
+                    "diagnosis-v13",
+                    "diagnosis-v14",
+                    "diagnosis-v15",
+                    "diagnosis-v16",
+                }:
                     from app.commerce.answer_contract_v2 import bound_request
 
                     existing_contract = db.scalar(
@@ -255,7 +263,13 @@ class Repository:
                                 "answer_contract"
                             ]
                     else:
-                        if versions["graph_version"] == "diagnosis-v14":
+                        if versions["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
+                            from app.commerce.answer_contract_v4 import bound_request as bind_v4
+
+                            payload["answer_contract"] = bind_v4(
+                                request.query, bundle.payload, diagnosis_sales.payload["products"]
+                            )
+                        elif versions["graph_version"] == "diagnosis-v14":
                             from app.commerce.answer_contract_v3 import bound_request as bind_v3
 
                             payload["answer_contract"] = bind_v3(
@@ -273,6 +287,9 @@ class Repository:
                 from app.commerce.review_inputs import (
                     REVIEW_BUNDLE_V2,
                     REVIEW_BUNDLE_V3,
+                    REVIEW_BUNDLE_V4,
+                    REVIEW_BUNDLE_V5,
+                    REVIEW_BUNDLE_V6,
                     REVIEW_BUNDLE_VERSIONS,
                 )
                 from app.diagnosis.inputs import owned_bundle
@@ -289,7 +306,13 @@ class Repository:
                 bundle_id, versions = (
                     bundle.id,
                     dict(
-                        REVIEW_BUNDLE_V3
+                        REVIEW_BUNDLE_V6
+                        if payload["review_answer_version"] == 6
+                        else REVIEW_BUNDLE_V5
+                        if payload["review_answer_version"] == 5
+                        else REVIEW_BUNDLE_V4
+                        if payload["review_answer_version"] == 4
+                        else REVIEW_BUNDLE_V3
                         if payload["review_answer_version"] == 3
                         else REVIEW_BUNDLE_V2
                         if payload["review_answer_version"] == 2
@@ -307,9 +330,35 @@ class Repository:
                 fingerprint = hashlib.sha256(
                     json.dumps(payload, sort_keys=True).encode()
                 ).hexdigest()
-            prior = db.scalar(
-                select(Task).where(Task.user_id == user.id, Task.idempotency_key == idempotency_key)
-            )
+            if (
+                request.profile == "commerce_review"
+                and not request.bundle_id
+                and payload["review_answer_version"] in {5, 6}
+            ):
+                from app.commerce.review_inputs import REVIEW_BUNDLE_V5, REVIEW_BUNDLE_V6
+
+                versions = dict(
+                    REVIEW_BUNDLE_V6 if payload["review_answer_version"] == 6 else REVIEW_BUNDLE_V5
+                )
+                payload.update(**versions, budget=self._bounded_commerce_budget())
+            if request.profile == "commerce_review" and payload.get("review_answer_version") == 6:
+                from app.commerce.explanation_contract_v6 import contract
+
+                if saved_request is None:
+                    payload["explanation_contract"] = contract(request.query)
+                elif "explanation_contract" in saved_request.parameters:
+                    payload["explanation_contract"] = saved_request.parameters[
+                        "explanation_contract"
+                    ]
+            if versions.get("graph_version") == "diagnosis-v16" or (
+                request.profile == "commerce_review"
+                and payload.get("review_answer_version") in {5, 6}
+            ):
+                payload["accounting_protocol"] = 2
+                fingerprint = hashlib.sha256(
+                    json.dumps(payload, sort_keys=True).encode()
+                ).hexdigest()
+            prior = saved_request
             if prior:
                 # Server version/budget changes must not turn an identical client
                 # retry into a new contract. Preserve old stored fingerprints.
@@ -322,6 +371,8 @@ class Repository:
                     "tool_registry_version",
                     "review_answer_version",
                     "answer_contract",
+                    "accounting_protocol",
+                    "explanation_contract",
                 }
                 prior_hash_valid = (
                     hashlib.sha256(
@@ -782,6 +833,13 @@ class Repository:
             task = self._fenced(db, ctx)
             if task.parameters.get("profile") == "commerce_diagnosis":
                 raise Conflict("诊断报告须经版本化报告入口登记")
+            if task.parameters.get("review_answer_version") in {5, 6}:
+                from app.commerce.review_report_v5 import binding
+
+                report_hash = binding(report, validation.get("composition"))
+                if task.review_decision is not None and report_hash != task.report_hash:
+                    raise Conflict("复核后不能更换报告或组合记录")
+                task.report_hash = report_hash
             task.report, task.validation = report, validation
             db.commit()
 
@@ -887,6 +945,11 @@ class Repository:
                 raise NotFound()
             if task.status != "waiting_review":
                 raise Conflict("当前任务未等待复核")
+            if task.parameters.get("review_answer_version") in {5, 6}:
+                from app.commerce.review_report_v5 import binding
+
+                if task.report_hash != binding(task.report, task.validation.get("composition")):
+                    raise Conflict("待复核报告与组合记录不一致")
             task.review_decision, task.status = approved, "queued"
             task.updated_at = utcnow()
             db.add(

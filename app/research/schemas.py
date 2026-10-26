@@ -155,6 +155,13 @@ class ReviewNarrativeV3(BaseModel):
     recommendations: list[ReviewActionV3] = Field(min_length=1, max_length=4)
 
 
+class ReviewNarrativeV6(ReviewNarrativeV3):
+    analysis: list[
+        Literal["sales_drivers", "refund_drivers", "product_mix", "daily_structure", "data_quality"]
+    ] = Field(min_length=0, max_length=4)
+    recommendations: list[ReviewActionV3] = Field(min_length=0, max_length=4)
+
+
 class SemanticReview(BaseModel):
     unsupported_claim_ids: list[str] = Field(default_factory=list)
     unsupported_limitation_indices: list[int] = Field(

@@ -1,0 +1,16 @@
+[
+  {
+    "split": "development",
+    "executed": 32,
+    "all_automatic_passed": true,
+    "provider_requests": 0,
+    "directory": "evaluations/results/diagnosis-v15-development-local-20261025-02"
+  },
+  {
+    "split": "regression",
+    "executed": 27,
+    "all_automatic_passed": true,
+    "provider_requests": 0,
+    "directory": "evaluations/results/diagnosis-v15-regression-local-20261025-03"
+  }
+]

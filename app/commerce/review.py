@@ -40,6 +40,12 @@ def calculate_periods(
     prior_start, prior_end = comparison_dates(start, end, comparison_start, comparison_end)
     cube = SalesCube(payload)
     products, rows, aggregate = cube.products, cube.rows, cube.aggregate
+    if answer_version in {4, 5, 6}:
+        from app.commerce.answer_contract_v3 import entity_selection
+
+        allowed_skus = entity_selection(
+            objective, allowed_skus or list(products), payload["products"]
+        )["selected"]
     if allowed_skus is not None:
         allowed = set(allowed_skus)
         if not allowed or allowed - products.keys():
@@ -185,6 +191,14 @@ def calculate_periods(
                     "对比期记账退款件数占比",
                     period=(prior_start, prior_end),
                 )
+        if answer_version in {4, 5, 6} and prior["coverage"]["observed_records"]:
+            put(
+                "comparison_gross_revenue",
+                money(prior["revenue"]),
+                "CNY",
+                "对比期已记录支付金额",
+                period=(prior_start, prior_end),
+            )
         if complete:
             put(
                 "paid_units_delta", current["paid"] - prior["paid"], "count", "相对前期支付件数变化"
@@ -227,13 +241,21 @@ def calculate_periods(
                 delta_key = f"{kind}.{index}.delta"
                 put(delta_key, money(delta), "CNY", "相对前期净销售额变化贡献", entity, name)
                 entry.update(delta_key=delta_key, delta_cents=delta)
-            if answer_version == 3:
+            if answer_version in {3, 4, 5, 6}:
                 parts = {}
-                for metric, field, label in (
-                    ("net_revenue", "net", "净销售额"),
-                    ("gross_revenue", "revenue", "支付金额"),
-                    ("refund_amount", "refund", "退款金额"),
-                ):
+                component_specs = (
+                    [("paid_units", "paid", "支付件数"), ("refunded_units", "refunded", "退款件数")]
+                    if answer_version in {4, 5, 6}
+                    else []
+                )
+                for metric, field, label in [
+                    *component_specs,
+                    *(
+                        ("net_revenue", "net", "净销售额"),
+                        ("gross_revenue", "revenue", "支付金额"),
+                        ("refund_amount", "refund", "退款金额"),
+                    ),
+                ]:
                     for part, value, period in (
                         ("current", now, (start, end)),
                         ("comparison", before, (prior_start, prior_end)),
@@ -242,8 +264,10 @@ def calculate_periods(
                             component_key = f"{kind}.{index}.{metric}.{part}"
                             put(
                                 component_key,
-                                money(value[field]),
-                                "CNY",
+                                str(value[field])
+                                if field in {"paid", "refunded"}
+                                else money(value[field]),
+                                "count" if field in {"paid", "refunded"} else "CNY",
                                 ("本期已记录" if part == "current" else "对比期已记录") + label,
                                 entity,
                                 name,
@@ -254,8 +278,10 @@ def calculate_periods(
                         component_key = f"{kind}.{index}.{metric}.delta"
                         put(
                             component_key,
-                            money(now[field] - before[field]),
-                            "CNY",
+                            str(now[field] - before[field])
+                            if field in {"paid", "refunded"}
+                            else money(now[field] - before[field]),
+                            "count" if field in {"paid", "refunded"} else "CNY",
                             label + "变化贡献",
                             entity,
                             name,
@@ -275,7 +301,7 @@ def calculate_periods(
         )
     if sample:
         limitations.append("本报告使用可复现模拟经营数据，不代表真实业务效果")
-    return {
+    result = {
         **(
             {"answer_version": answer_version, "direct_answers": direct_answers}
             if answer_version >= 2
@@ -315,6 +341,28 @@ def calculate_periods(
         },
         "limitations": limitations,
     }
+    if answer_version in {4, 5, 6}:
+        from app.commerce.answer_contract_v4 import request_contract as contract_v4
+        from app.diagnosis.completion_v15 import completion
+
+        selected = sorted(products)
+        result["scope"] = {"skus": selected}
+        result["answer_contract"] = contract_v4(objective)
+        result["objective"] = objective
+        result["entity_coverage"] = {
+            sku: {
+                "current": aggregate([sku], start, end)["coverage"],
+                "comparison": aggregate([sku], prior_start, prior_end)["coverage"],
+            }
+            for sku in selected
+        }
+        for f in catalog.values():
+            if f["entity_id"] == "all":
+                f["entity_id"] = ",".join(selected)
+        result["answer_completion"] = completion(
+            objective, [{"id": "self", "payload": result}], result["scope"]
+        )
+    return result
 
 
 def dataset_review(
@@ -358,7 +406,9 @@ def dataset_review(
         result.update(
             bundle_id=info["bundle_id"],
             bundle_hash=info["bundle_hash"],
-            scope={"skus": info["allowed_skus"]},
+            scope=result["scope"]
+            if answer_version in {4, 5, 6}
+            else {"skus": info["allowed_skus"]},
             source_hashes={"sales": info["sales_content_hash"]},
             input_binding_version=f"commerce-review-bundle-v{answer_version}",
             source_samples=info.get("source_samples", {"sales": info["sample"]}),

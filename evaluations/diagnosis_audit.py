@@ -10,7 +10,7 @@ from evaluations.diagnosis_cases import DEFAULT_CASES, load_cases
 from evaluations.diagnosis_grading import grade, sha
 
 
-def audit_run(directory):
+def audit_run(directory, *, reconciliation=None):
     root = Path(directory).resolve()
     meta = json.loads((root / "run.json").read_bytes())
     original = json.loads((root / "summary.json").read_bytes())
@@ -61,11 +61,17 @@ def audit_run(directory):
             model=meta["model"],
             token_limit=meta["max_total_tokens"],
             require_stopped=False,
+            reconciliation=reconciliation,
         )
         accounting = {
             "known_tokens": reconciled["known_tokens"],
             "provider_requests": reconciled["provider_requests"],
             "ancestry_fully_reconciled": True,
+            **(
+                {"original_usage_state_preserved": True, "explicit_reconciliation_verified": True}
+                if reconciliation is not None
+                else {}
+            ),
         }
     return {
         "run_id": meta["run_id"],
