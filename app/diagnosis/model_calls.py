@@ -258,6 +258,12 @@ class DiagnosisModelGateway:
                     raise Conflict("保存的发送前拒绝证明已缺失或改变")
                 return outcome(call, reused=True), False
             # Another step's unknown attempt forbids spending again, even with a new ID.
+            if task.parameters.get("budget", {}).get("stop_after_model_failure") and db.scalar(
+                select(ModelInvocation.call_id).where(
+                    ModelInvocation.task_id == task.id, ModelInvocation.status == "FAILED"
+                )
+            ):
+                raise BudgetExceeded("model_failure_stop")
             interrupted = list(
                 db.scalars(
                     select(ModelInvocation).where(

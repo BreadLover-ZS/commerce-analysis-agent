@@ -1,0 +1,10 @@
+{
+  "failed_receipt_sha256": "560aca600dc50b35fd79bf5ca0df0d3f3023dd2b0ae1b36c1370764290429bbb",
+  "implementation_sha256": "6a62858462e5fe8a7ac4dce3b79c00de51389c9b8c949cc3eecb87357c41e432",
+  "local_verification_passed": true,
+  "root_cause_document": "docs/55-H01-probe-budget-root-cause-and-repair-20261026.md",
+  "readiness_file": "docs/acceptance/model-probes-20m-20261026/readiness-H01-repair.json",
+  "readiness_sha256": "860230da6f8fb3728b20d933931644a3bbf0f9b918052d32d7419123c2b8063b",
+  "http_cap_unchanged": 2,
+  "amount_witness_and_grading_unchanged": true
+}

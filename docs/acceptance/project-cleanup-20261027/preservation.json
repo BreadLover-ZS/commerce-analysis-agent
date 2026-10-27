@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "implementation_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "source_files_unchanged": 267,
+  "initial_git_files_checked": 862,
+  "initial_git_files_unchanged_except_authorized_docs": true,
+  "modified_original_docs": [
+    "README.md",
+    "TASK.md",
+    "docs/25-diagnosis-acceptance-matrix.md",
+    "docs/26-diagnosis-evaluation.md",
+    "docs/31-development-progress-20261021.md"
+  ],
+  "original_raw_evidence_files_unchanged": 29777,
+  "historical_seals_checked": 19,
+  "historical_seal_entries_checked": 414,
+  "historical_seals": [
+    {
+      "seal": "docs/acceptance/boundary-formal-repair-20261027/SHA256SUMS",
+      "files_checked": 55
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-boundary-v2-U-live-20261027/SHA256SUMS",
+      "files_checked": 21
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-boundary-v2-formal-U-20261027/SHA256SUMS",
+      "files_checked": 9
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v12-deep-20261023/SHA256SUMS",
+      "files_checked": 11
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v13-h01-h20/SHA256SUMS",
+      "files_checked": 13
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v13-repair-20261023/SHA256SUMS",
+      "files_checked": 9
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v14-formal-20261025/SHA256SUMS",
+      "files_checked": 10
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v14-h01-h20/SHA256SUMS",
+      "files_checked": 11
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v14-h01-h20-12m/SHA256SUMS",
+      "files_checked": 9
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v14-preflight-20261025/SHA256SUMS",
+      "files_checked": 19
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v15-formal-20261026/SHA256SUMS",
+      "files_checked": 15
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v15-h01-h20/SHA256SUMS",
+      "files_checked": 11
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v15-local-20261025/SHA256SUMS",
+      "files_checked": 11
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v15-repair-plan-20261025/SHA256SUMS",
+      "files_checked": 6
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v16-formal-U-20261027/SHA256SUMS",
+      "files_checked": 37
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v16-local-20261026/SHA256SUMS",
+      "files_checked": 34
+    },
+    {
+      "seal": "docs/acceptance/diagnosis-v16-repair-plan-20261026/SHA256SUMS",
+      "files_checked": 8
+    },
+    {
+      "seal": "docs/acceptance/model-probes-20m-20261026/SHA256SUMS",
+      "files_checked": 90
+    },
+    {
+      "seal": "docs/acceptance/pre-model-preflight-20261026/SHA256SUMS",
+      "files_checked": 35
+    }
+  ],
+  "env_unchanged": true,
+  "dependencies_retained": true,
+  "original_entrypoint_bytes_archived": true,
+  "browser_output_hashes_verified": 9,
+  "git_head_and_index_unchanged": true,
+  "known_tokens": 11122121,
+  "frozen_unknown_tokens": 1051576,
+  "remaining_tokens": 7826303,
+  "paid_model_requests": 0
+}

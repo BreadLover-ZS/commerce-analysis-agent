@@ -1,0 +1,73 @@
+{
+  "receipt_sha256": "33f50fb578dc58245cb42394ea5fb85b0a05980101579544fcd471a519f9e7cd",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "scope": "Single previously executed synthetic H03 fixed regression; not fresh holdout or G6 release",
+  "checks": {
+    "all_nine_amounts": {
+      "passed": true,
+      "current_cents": {
+        "gross": 212397000,
+        "refund": 50173500,
+        "net": 162223500
+      },
+      "comparison_cents": {
+        "gross": 187497000,
+        "refund": 12450000,
+        "net": 175047000
+      },
+      "delta_cents": {
+        "gross": 24900000,
+        "refund": 37723500,
+        "net": -12823500
+      },
+      "evidence_refs": [
+        "business-input.json",
+        "receipt.json:review-summary",
+        "receipt.json:review-change",
+        "receipt.json:review-comparison-net",
+        "receipt.json:review-v4-required-0",
+        "receipt.json:review-refund-comparison"
+      ]
+    },
+    "accounting_identity": {
+      "passed": true,
+      "reason": "-12823500 = 24900000 - 37723500 cents; direct display of both periods and deltas"
+    },
+    "scope_and_periods": {
+      "passed": true,
+      "skus": [
+        "T031",
+        "T032"
+      ],
+      "reason": "Only bound authorized input and explicit current/comparison periods"
+    },
+    "report_capacity": {
+      "passed": true,
+      "section_claim_counts": [
+        4,
+        4,
+        3,
+        8,
+        3
+      ],
+      "reason": "5 mandatory program observations + 3 selected hypotheses, no report overflow or fallback"
+    },
+    "all_claims_and_limitations_read": {
+      "passed": true,
+      "reason": "Financial facts checked against raw cents; hypothetical causes marked pending verification; no profit/order-cohort refund inference; simulation and scope disclosed"
+    },
+    "semantic_and_protocol": {
+      "passed": true,
+      "reason": "Both calls SUCCEEDED, known usage, semantic review had no unsupported claims or limitations, no API retry"
+    },
+    "independent_grade": {
+      "passed": true,
+      "failed_assertions": []
+    }
+  },
+  "new_http_requests": 2,
+  "new_known_tokens": 25656,
+  "four_candidate_real_response_this_probe": false,
+  "limitation": "This provider returned three hypotheses. The four-candidate capacity branch has local saved-response/mutation evidence, not a newly forced paid response."
+}

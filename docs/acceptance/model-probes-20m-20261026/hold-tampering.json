@@ -1,0 +1,56 @@
+{
+  "provider_requests": 0,
+  "raw_originals_modified": false,
+  "known_tokens": 10954662,
+  "hold_tokens": 1051576,
+  "results": [
+    {
+      "mutation": "authorization_cap",
+      "rejected": true
+    },
+    {
+      "mutation": "hold",
+      "rejected": true
+    },
+    {
+      "mutation": "source",
+      "rejected": true
+    },
+    {
+      "mutation": "journal_spent",
+      "rejected": true
+    },
+    {
+      "mutation": "http_usage",
+      "rejected": true
+    },
+    {
+      "mutation": "record_usage",
+      "rejected": true
+    },
+    {
+      "mutation": "unknown_zero",
+      "rejected": true
+    },
+    {
+      "mutation": "extra_unknown",
+      "rejected": true
+    },
+    {
+      "mutation": "missing_receipt",
+      "rejected": true
+    },
+    {
+      "mutation": "duplicate_progress",
+      "rejected": true
+    },
+    {
+      "mutation": "different_run",
+      "rejected": true
+    },
+    {
+      "mutation": "case_source",
+      "rejected": true
+    }
+  ]
+}

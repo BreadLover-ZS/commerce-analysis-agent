@@ -1,0 +1,10 @@
+{
+  "receipt_sha256": "ae1537bcb9eb086dc24a5b78ef81e63ea0e92aa4356cc9d8b0b42568d4ec4ffd",
+  "original_review_sha256": "d050c78f3cc2fec8cc17f4b1645c5100f59dcfc52712bb2d06754821f73ce788",
+  "original_review_verdict_preserved": "PASS",
+  "supplemental_formal_verdict": "FAIL",
+  "reason": "semantic_review_sent_with_no_referenced_authoritative_evidence",
+  "report_numeric_content_is_not_the_same_as_a_grounded_model_review": true,
+  "original_receipt_grading_and_review_modified": false,
+  "provider_requests": 0
+}

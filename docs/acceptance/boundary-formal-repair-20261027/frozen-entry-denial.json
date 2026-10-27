@@ -1,0 +1,11 @@
+{
+  "status": "PASS_UNAUTHORIZED_SEND_BLOCKED",
+  "reason": "formal_explicit_authorization_required",
+  "plan_sha256": "07130b3c179ede63f65eded234dc35be8cdf9e2161912c84b75d7b2c5d06a335",
+  "credential_loads": 0,
+  "socket_attempts": 0,
+  "provider_requests": 0,
+  "fresh_task_graph_tool_executions": 0,
+  "output_created": false,
+  "real_parent_claim_created": false
+}

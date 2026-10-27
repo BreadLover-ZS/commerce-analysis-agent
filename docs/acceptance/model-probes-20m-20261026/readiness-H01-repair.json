@@ -1,0 +1,58 @@
+{
+  "implementation_sha256": "6a62858462e5fe8a7ac4dce3b79c00de51389c9b8c949cc3eecb87357c41e432",
+  "source_files": 254,
+  "local_verification_passed": true,
+  "source_snapshot": "evaluations/results/H01-probe-budget-repair-local-20261026-01/source-snapshot",
+  "postgres_passed": 1337,
+  "chrome_passed": 19,
+  "behavior_breaking_mutants_detected": 13,
+  "legacy_grades_checked": 267,
+  "network_guard_file": "docs/acceptance/model-probes-20m-20261026/H01-repair-network.json",
+  "evidence_files": [
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/authorization.json",
+      "sha256": "cecf135b1d333459c1956966346341d1895aa2cc7b8f8ba4064ea00a28a45c29"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/conservative-hold.json",
+      "sha256": "6ad5fbdf8695412dad4d80ad106f6d3d9f035af214eff3e22ca3ecc8cc8fecbd"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-repair-postgres.log",
+      "sha256": "ddac6673a15e3a3dc81f1417e233dad305996439d4fc62da2b07275a7d1ba9aa"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-repair-network.json",
+      "sha256": "82296b934b2d3baea71ddffeafee810d264bceb674005a71e4ec071578c65def"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-repair-chrome.log",
+      "sha256": "d73c9c0ea749a1af38560c4af8a055b17e08d95a1de0bc01fe18b41b3c1012ed"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-stop-mutations.json",
+      "sha256": "ebb03fb0dc794c2f5e3f061cac2d5b1d1ba442322b1aa7ab81fcebb2635c5a25"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-offline-replay-release.json",
+      "sha256": "7edc68fa8e53a71e1f13e141037004d0a2759281735d34d34a6380dbb0a292df"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-legacy-regrade.json",
+      "sha256": "b1e7681ddacd419c3492525989e496df084228172793a23d5f5e23e5c79538ae"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/H01-frozen-check.json",
+      "sha256": "4e258fb2e3aa2e004ecdf2284f5f56af96ed130d20a60aba86ede56816d4094f"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/launch_one_probe.py",
+      "sha256": "b5fc2cbeb286cf80d2b707aa992911a2aa44c93c52db5694c231269705380325"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/prepare_repair_readiness.py",
+      "sha256": "0e7baf892964b479606111cdc527daae6ea2b6611ced2ab4a243acb796f3c604"
+    }
+  ],
+  "scope": "H01 two-call repair readiness; not model quality or G6 acceptance"
+}

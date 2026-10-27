@@ -1,0 +1,12 @@
+{
+  "status": "PASS_EVIDENCE_INTEGRITY_NOT_MODEL_ACCEPTANCE",
+  "source_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "json_files_checked": 15,
+  "local_links_checked": 11,
+  "prior_evidence_seals_verified": 4,
+  "protected_original_files_unchanged": 330,
+  "credential_pattern_matches": 0,
+  "paid_requests_in_this_check": 0,
+  "failed_leaf_unclaimed": true,
+  "all_five_tasks_source_bound": true
+}

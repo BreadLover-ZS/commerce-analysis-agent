@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/model-probes-20m-20261026/check_prior_boundary.py", line 105, in <module>
+    asyncio.run(main())
+  File "/Users/zzds/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/zzds/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zzds/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/model-probes-20m-20261026/check_prior_boundary.py", line 43, in main
+    with sandbox(
+         ^^^^^^^^
+  File "/Users/zzds/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/diagnosis_runtime.py", line 87, in sandbox
+    settings = EvaluationSettings(**values)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pydantic_settings/main.py", line 247, in __init__
+    super().__init__(**__pydantic_self__.__class__._settings_build_values(sources, init_kwargs))
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/.venv/lib/python3.12/site-packages/pydantic/main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for EvaluationSettings
+  Value error, live 模式需要 OPENAI_API_KEY 和 LLM_MODEL [type=value_error, input_value={'app_env': 'test', 'agen...agnosis_runtime': 'v16'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error

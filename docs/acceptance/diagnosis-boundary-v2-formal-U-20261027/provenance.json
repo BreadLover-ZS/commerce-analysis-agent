@@ -1,0 +1,302 @@
+{
+  "source": "docs/acceptance/diagnosis-v15-h01-h20/cases.json",
+  "source_sha256": "fcf82071d20bc26ecfd7fa7bd22046b4d89c79cb47978ba235f0c6c6a2866cb9",
+  "reused_author_module_sha256": "fee2ecfe7d81b6186084a3d48756d3c863ba37f7562ba1068953576129a2b2af",
+  "origins": [
+    {
+      "case_id": "H01",
+      "source_case": "H01",
+      "sku_mapping": {
+        "T011": "U011",
+        "T012": "U012",
+        "T013": "U013"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "918ad4b84edc0bf86e119cf2bad4fb1dfb3de0caa35f69d934e68464029cbde7",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H02",
+      "source_case": "H02",
+      "sku_mapping": {
+        "T021": "U021",
+        "T022": "U022"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "e20d3bd5c59b4625d4e837c61113408f89574d289a9666a555985c7ac3079fdd",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H03",
+      "source_case": "H03",
+      "sku_mapping": {
+        "T031": "U031",
+        "T032": "U032"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 3,
+      "input_hash": "27d08f19304f992b0a6f6194346865551273c7b48df2da19eca4b1b1ef49b525",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H04",
+      "source_case": "H04",
+      "sku_mapping": {
+        "T041": "U041",
+        "T042": "U042"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "e795bde8fd62af8986305bc2c63268684d3469968f683e488373526c1ceef512",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H05",
+      "source_case": "H05",
+      "sku_mapping": {
+        "T051": "U051",
+        "T052": "U052"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "e2a2ba14be46b5622bb1efd8bb1182fb8752631beb8adfd06b1952241304b293",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H06",
+      "source_case": "H06",
+      "sku_mapping": {
+        "T061": "U061",
+        "T062": "U062"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 3,
+      "input_hash": "a56c2f4af96b728d1c046a4d0c135b42a81fa1a60a7445e2755d36064a4b9468",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H07",
+      "source_case": "H07",
+      "sku_mapping": {
+        "T071": "U071",
+        "T072": "U072"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "53017960e91cfdf5ad67c884a870a329b3982edaea0a42cd157cb6a751b1bb1f",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": true
+    },
+    {
+      "case_id": "H08",
+      "source_case": "H08",
+      "sku_mapping": {
+        "T081": "U081",
+        "T082": "U082"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "220b5819be46dd8dc8cf5565f6b18d954279576c1fe388e4d466e433c29680f9",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H09",
+      "source_case": "H09",
+      "sku_mapping": {
+        "T091": "U091",
+        "T092": "U092"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 3,
+      "input_hash": "a2daeccc71ca13688c8f9fb54ff18af5dc6e75523382be8838aaab2a7a48fa90",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H10",
+      "source_case": "H10",
+      "sku_mapping": {
+        "T101": "U101",
+        "T102": "U102"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "c74034b56aaeb8683df8b75227ecdec5d31a05f44ce8096adcd8bcad8cdf4b6e",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H11",
+      "source_case": "H11",
+      "sku_mapping": {
+        "T111": "U111",
+        "T112": "U112"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "ce53119c414f0ad431674148682b56f07595aa0fa95db810e20f557011027a1f",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H12",
+      "source_case": "H12",
+      "sku_mapping": {
+        "T121": "U121",
+        "T122": "U122"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 3,
+      "input_hash": "1715e71c034e9011e908961ea5d6f31ec283b5433d5f4fc2e21b82b240ddb605",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H13",
+      "source_case": "H13",
+      "sku_mapping": {
+        "T131": "U131",
+        "T132": "U132"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "41b7e1a5e8cc6b69adb7c30b5b5c4601b9f433e9977984bde4b24bee0f38b876",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H14",
+      "source_case": "H14",
+      "sku_mapping": {
+        "T141": "U141",
+        "T142": "U142"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "4bdb1208b627b0193cce832814b6c105f75d96cea607b389878dc89475177ce1",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H15",
+      "source_case": "H15",
+      "sku_mapping": {
+        "T151": "U151",
+        "T152": "U152"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 3,
+      "input_hash": "6c736854d629771c9452cc3eccfe280eb030d992efabfa7865d18d387626a17f",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H16",
+      "source_case": "H16",
+      "sku_mapping": {
+        "T161": "U161",
+        "T162": "U162"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "a80ff3e1639fd97334c643aae9a90317e5d9dcc890b5aa987c2edb34f3088018",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H17",
+      "source_case": "H17",
+      "sku_mapping": {
+        "T171": "U171",
+        "T172": "U172"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "6b1718aa5bf3456ab7b2f68541dbee1a03e314637b046d8d7984db199477b948",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H18",
+      "source_case": "H18",
+      "sku_mapping": {
+        "T181": "U181",
+        "T182": "U182"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 3,
+      "input_hash": "15ab269240d7ba4ec86d47839dddcc2a0c198346745705617f4b243fcccda7ce",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H19",
+      "source_case": "H19",
+      "sku_mapping": {
+        "T191": "U191",
+        "T192": "U192"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 4,
+      "input_hash": "b1fbcd786223272abfbc3fda8aabc3632f0ee47c3154569a587eefe897eecb8d",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    },
+    {
+      "case_id": "H20",
+      "source_case": "H20",
+      "sku_mapping": {
+        "T201": "U201",
+        "T202": "U202"
+      },
+      "date_shift_days": 73,
+      "numeric_scale_numerator": 2,
+      "numeric_scale_denominator": 5,
+      "input_hash": "52247f5275696881a08a8d8464477d2271537f5aabadd9c96e465eb1d32097df",
+      "semantic_family_reused": true,
+      "new_pre_activation_boundary": false
+    }
+  ],
+  "new_data_hashes_not_semantic_independence": true,
+  "fresh_case_graph_tool_model_executions": 0,
+  "refrozen_from": "docs/acceptance/diagnosis-v16-formal-U-20261027",
+  "refrozen_file_sha256": {
+    "cases.json": "1afca96ae41a376d5b95d4a6ca80077e3652fabf7072235a40795ffcc475c296",
+    "answer-obligations.json": "e04a8a961a09967ad915bc5ff9bebdff46bde99891599f4057f3005ad2b3d24f",
+    "semantic-contract.json": "f603e394ebf642de0dff04f26d6df76661ab6e96bec63cc32a8b582a0eb9b4cf",
+    "execution-plan.json": "0ae5de7e3ac5ed929fea7f6278d63165c65a6d38201651b319d60e4a6c930cf9",
+    "provenance.json": "c8fa49c10a501acb3a9d060d1346b8a5f461625502cdfac88b0a9a6a389366c7"
+  },
+  "same_unexecuted_U_raw_data": true,
+  "refreeze_is_not_an_additional_fresh_family": true,
+  "query_change": "H07 natural synonym restored: 不适用的边界",
+  "semantic_contract": "schema5 / answer-contract-v5 / frozen boundary policy2"
+}

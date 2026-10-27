@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/diagnosis-v16-formal-U-20261027/prepare.py", line 258, in <module>
+    main()
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/diagnosis-v16-formal-U-20261027/prepare.py", line 201, in main
+    _, contract = validate_cases(BASE / "cases.json")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/diagnosis_plan.py", line 120, in validate_cases
+    raise ValueError("题面字面义务与作者必答矩阵不一致")
+ValueError: 题面字面义务与作者必答矩阵不一致

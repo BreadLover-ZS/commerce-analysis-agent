@@ -1,0 +1,64 @@
+......................................F...                               [100%]----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+______ test_boundary_policy_is_frozen_through_worker_and_report[1-agent] _______
+
+setup = (Settings(app_env='test', agent_mode='demo', database_url='sqlite:////private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200...ject at 0x10bcde300>, <app.storage.models.User object at 0x10bde6750>, <app.storage.models.User object at 0x10bde5100>)
+group = 'agent', version = 1
+
+    @pytest.mark.parametrize("group", ["agent", "fixed"])
+    @pytest.mark.parametrize("version", [1, 2])
+    async def test_boundary_policy_is_frozen_through_worker_and_report(setup, group, version):
+        from uuid import uuid4
+    
+        from app.commerce.datasets import DatasetInput
+        from app.diagnosis.inputs import create_bundle
+        from app.research.schemas import TaskRequest
+        from evaluations.diagnosis_runtime import collect, execute
+        from tests.test_diagnosis_tools import bundle_request, committed, oracle_payload
+    
+        settings, repo, user, _ = setup
+        settings.answer_boundary_version = version
+        settings.diagnosis_runtime = "v16"
+        settings.commerce_review_answer_version = 6
+        raw = oracle_payload().model_dump(mode="json")
+        for p in raw["products"]:
+            p["active_from"] = "2026-09-01"
+        raw["daily_sales"] = [r for r in raw["daily_sales"] if r["day"] == "2026-09-01"]
+        data = committed(repo, user, DatasetInput.model_validate(raw))
+        bundle = create_bundle(repo, user, bundle_request(data["id"]))
+        q = "请给出授权范围本期已有净销售额，说明比较期（早于启用日）不适用的边界，不补造比较期零值。"
+        request = TaskRequest(
+            conversation_id=repo.create_conversation(user.id),
+            query=q,
+            bundle_id=bundle["bundle_id"],
+            profile="commerce_diagnosis" if group == "agent" else "commerce_review",
+            strategy="diagnostic" if group == "agent" else "workflow",
+            sources=["sales"],
+        )
+        key = str(uuid4())
+        task = repo.create_task(user, request, key)
+        expected = "answer-contract-v5" if version == 2 else "answer-contract-v4"
+        if group == "agent":
+            assert task["parameters"]["answer_contract"]["version"] == expected
+        settings.answer_boundary_version = 3 - version
+        assert repo.create_task(user, request, key)["id"] == task["id"]
+        # Deployment changes must not reinterpret the frozen task.
+        await execute(repo, settings)
+        record = collect(repo, task["id"], group)
+        assert record["task"]["validation"]["passed"], record["task"]["validation"]
+        if group == "agent":
+            rep = record["task"]["report"]
+            assert rep["request_contract"]["version"] == expected
+>           assert rep["answer_completion"]["status"] == (
+                "boundary_explained" if version == 2 else "fulfilled"
+            )
+E           AssertionError: assert 'incomplete' == 'fulfilled'
+E             
+E             - fulfilled
+E             + incomplete
+
+tests/test_boundary_semantics_v2.py:102: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_boundary_semantics_v2.py::test_boundary_policy_is_frozen_through_worker_and_report[1-agent]
+1 failed, 41 passed in 1.77s

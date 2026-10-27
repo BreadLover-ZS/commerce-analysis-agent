@@ -1,0 +1,27 @@
+{
+  "receipt_sha256": "cd9bb703d0deb0f175cea5710aa2f1bdcd99038a7127d8a775150d892a5221c7",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "model_effect_evidence": false,
+  "scope": "Used-input live orchestration: program boundary response without any provider call",
+  "checks": {
+    "boundary_answer_complete": {
+      "passed": true,
+      "reason": "evidence_gap retained, data_status partial, boundary_explained, no omitted items or remaining work"
+    },
+    "missing_not_zero": {
+      "passed": true,
+      "reason": "Explicitly states post-activation missing rows prevent full comparison/attribution; no invented zero or causal conclusion"
+    },
+    "facts_and_limitations": {
+      "passed": true,
+      "reason": "Partial recorded facts retained; missing-source limitation is supported; no profit, conversion or cohort refund inference"
+    },
+    "zero_call_accounting": {
+      "passed": true,
+      "reason": "0 model invocations/HTTP/new tokens, empty durable journal audited; original UNKNOWN hold remains 1051576"
+    }
+  },
+  "new_http_requests": 0,
+  "new_known_tokens": 0
+}

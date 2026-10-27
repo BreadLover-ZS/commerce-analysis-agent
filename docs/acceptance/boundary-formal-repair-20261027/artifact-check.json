@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "implementation_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "json_and_local_document_links_checked": true,
+  "links_checked": 16,
+  "credential_pattern_matches": 0,
+  "browser_archive_sha256": {
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/commerce-analysis-desktop.png": "2c1c39eeeaa5e04081e3e06c806d498dcd66e5c22797a2c51fe0a859ff51db09",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/commerce-analysis-mobile.png": "5ab4c1445f55d934a5961086acdf233412eb3018309f8288f24d9a858d427fa3",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/diagnosis-comparison-mobile.png": "f8f853f25f9b7b7f7c0f55b574ca70e34aa9d98c647912e8eb8ae8af03985de1",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/diagnosis-mobile.png": "d5127d22065a58a1b785ca8b853e4dee4950bbd7289e67590432617135abbd2d",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/diagnosis-preflight-mobile.png": "693e4e2c539337aab53066c511e3cda6d8923d7e3cc7d8dd6432130472451ae5",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/diagnosis-rules.png": "a43536c259b0cb677856d13670a0abc1bdabe127d58d5be7c6b9b5faaab58d6d",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/workbench-create-mobile.png": "32c0ede68ba79f0c4fd8b5d1d479070112cb4a4e9971f8fe1771929583305b4b",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/workbench-create.png": "3653577656c56aa4a7f5ccecac755038a6740b3fb2e1fca5a2939c08ab8ba7e9",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/workbench-login-mobile.png": "d7fe6d68bbfe0a8920aac44bba804c4dd8728e9e7f1b3b49dc9b8bac6c8d8044",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/workbench-login.png": "ab80f4d190081cab99f3ec0aa555cdc306b5f76e5f7e7a0dc4ed0aca950de24c",
+    "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images/workbench-report.png": "3be080a9ad6653aff7c69a576ccb294fbd58dfa3fdcd2292257aaaa00f0e0f13"
+  },
+  "source_and_formal_manifest_match": true,
+  "original_history_unchanged": 330,
+  "provider_requests": 0
+}

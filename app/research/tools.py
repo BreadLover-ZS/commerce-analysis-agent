@@ -70,6 +70,7 @@ class ToolGateway:
                 end,
                 bundle_ctx=self.ctx if self.parameters.get("bundle_id") else None,
                 answer_version=self.parameters.get("review_answer_version", 1),
+                answer_boundary_version=self.parameters.get("answer_boundary_version", 1),
                 objective=self.repo.get_task(self.ctx.task_id)["query"],
             )
         else:

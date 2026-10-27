@@ -1,0 +1,32 @@
+...........................F............................................ [ 56%]
+........................................................                 [100%]----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+___________ test_semantic_rejection_stops_even_if_a_grader_says_pass ___________
+
+frozen = namespace(directory=PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-233/test...3818d3d8c249154b4db1b4fc2fc15f67b1e9c6aec14e744fa', 'parent_implementation_sha256': 'prior-mock', 'ancestry_depth': 1})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x111596840>
+
+    async def test_semantic_rejection_stops_even_if_a_grader_says_pass(frozen, monkeypatch):
+        sent = sdk_transport(monkeypatch, "semantic")
+        original = one.grade
+    
+        def overly_optimistic(*a, **kw):
+            value = original(*a, **kw)
+            value["automatic_passed"] = True
+            return value
+    
+        monkeypatch.setattr(one, "grade", overly_optimistic)
+        a = args(frozen)
+        assert await formal.run(a)
+        assert len(sent) == 2
+        record = json.loads((a.output / "receipt.json").read_bytes())
+>       assert record["task"]["validation"]["passed"] is False
+E       assert True is False
+
+tests/test_formal_single_task.py:546: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"run_id": "1e1c0420-0c91-4840-87d6-eddeee25ade1", "failure_reason": "model_report_fallback", "status": "FAIL_STOPPED", "receipt_sha256": "65413c26805763130d500c0412273807fb1f78721ca15659fff3686984c7fd6d", "budget": {"max_total_tokens": 20000000, "known_tokens": 12, "unresolved_reserved_tokens": 0, "upper_bound_charged_tokens": 1051588, "frozen_unknown_tokens": 1051576, "request_context_ceiling": 1048576, "denied_reason": null}, "confirmed_http_requests": 3, "new_http_requests": 2, "new_known_tokens": 8, "old_unknown_preserved": true, "real_model_formal_acceptance": "UNTESTED", "release_eligible": false}
+=========================== short test summary info ============================
+FAILED tests/test_formal_single_task.py::test_semantic_rejection_stops_even_if_a_grader_says_pass
+1 failed, 127 passed in 18.22s

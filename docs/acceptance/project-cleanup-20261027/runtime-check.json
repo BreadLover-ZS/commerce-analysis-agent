@@ -1,0 +1,16 @@
+{
+  "status": "PASS_IMPORT_AND_VERSION_ONLY_NOT_BUSINESS_ACCEPTANCE",
+  "python_runtime_imports": [
+    "fastapi",
+    "sqlalchemy",
+    "langgraph",
+    "langchain_openai",
+    "psycopg"
+  ],
+  "frontend_vite": "7.3.3",
+  "node": "v26.0.0",
+  "typescript": "5.9.3",
+  "bytecode_writes_disabled": true,
+  "provider_requests": 0,
+  "full_test_suite_rerun": false
+}

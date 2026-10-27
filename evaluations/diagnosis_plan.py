@@ -52,22 +52,24 @@ def validate_cases(path, used_inputs=()):
     semantic_path = Path(path).with_name("semantic-contract.json")
     semantic = json.loads(semantic_path.read_bytes()) if semantic_path.exists() else None
     if semantic is not None:
-        if semantic.get("schema_version") not in {1, 2, 3, 4} or set(semantic.get("cases", {})) != {
-            c.case_id for c in cases
-        }:
+        if semantic.get("schema_version") not in {1, 2, 3, 4, 5} or set(
+            semantic.get("cases", {})
+        ) != {c.case_id for c in cases}:
             raise ValueError("题包语义范围契约必须逐题完整覆盖")
-        if semantic["schema_version"] in {2, 3, 4}:
+        if semantic["schema_version"] in {2, 3, 4, 5}:
             from evaluations.diagnosis_grading import VERSION_CONTRACTS
 
-            runtime = "diagnosis-v16" if semantic["schema_version"] in {3, 4} else "diagnosis-v15"
+            runtime = (
+                "diagnosis-v16" if semantic["schema_version"] in {3, 4, 5} else "diagnosis-v15"
+            )
             fixed = (
                 "commerce-review-bundle-v6"
-                if semantic["schema_version"] == 4
+                if semantic["schema_version"] in {4, 5}
                 else "commerce-review-bundle-v5"
                 if semantic["schema_version"] == 3
                 else "commerce-review-bundle-v4"
             )
-            if semantic["schema_version"] in {3, 4} and semantic.get("accounting_protocol") != 2:
+            if semantic["schema_version"] in {3, 4, 5} and semantic.get("accounting_protocol") != 2:
                 raise ValueError("v3/v4语义契约必须冻结计量发送协议v2")
             if (
                 semantic.get("expected_runtime") != VERSION_CONTRACTS[runtime]
@@ -78,6 +80,11 @@ def validate_cases(path, used_inputs=()):
                 Path(path).with_name("answer-obligations.json").read_bytes()
             ):
                 raise ValueError("作者必答项与独立侧表不一致")
+        if semantic["schema_version"] == 5 and (
+            semantic.get("expected_answer_contract_version") != "answer-contract-v5"
+            or semantic.get("expected_answer_boundary_version") != 2
+        ):
+            raise ValueError("schema5必须冻结新的边界子契约")
         for case in cases:
             rule = semantic["cases"][case.case_id]
             if (
@@ -86,7 +93,7 @@ def validate_cases(path, used_inputs=()):
                 or set(rule["sources"]) != set(case.sources)
             ):
                 raise ValueError("题包语义范围、断言或数据源不满足作者冻结契约")
-            if semantic["schema_version"] in {2, 3, 4}:
+            if semantic["schema_version"] in {2, 3, 4, 5}:
                 if (
                     rule.get("expected_stop_reasons") != case.expected.stop_reasons
                     or not rule.get("answer_statuses")
@@ -104,6 +111,11 @@ def validate_cases(path, used_inputs=()):
                     requested_items,
                 )
 
+                if semantic["schema_version"] == 5:
+                    from evaluations.diagnosis_request_checks_v4 import (
+                        boundary_request,
+                        requested_items,
+                    )
                 author = next(
                     a
                     for a in semantic["author_obligations"]["cases"]
@@ -339,7 +351,7 @@ def check(directory, charge_from=None, *, reconciliation=None):
         raise ValueError("题目、预期、门槛或配对计划已改变，禁止沿用原冻结计划")
     semantic_file = directory / "semantic-contract.json"
     semantic = json.loads(semantic_file.read_bytes()) if semantic_file.exists() else {}
-    if semantic.get("schema_version") in {2, 3, 4}:
+    if semantic.get("schema_version") in {2, 3, 4, 5}:
         from evaluations.diagnosis_grading import VERSION_CONTRACTS
         from evaluations.diagnosis_runtime import EvaluationSettings
 
@@ -395,6 +407,12 @@ def guard_run(args):
     """Bind the actual CLI to its frozen plan; --allow-paid remains mandatory."""
     directory = Path(args.frozen_plan)
     plan = json.loads((directory / "manifest.json").read_bytes())
+    if plan.get("formal_entry_version") == 1 or (
+        (directory / "semantic-contract.json").is_file()
+        and json.loads((directory / "semantic-contract.json").read_bytes()).get("schema_version")
+        == 5
+    ):
+        raise ValueError("schema5正式验证须使用逐Task正式入口，禁止旧整轮入口")
     supplied = getattr(args, "prior_reconciliation", None)
     frozen_certificate = plan.get("history", {}).get("reconciliation")
     if (supplied is None) != (frozen_certificate is None):

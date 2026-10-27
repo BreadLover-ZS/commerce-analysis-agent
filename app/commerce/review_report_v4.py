@@ -2,7 +2,6 @@
 
 import copy
 
-from app.diagnosis.completion_v15 import amount_witness, completion, value_obligations
 from app.research.schemas import Claim
 
 
@@ -14,6 +13,14 @@ def build_report(evidence, gaps):
     legacy = copy.deepcopy(evidence)
     next(e for e in legacy if e["id"] == eid)["payload"]["answer_version"] = 3
     report = commerce_review_report(legacy, gaps)
+    from app.commerce.answer_versions import completion_module
+
+    semantic = completion_module(p)
+    value_obligations, completion, amount_witness = (
+        semantic.value_obligations,
+        semantic.completion,
+        semantic.amount_witness,
+    )
     query, scope = p["objective"], p["scope"]
     required = value_obligations(query, [source], scope)
     displayed = {m.key for s in report.sections for c in s.claims for m in c.metrics}
@@ -58,6 +65,8 @@ def build_report(evidence, gaps):
         "boundary_explained": "缺口与限制已答齐，源数据仍不完整",
         "incomplete": "请求尚未答齐",
     }
+    if p.get("answer_boundary_version", 1) == 2:
+        names["boundary_explained"] = "边界与限制已答齐，仍不可计算的项目保持不可用"
     report.sections[3].claims.append(
         Claim(
             id="review-answer-completion",

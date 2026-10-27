@@ -1,0 +1,12 @@
+{
+  "receipt_sha256": "5de13eb1c302cb58a42cda15bc6b3bd3e1a2ab9393b9b9e949d2862ef1183e56",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "checks": {
+    "report_all_sections_or_complete_repeat_diff_read": true,
+    "author_raw_source_and_required_answer_obligations_reviewed": true,
+    "causal_language_limitations_rules_and_actions_reviewed": true,
+    "source_policy_and_usage_ledger_reviewed": true
+  },
+  "notes": "已读完整报告与两条真实提议；27项金额、净销售额汇总和贡献比例80%/40%/-20%正确，恒等式不当作因果。退款金额增加与占比变化分别论证；无缺行误述。同bundle id/hash与固定流程完全一致，两次HTTP/18913token完整入账。"
+}

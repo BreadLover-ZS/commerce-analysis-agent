@@ -35,6 +35,7 @@ def calculate_periods(
     comparison_end=None,
     allowed_skus=None,
     answer_version=1,
+    answer_boundary_version=1,
     objective="",
 ):
     prior_start, prior_end = comparison_dates(start, end, comparison_start, comparison_end)
@@ -342,9 +343,13 @@ def calculate_periods(
         "limitations": limitations,
     }
     if answer_version in {4, 5, 6}:
-        from app.commerce.answer_contract_v4 import request_contract as contract_v4
-        from app.diagnosis.completion_v15 import completion
+        from app.commerce.answer_versions import completion_module, contract_module
 
+        parameters = {"answer_boundary_version": answer_boundary_version}
+        contract_v4 = contract_module(parameters).request_contract
+        completion = completion_module(parameters).completion
+        if answer_boundary_version == 2:
+            result["answer_boundary_version"] = 2
         selected = sorted(products)
         result["scope"] = {"skus": selected}
         result["answer_contract"] = contract_v4(objective)
@@ -375,6 +380,7 @@ def dataset_review(
     *,
     bundle_ctx=None,
     answer_version=1,
+    answer_boundary_version=1,
     objective="",
 ):
     if bundle_ctx is not None:
@@ -401,6 +407,7 @@ def dataset_review(
             comparison_end=date.fromisoformat(info["comparison_period"]["end"]),
             allowed_skus=info["allowed_skus"],
             answer_version=answer_version,
+            answer_boundary_version=answer_boundary_version,
             objective=objective,
         )
         result.update(
@@ -432,5 +439,6 @@ def dataset_review(
         content_hash=digest,
         sample=sample,
         answer_version=answer_version,
+        answer_boundary_version=answer_boundary_version,
         objective=objective,
     )

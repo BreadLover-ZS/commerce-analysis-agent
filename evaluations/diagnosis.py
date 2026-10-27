@@ -52,40 +52,47 @@ def write(path, value):
 
 
 def implementation_manifest():
-    paths = [
-        p
-        for directory in (
-            "app",
-            "evaluations",
-            "migrations",
-            "scripts",
-            "tests",
-            "frontend/src",
-            "frontend/e2e",
-            ".github/workflows",
-            "deploy",
-            "docker",
-        )
-        for p in (ROOT / directory).rglob("*")
-        if p.is_file()
-        and p.suffix
-        in {
-            ".py",
-            ".json",
-            ".ts",
-            ".tsx",
-            ".css",
-            ".md",
-            ".yaml",
-            ".yml",
-            ".toml",
-            ".conf",
-            ".sql",
-            ".Dockerfile",
-        }
-        and "results" not in p.relative_to(ROOT).parts
-        and "__pycache__" not in p.parts
-    ]
+    roots = (
+        "app",
+        "evaluations",
+        "migrations",
+        "scripts",
+        "tests",
+        "frontend/src",
+        "frontend/e2e",
+        ".github/workflows",
+        "deploy",
+        "docker",
+    )
+    suffixes = {
+        ".py",
+        ".json",
+        ".ts",
+        ".tsx",
+        ".css",
+        ".md",
+        ".yaml",
+        ".yml",
+        ".toml",
+        ".conf",
+        ".sql",
+        ".Dockerfile",
+    }
+    paths = []
+    for directory in roots:
+        for base, directories, names in os.walk(ROOT / directory):
+            # Prune before traversal, preserving the original membership/hash
+            # rules without walking every immutable historical result snapshot.
+            directories[:] = [d for d in directories if d not in {"results", "__pycache__"}]
+            for name in names:
+                p = Path(base) / name
+                if (
+                    p.is_file()
+                    and p.suffix in suffixes
+                    and "results" not in p.relative_to(ROOT).parts
+                    and "__pycache__" not in p.parts
+                ):
+                    paths.append(p)
     paths += [
         ROOT / name
         for name in (
@@ -122,6 +129,7 @@ class RequestBudget:
         context_ceiling=None,
         journal=None,
         initial_spent_tokens=0,
+        frozen_unknown_tokens=0,
         protocol=1,
         run_id=None,
     ):
@@ -145,6 +153,19 @@ class RequestBudget:
         ):
             raise ValueError("历史token扣费须为总预算内的非负整数")
         self.spent_tokens = initial_spent_tokens
+        if (
+            type(frozen_unknown_tokens) is not int
+            or frozen_unknown_tokens < 0
+            or (
+                frozen_unknown_tokens
+                and (
+                    max_total_tokens is None
+                    or initial_spent_tokens + frozen_unknown_tokens > max_total_tokens
+                )
+            )
+        ):
+            raise ValueError("历史未知冻结必须为累计预算内单列的非负整数")
+        self.frozen_unknown_tokens = frozen_unknown_tokens
         self.reserved_tokens = 0
         self.denied_reason = None
         self.journal = journal
@@ -160,6 +181,11 @@ class RequestBudget:
                             "event": kind,
                             "spent_tokens": self.spent_tokens,
                             "reserved_tokens": self.reserved_tokens,
+                            **(
+                                {"frozen_unknown_tokens": self.frozen_unknown_tokens}
+                                if self.frozen_unknown_tokens
+                                else {}
+                            ),
                             **fields,
                         },
                         allow_nan=False,
@@ -174,7 +200,14 @@ class RequestBudget:
             "max_total_tokens": self.token_limit,
             "known_tokens": self.spent_tokens,
             "unresolved_reserved_tokens": self.reserved_tokens,
-            "upper_bound_charged_tokens": self.spent_tokens + self.reserved_tokens,
+            "upper_bound_charged_tokens": self.spent_tokens
+            + self.reserved_tokens
+            + self.frozen_unknown_tokens,
+            **(
+                {"frozen_unknown_tokens": self.frozen_unknown_tokens}
+                if self.frozen_unknown_tokens
+                else {}
+            ),
             "request_context_ceiling": self.context_ceiling,
             "denied_reason": self.denied_reason,
         }
@@ -188,7 +221,15 @@ class RequestBudget:
 
         self.denied_reason, self.blocked = reason, True
         attempt = CURRENT_ATTEMPT.get() if self.protocol == 2 else None
-        fields = {"reason": reason, "next_reservation": next_reservation}
+        fields = {
+            "reason": reason,
+            "next_reservation": next_reservation,
+            **(
+                {"frozen_unknown_tokens": self.frozen_unknown_tokens}
+                if self.frozen_unknown_tokens
+                else {}
+            ),
+        }
         if attempt is not None:
             fields.update(
                 protocol=2,
@@ -241,7 +282,10 @@ class RequestBudget:
             # A documented full-context ceiling is deliberately conservative. We
             # never pretend a character/token estimator is a hard billing bound.
             reservation = self.context_ceiling + output_limit
-            if self.spent_tokens + self.reserved_tokens + reservation > self.token_limit:
+            if (
+                self.spent_tokens + self.reserved_tokens + self.frozen_unknown_tokens + reservation
+                > self.token_limit
+            ):
                 self.deny_before_send("token_budget_capacity", next_reservation=reservation)
         from app.core.model_boundary import CURRENT_ATTEMPT
 

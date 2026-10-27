@@ -37,6 +37,8 @@ class Settings(BaseSettings):
 
     max_tool_calls: int = Field(16, ge=1, le=100)
     max_model_calls: int = Field(12, ge=1, le=100)
+    stop_after_model_failure: bool = False
+    model_decision_reserve: int = Field(3, ge=0, le=11)
     max_tokens: int = Field(60000, ge=1000)
     max_runtime_seconds: int = Field(180, ge=5, le=1800)
     max_upload_bytes: int = Field(5 * 1024 * 1024, ge=1024, le=20 * 1024 * 1024)
@@ -63,6 +65,7 @@ class Settings(BaseSettings):
         "v15",
         "v16",
     ] = "v16"
+    answer_boundary_version: int = Field(2, ge=1, le=2)
     commerce_review_answer_version: Literal[1, 2, 3, 4, 5, 6] = 6
 
     @field_validator("commerce_review_answer_version", mode="before")

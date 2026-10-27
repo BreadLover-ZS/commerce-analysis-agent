@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "REQUIRED_FUTURE_ENTRY_CONTRACT_NOT_IMPLEMENTED_OR_AUTHORIZED",
+  "provider": "DeepSeek",
+  "endpoint": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "temperature": 0,
+  "max_output_tokens": 3000,
+  "sdk_max_retries": 0,
+  "follow_redirects": false,
+  "trust_environment_proxy": false,
+  "accounting_protocol": 2,
+  "cumulative_token_limit": 20000000,
+  "historical_unknown_is_not_zero_usage": true,
+  "per_task_policy": "execution-plan.json",
+  "required_boundaries": [
+    "validate source fingerprint, whole packet, selected slot and remaining budget before credentials",
+    "accept only current unclaimed paid leaf with a receipt-bound PASS review",
+    "do not authorize formal conservative carry merely because used-input probes were authorized",
+    "freeze Task max_model_calls equal to selected slot HTTP cap and decision_call_reserve zero",
+    "execute exactly one slot per launch; sequential exclusive claim with fsync",
+    "on any protocol, model, tool, automatic grade, manual review, UNKNOWN or budget failure stop all following requests",
+    "save raw response, known usage or reserved uncertainty, receipt and artifacts before further admission",
+    "manual review must bind this receipt SHA256 before admitting another slot",
+    "never resume missing checkpoints by issuing a second request if persisted output exists",
+    "after a source fix, do not splice prior source quality results into the new frozen formal round"
+  ],
+  "required_local_counterexamples": [
+    "noncritical automatic grade failure stops without another request",
+    "unsupported semantic assertion in manual review blocks next slot",
+    "failed first fixed response does not consume repair or semantic review calls",
+    "rejected diagnosis proposal or no-information tool stops immediately",
+    "new UNKNOWN blocks all descendants and retains its full in-flight reservation",
+    "old unknown hold cannot be zeroed or reauthorized by a mode flag",
+    "current known spend plus old hold plus next request reserve cannot exceed the cumulative limit",
+    "wrong slot, duplicate parent claim, changed source, altered packet or wrong provider fails before key loading",
+    "UNEXECUTED, FAIL, PENDING or mismatched receipt reviews never admit a following slot",
+    "natural synonymous boundary phrasing must match literal author intent, rather than accepting agreement between two similar regex detectors"
+  ],
+  "current_missing_implementation": [
+    "formal entry cannot consume the probe leaf accounting schema",
+    "formal entry does not stop on every automatic failure or require each-task manual review",
+    "production and independent lexical boundary detection both miss the authored synonymous pre-activation boundary phrase"
+  ],
+  "current_execution_authorization": false,
+  "new_packet_transmission_authorization": false,
+  "formal_conservative_carry_authorization": false,
+  "real_model_calls_in_preparation": 0
+}

@@ -1,0 +1,163 @@
+{
+  "baseline_passed": true,
+  "mutations": [
+    {
+      "mutation": "question",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "raw_amount",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "author_amount",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "author_unit",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "missing_obligation",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "daily_omission",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "excluded_scope",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "runtime",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "fixed_runtime",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "protocol",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "one_sku_daily",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "slot_omission",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "http_cap",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "decision_reserve",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "stop_flag",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "review_flag",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "retry_flag",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "stop_classes",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "paid_admission",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "drop_blockers",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "source_hash",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "known_spend",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "hold_zero",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "token_increase",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "drop_hash_inventory",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "history_hashes",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    },
+    {
+      "mutation": "pretend_paid_ready",
+      "rejected": true,
+      "sidecar_hashes_rebound_in_copy": true
+    }
+  ],
+  "all_rejected": true,
+  "entrypoint_controls": {
+    "rows": [
+      {
+        "entrypoint": "legacy_formal_cli",
+        "rejected_before_credentials": true,
+        "reason": "preparation_is_not_a_paid_frozen_plan"
+      },
+      {
+        "entrypoint": "used_input_probe_cli",
+        "rejected_before_credentials": true,
+        "reason": "fresh_formal_packet_cannot_be_smuggled_as_used_probe"
+      }
+    ],
+    "counters": {
+      "credential_boundary": 0,
+      "task_execution": 0,
+      "http_send": 0
+    }
+  },
+  "network_attempts": 0,
+  "provider_requests": 0,
+  "fresh_formal_case_executions": 0
+}

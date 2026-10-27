@@ -1,0 +1,392 @@
+{
+  "local_preparation_verified": true,
+  "paid_admission": false,
+  "blockers": [
+    "legacy_strict_reconciliation_remains_blocked",
+    "conservative_hold_authorization_covers_used_input_probes_only",
+    "formal_cli_cannot_carry_probe_leaf_accounting",
+    "formal_cli_lacks_each_task_manual_review_and_all_failure_stop",
+    "new_formal_packet_external_send_not_authorized_in_this_preparation"
+  ],
+  "fresh_case_graph_tool_model_executions": 0,
+  "provider_requests": 0,
+  "metadata": {
+    "contract": {
+      "semantic_contract_sha256": "f603e394ebf642de0dff04f26d6df76661ab6e96bec63cc32a8b582a0eb9b4cf",
+      "cases_file_sha256": "1afca96ae41a376d5b95d4a6ca80077e3652fabf7072235a40795ffcc475c296",
+      "selected_cases_sha256": "f5c99979e16c07549af44950f4044e33d7d087a2dcbeafa81bb893d5b4ad5e32",
+      "expected_sha256": "0d4b36e68522363ee21029a5473ec25169ba92518fa7e0b5336b515de67ac335",
+      "targets_sha256": "6a5c8116d16f9f472ad90930959525dfc3b4c74aca4f5d67675a1f58a21cc4a1",
+      "input_hashes": [
+        "918ad4b84edc0bf86e119cf2bad4fb1dfb3de0caa35f69d934e68464029cbde7",
+        "e20d3bd5c59b4625d4e837c61113408f89574d289a9666a555985c7ac3079fdd",
+        "27d08f19304f992b0a6f6194346865551273c7b48df2da19eca4b1b1ef49b525",
+        "e795bde8fd62af8986305bc2c63268684d3469968f683e488373526c1ceef512",
+        "e2a2ba14be46b5622bb1efd8bb1182fb8752631beb8adfd06b1952241304b293",
+        "a56c2f4af96b728d1c046a4d0c135b42a81fa1a60a7445e2755d36064a4b9468",
+        "53017960e91cfdf5ad67c884a870a329b3982edaea0a42cd157cb6a751b1bb1f",
+        "220b5819be46dd8dc8cf5565f6b18d954279576c1fe388e4d466e433c29680f9",
+        "a2daeccc71ca13688c8f9fb54ff18af5dc6e75523382be8838aaab2a7a48fa90",
+        "c74034b56aaeb8683df8b75227ecdec5d31a05f44ce8096adcd8bcad8cdf4b6e",
+        "ce53119c414f0ad431674148682b56f07595aa0fa95db810e20f557011027a1f",
+        "1715e71c034e9011e908961ea5d6f31ec283b5433d5f4fc2e21b82b240ddb605",
+        "41b7e1a5e8cc6b69adb7c30b5b5c4601b9f433e9977984bde4b24bee0f38b876",
+        "4bdb1208b627b0193cce832814b6c105f75d96cea607b389878dc89475177ce1",
+        "6c736854d629771c9452cc3eccfe280eb030d992efabfa7865d18d387626a17f",
+        "a80ff3e1639fd97334c643aae9a90317e5d9dcc890b5aa987c2edb34f3088018",
+        "6b1718aa5bf3456ab7b2f68541dbee1a03e314637b046d8d7984db199477b948",
+        "15ab269240d7ba4ec86d47839dddcc2a0c198346745705617f4b243fcccda7ce",
+        "b1fbcd786223272abfbc3fda8aabc3632f0ee47c3154569a587eefe897eecb8d",
+        "52247f5275696881a08a8d8464477d2271537f5aabadd9c96e465eb1d32097df"
+      ],
+      "case_ids": [
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05",
+        "H06",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12",
+        "H13",
+        "H14",
+        "H15",
+        "H16",
+        "H17",
+        "H18",
+        "H19",
+        "H20"
+      ],
+      "diagnosis_tasks": 60,
+      "paired_fixed_tasks": 36,
+      "total_tasks": 96
+    },
+    "totals": {
+      "raw_matrix_items": 70,
+      "scope_matrix_items": 25,
+      "daily_items": 12,
+      "contribution_groups": 11
+    },
+    "coverage": [
+      {
+        "case_id": "H01",
+        "current": {
+          "expected_records": 3,
+          "observed_records": 3,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 3,
+          "observed_records": 3,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H02",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H03",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H04",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H05",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H06",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 1,
+          "missing_records": 1,
+          "complete": false
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H07",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 0,
+          "observed_records": 0,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H08",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 1,
+          "observed_records": 1,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H09",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H10",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H11",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H12",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H13",
+        "current": {
+          "expected_records": 6,
+          "observed_records": 6,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 6,
+          "observed_records": 6,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H14",
+        "current": {
+          "expected_records": 6,
+          "observed_records": 6,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 6,
+          "observed_records": 6,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H15",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H16",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H17",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H18",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H19",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      },
+      {
+        "case_id": "H20",
+        "current": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        },
+        "comparison": {
+          "expected_records": 2,
+          "observed_records": 2,
+          "missing_records": 0,
+          "complete": true
+        }
+      }
+    ],
+    "max_http_all_slots": 192
+  },
+  "budget": {
+    "cumulative_limit": 20000000,
+    "known_tokens": 11049569,
+    "legacy_unknown_hold_tokens": 1051576,
+    "effective_occupied_tokens": 12101145,
+    "remaining_tokens": 7898855,
+    "reference_round_new_tokens": 1155229,
+    "reference_round": "evaluations/results/diagnosis-v14-h01-h20-live-20261025-01",
+    "single_request_upper_bound": 1051576,
+    "estimated_round_plus_final_request_capacity": 14307950,
+    "estimated_margin": 5692050,
+    "double_reference_stress_margin": 4536821,
+    "estimate_not_completion_guarantee": true
+  }
+}

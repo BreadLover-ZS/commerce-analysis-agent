@@ -1,0 +1,17 @@
+{
+  "status": "AUTHORIZED_FIRST_SLOT_PENDING",
+  "formal_plan": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/diagnosis-boundary-v2-formal-U-20261027",
+  "formal_plan_sha256": "07130b3c179ede63f65eded234dc35be8cdf9e2161912c84b75d7b2c5d06a335",
+  "source_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "source_files": 267,
+  "parent_anchor": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/results/model-probe-H07-prior-boundary-20261027-01",
+  "known_tokens": 11049569,
+  "old_unknown_hold_tokens": 1051576,
+  "remaining_tokens": 7898855,
+  "token_limit": 20000000,
+  "authorization_sha256": "4655d21deb3543e26d62a9b4e2838fcd0dbe4faa44b8ffa7a0b50274ac01df4a",
+  "paid_requests_so_far_this_round": 0,
+  "slots_total": 96,
+  "no_automatic_retry": true,
+  "first_failure_stops": true
+}

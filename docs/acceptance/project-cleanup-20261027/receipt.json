@@ -1,0 +1,36 @@
+{
+  "status": "DOCUMENTATION_AND_GENERATED_FILE_CLEANUP_PASS",
+  "date": "2026-10-27",
+  "timezone": "Asia/Shanghai",
+  "report": "docs/63-project-organization-cleanup-20261027.md",
+  "report_sha256": "278b00c204394e3de9ef3bad30a0f7af7a4c0f8b9ed10a008510476047a7c33d",
+  "implementation_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "source_files_unchanged": 267,
+  "removed_files": 3772,
+  "removed_logical_bytes": 68742261,
+  "browser_outputs_archived_and_verified": 9,
+  "original_raw_evidence_files_unchanged": 29777,
+  "initial_git_files_checked": 862,
+  "historical_seals_checked": 19,
+  "historical_seal_entries_checked": 414,
+  "local_links_checked": 365,
+  "anchors_checked": 1,
+  "readme_lines_before_after": [
+    201,
+    122
+  ],
+  "task_lines_before_after": [
+    245,
+    27
+  ],
+  "configuration_and_runtime_dependencies_retained": true,
+  "known_tokens_unchanged": 11122121,
+  "historical_unknown_hold_unchanged": 1051576,
+  "remaining_tokens_unchanged": 7826303,
+  "paid_model_requests": 0,
+  "business_code_modified": false,
+  "new_model_acceptance_claimed": false,
+  "commit_or_push": false,
+  "publication": "UNCOMMITTED_UNPUSHED",
+  "raw_cleanup_record_directory": "evaluations/results/project-cleanup-20261027-01"
+}

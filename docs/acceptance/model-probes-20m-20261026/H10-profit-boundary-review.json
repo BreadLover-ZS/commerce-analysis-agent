@@ -1,0 +1,26 @@
+{
+  "receipt_sha256": "482acdd0cad179ab086dee0290812751bb76d8e2f34081eb82b3167074d8cfef",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "scope": "Expected unsupported-profit boundary on used input; not claiming profit calculation completed or G6 acceptance",
+  "checks": {
+    "remaining_unsupported_profit_retained": true,
+    "no_profit_number_in_facts": true,
+    "cost_absence_explicit": true,
+    "baseline_net_cents_independent_raw": {
+      "current": 530496000,
+      "comparison": 616896000,
+      "delta": -86400000
+    },
+    "net_revenue_never_equated_to_profit": true,
+    "data_status_complete_not_confused_with_answer_incomplete": true,
+    "gap_total": 1,
+    "gap_displayed": 1,
+    "gap_omitted": 0,
+    "all_observations_limitations_and_model_stop_read": true,
+    "one_successful_stop_decision_no_followup": true
+  },
+  "new_http_requests": 1,
+  "new_known_tokens": 5346,
+  "new_unknown": 0
+}

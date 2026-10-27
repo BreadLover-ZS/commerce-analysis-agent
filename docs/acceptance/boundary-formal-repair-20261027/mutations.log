@@ -1,0 +1,9 @@
+lose_boundary_synonym KILLED
+independent_checker_loses_synonym KILLED
+ignore_frozen_boundary_policy KILLED
+accept_failed_manual_review KILLED
+drop_formal_hold_from_capacity KILLED
+reuse_new_input_instead_of_paired_bundle KILLED
+ignore_any_automatic_failure KILLED
+spend_review_after_invalid_draft KILLED
+drop_zero_call_accounting_journal KILLED

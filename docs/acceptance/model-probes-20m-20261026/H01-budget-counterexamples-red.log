@@ -1,0 +1,276 @@
+FFFFFF                                                                   [100%]----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+________ test_explicit_zero_reserve_is_reported_as_four_decision_calls _________
+
+setup = (Settings(app_env='test', agent_mode='live', database_url='sqlite:////private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200...ject at 0x10f149460>, <app.storage.models.User object at 0x10ff633b0>, <app.storage.models.User object at 0x10ff63440>)
+
+    def test_explicit_zero_reserve_is_reported_as_four_decision_calls(setup):
+>       c = context(setup)
+            ^^^^^^^^^^^^^^
+
+tests/test_probe_budget_repair.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_probe_budget_repair.py:30: in context
+    return json.loads(prompt(task, bundle, scope, [], [], gateway.catalog())[1][1])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/diagnosis/planner_v16.py:9: in prompt
+    messages = v15_prompt(task, bundle, scope, steps, evidence, catalog)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/diagnosis/planner_v15.py:50: in prompt
+    context = json.loads(planner_v14.prompt(task, bundle, scope, steps, evidence, catalog)[1][1])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+task = {'id': '184f8eec-5532-4338-a713-ddbfb12c0e20', 'conversation_id': '26fa6702-f65e-458e-b86a-e4f738cab24c', 'query': '分别...4f738cab24c', 'query': '分别列出两期支付金额、退款金额和净销售额，不要解释原因。', 'start_date': '2026-09-01', 'end_date': '2026-09-01', ...}, ...}
+bundle = {'bundle_id': 'e593e0f2-9ebb-4b34-a2da-1259a8cf0ac6', 'bundle_hash': 'fdc41c25589260455593fcd1032b1aafc1406ee6348b7141b05ab2f9a661fe3b', 'schema_version': 1, 'sales_dataset_id': '990f8c66-b49e-498f-80f3-a513d7da911e', ...}
+scope = {'skus': ['A', 'B'], 'objective': None}, steps = [], evidence = []
+catalog = {'inspect_dataset': {'additionalProperties': False, 'properties': {}, 'title': 'InspectArgs', 'type': 'object'}, 'comp...ty': {'const': 'day', 'default': 'day', 'title': 'Granularity', 'type': 'string'}}, 'required': ['filters'], ...}, ...}
+
+    def prompt(task, bundle, scope, steps, evidence, catalog):
+        # Reuse the bounded compressor without mutating any frozen v12 helper.
+        # v12's context builder accepts versioned projections via this independent
+        # context rebinding below; the full v14 obligation table is authoritative.
+        messages = planner_v12.prompt(task, bundle, scope, steps, evidence, catalog)
+        context = json.loads(messages[1][1])
+        context.update(
+            prompt_version="diagnosis-v14",
+>           request_contract=task["parameters"]["answer_contract"],
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            component_obligations=component_obligations(task["query"], evidence, scope),
+            required_evidence_gaps=missing_coverage(task["query"], evidence, scope),
+        )
+E       KeyError: 'answer_contract'
+
+app/diagnosis/planner_v14.py:244: KeyError
+__________ test_legacy_absent_reserve_keeps_three_finalization_slots ___________
+
+setup = (Settings(app_env='test', agent_mode='live', database_url='sqlite:////private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200...ject at 0x10fecb860>, <app.storage.models.User object at 0x1100c9a60>, <app.storage.models.User object at 0x1100ca3f0>)
+
+    def test_legacy_absent_reserve_keeps_three_finalization_slots(setup):
+>       c = context(setup, reserve=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_probe_budget_repair.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_probe_budget_repair.py:30: in context
+    return json.loads(prompt(task, bundle, scope, [], [], gateway.catalog())[1][1])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/diagnosis/planner_v16.py:9: in prompt
+    messages = v15_prompt(task, bundle, scope, steps, evidence, catalog)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/diagnosis/planner_v15.py:50: in prompt
+    context = json.loads(planner_v14.prompt(task, bundle, scope, steps, evidence, catalog)[1][1])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+task = {'id': '894fd925-2953-4c01-976b-21410093813e', 'conversation_id': '439a09cd-cdfa-4569-90f0-565cf53a3159', 'query': '分别...65cf53a3159', 'query': '分别列出两期支付金额、退款金额和净销售额，不要解释原因。', 'start_date': '2026-09-01', 'end_date': '2026-09-01', ...}, ...}
+bundle = {'bundle_id': '2872af8d-9d0f-4c34-bd47-13f3af1b0eac', 'bundle_hash': '9cd07e9a1025c3b60493e6557efd016c0dc67fb829e60b485b2c3b8d4462df49', 'schema_version': 1, 'sales_dataset_id': '40962814-5ddf-4a86-b356-8b68bb4beee2', ...}
+scope = {'skus': ['A', 'B'], 'objective': None}, steps = [], evidence = []
+catalog = {'inspect_dataset': {'additionalProperties': False, 'properties': {}, 'title': 'InspectArgs', 'type': 'object'}, 'comp...ty': {'const': 'day', 'default': 'day', 'title': 'Granularity', 'type': 'string'}}, 'required': ['filters'], ...}, ...}
+
+    def prompt(task, bundle, scope, steps, evidence, catalog):
+        # Reuse the bounded compressor without mutating any frozen v12 helper.
+        # v12's context builder accepts versioned projections via this independent
+        # context rebinding below; the full v14 obligation table is authoritative.
+        messages = planner_v12.prompt(task, bundle, scope, steps, evidence, catalog)
+        context = json.loads(messages[1][1])
+        context.update(
+            prompt_version="diagnosis-v14",
+>           request_contract=task["parameters"]["answer_contract"],
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            component_obligations=component_obligations(task["query"], evidence, scope),
+            required_evidence_gaps=missing_coverage(task["query"], evidence, scope),
+        )
+E       KeyError: 'answer_contract'
+
+app/diagnosis/planner_v14.py:244: KeyError
+____ test_refund_capability_declares_the_gross_amounts_it_actually_returns _____
+
+setup = (Settings(app_env='test', agent_mode='live', database_url='sqlite:////private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200...ject at 0x10eee8bf0>, <app.storage.models.User object at 0x1101013a0>, <app.storage.models.User object at 0x110102c60>)
+
+    def test_refund_capability_declares_the_gross_amounts_it_actually_returns(setup):
+>       c = context(setup)
+            ^^^^^^^^^^^^^^
+
+tests/test_probe_budget_repair.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_probe_budget_repair.py:30: in context
+    return json.loads(prompt(task, bundle, scope, [], [], gateway.catalog())[1][1])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/diagnosis/planner_v16.py:9: in prompt
+    messages = v15_prompt(task, bundle, scope, steps, evidence, catalog)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/diagnosis/planner_v15.py:50: in prompt
+    context = json.loads(planner_v14.prompt(task, bundle, scope, steps, evidence, catalog)[1][1])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+task = {'id': '43b79c0e-e898-45e8-82df-2a3745eb002b', 'conversation_id': '95a39f8b-0356-4acf-a54c-729a6614a718', 'query': '分别...29a6614a718', 'query': '分别列出两期支付金额、退款金额和净销售额，不要解释原因。', 'start_date': '2026-09-01', 'end_date': '2026-09-01', ...}, ...}
+bundle = {'bundle_id': '4e6d4629-1598-4306-bf4a-897c2fd0a25b', 'bundle_hash': '62155025ed1e6ab582c0f7a81b925c16d1269c5089b0e73a00180941227c609b', 'schema_version': 1, 'sales_dataset_id': '40c5fffb-4600-49c6-8d71-7ffea3d7f374', ...}
+scope = {'skus': ['A', 'B'], 'objective': None}, steps = [], evidence = []
+catalog = {'inspect_dataset': {'additionalProperties': False, 'properties': {}, 'title': 'InspectArgs', 'type': 'object'}, 'comp...ty': {'const': 'day', 'default': 'day', 'title': 'Granularity', 'type': 'string'}}, 'required': ['filters'], ...}, ...}
+
+    def prompt(task, bundle, scope, steps, evidence, catalog):
+        # Reuse the bounded compressor without mutating any frozen v12 helper.
+        # v12's context builder accepts versioned projections via this independent
+        # context rebinding below; the full v14 obligation table is authoritative.
+        messages = planner_v12.prompt(task, bundle, scope, steps, evidence, catalog)
+        context = json.loads(messages[1][1])
+        context.update(
+            prompt_version="diagnosis-v14",
+>           request_contract=task["parameters"]["answer_contract"],
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            component_obligations=component_obligations(task["query"], evidence, scope),
+            required_evidence_gaps=missing_coverage(task["query"], evidence, scope),
+        )
+E       KeyError: 'answer_contract'
+
+app/diagnosis/planner_v14.py:244: KeyError
+______________ test_driver_freezes_its_two_http_limit_in_the_task ______________
+
+tmp_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-188/test_driver_freezes_its_two_ht0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11019eea0>
+
+    async def test_driver_freezes_its_two_http_limit_in_the_task(tmp_path, monkeypatch):
+        original = probe.collect
+    
+        def inspect(*args, **kw):
+            record = original(*args, **kw)
+            assert record["task"]["parameters"]["budget"]["max_model_calls"] == 2
+            assert record["task"]["parameters"]["budget"]["decision_call_reserve"] == 0
+            return record
+    
+        monkeypatch.setattr(probe, "collect", inspect)
+>       await check_probe(tmp_path, monkeypatch, "valid", 2)
+
+tests/test_probe_budget_repair.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_diagnosis_probe.py:355: in test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error
+    failure = await module.run(args)
+              ^^^^^^^^^^^^^^^^^^^^^^
+evaluations/diagnosis_probe.py:312: in run
+    record = collect(repo, task["id"], args.group)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (<app.storage.repository.Repository object at 0x110297fb0>, '2e691dc6-98a0-473d-87fc-af2aea7e7bb9', 'fixed')
+kw = {}
+
+    def inspect(*args, **kw):
+        record = original(*args, **kw)
+>       assert record["task"]["parameters"]["budget"]["max_model_calls"] == 2
+E       assert 12 == 2
+
+tests/test_probe_budget_repair.py:56: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  langchain_openai.chat_models._client_utils:_client_utils.py:327 langchain-openai injected a custom httpx transport to apply `http_socket_options`, which disables httpx's proxy auto-detection (HTTP_PROXY, HTTPS_PROXY set in environment). Set `LANGCHAIN_OPENAI_TCP_KEEPALIVE=0` or pass `http_socket_options=()` to restore default proxy behavior, or supply `openai_proxy` / your own `http_client` / `http_async_client` to take full control.
+_________ test_one_call_fixed_probe_refuses_before_loading_credentials _________
+
+tmp_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-188/test_one_call_fixed_probe_refu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110b7caa0>
+
+    async def test_one_call_fixed_probe_refuses_before_loading_credentials(tmp_path, monkeypatch):
+        legacy = tmp_path / "legacy"
+        legacy.mkdir()
+        source = Path("docs/acceptance/diagnosis-v15-h01-h20/cases.json").resolve()
+        (legacy / "run.json").write_text(json.dumps({"cases_file_sha256": file_hash(source)}))
+        (legacy / "progress.jsonl").write_text(json.dumps({"case_id": "H03", "group": "fixed"}) + "\n")
+        monkeypatch.setattr(
+            probe,
+            "load_parent",
+            lambda *a, **kw: {
+                "known_tokens": 4,
+                "frozen_unknown_tokens": HOLD,
+                "confirmed_http_requests": 1,
+                "directory": str(legacy),
+                "legacy_root": str(legacy),
+                "run_id": "local",
+                "parent_failed": False,
+            },
+        )
+    
+        def forbidden(*a, **kw):
+            pytest.fail("probe reached credentials with a structurally insufficient fixed-call budget")
+    
+        monkeypatch.setattr(probe, "live_configuration", forbidden)
+        args = probe.parser().parse_args(
+            [
+                "--parent",
+                str(tmp_path / "hold.json"),
+                "--legacy-root",
+                str(legacy),
+                "--cases",
+                str(source),
+                "--case-id",
+                "H03",
+                "--group",
+                "fixed",
+                "--output",
+                str(tmp_path / "out"),
+                "--max-http",
+                "1",
+                "--max-total-tokens",
+                str(LIMIT),
+                "--allow-paid",
+                "--api-key-env",
+                "NEVER_READ",
+            ]
+        )
+        with pytest.raises(ValueError, match="minimum"):
+>           await probe.run(args)
+
+tests/test_probe_budget_repair.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+evaluations/diagnosis_probe.py:232: in run
+    conf = live_configuration(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+a = (namespace(mode='live', allow_paid=True, provider='DeepSeek', endpoint='https://api.deepseek.com', model='deepseek-fla...equests=1, max_total_tokens=20000000, prior_paid_run=None, charge_paid_run=None, input_price=None, output_price=None),)
+kw = {}
+
+    def forbidden(*a, **kw):
+>       pytest.fail("probe reached credentials with a structurally insufficient fixed-call budget")
+E       Failed: probe reached credentials with a structurally insufficient fixed-call budget
+
+tests/test_probe_budget_repair.py:85: Failed
+__ test_one_refund_query_completes_the_scope_identity_after_ranked_components __
+
+setup = (Settings(app_env='test', agent_mode='live', database_url='sqlite:////private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200...ject at 0x110c45f10>, <app.storage.models.User object at 0x110d37620>, <app.storage.models.User object at 0x110d36330>)
+
+    def test_one_refund_query_completes_the_scope_identity_after_ranked_components(setup):
+        from app.diagnosis.completion_v15 import amount_witness, completion
+    
+        query = "请对每个授权商品分别列出支付金额、退款金额和净销售额的本期值、比较期值及差额；按商品核对净销售额变化贡献并对账。"
+        task = new_probe_task(setup, group="agent", query=query)
+        _, repo, _, _ = setup
+        gateway = DiagnosisToolGateway(repo, repo.claim())
+        scope = {"skus": ["A", "B"], "objective": None}
+        filters = {"skus": scope["skus"]}
+        gateway.invoke("inspect_dataset", {"filters": filters}, "baseline-inspect")
+        gateway.invoke(
+            "compare_periods", {"metric": "net_revenue", "filters": filters}, "baseline-compare"
+        )
+        gateway.invoke("rank_contributors", {"dimension": "sku", "filters": filters}, "rank")
+        assert amount_witness(repo.evidence(task["id"]), scope) is None
+        result = gateway.invoke("analyze_refunds", {"filters": filters}, "refund")
+        for metric in ["gross_revenue", "refund_amount"]:
+            for part in ["current", "comparison", "delta"]:
+                assert f"{metric}.{part}" in result["fact_catalog"]
+        witness = amount_witness(repo.evidence(task["id"]), scope)
+        assert witness and len(witness["fact_refs"]) == 9
+>       assert completion(query, repo.evidence(task["id"]), scope)["status"] == "fulfilled"
+E       AssertionError: assert 'incomplete' == 'fulfilled'
+E         
+E         - fulfilled
+E         + incomplete
+
+tests/test_probe_budget_repair.py:137: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_probe_budget_repair.py::test_explicit_zero_reserve_is_reported_as_four_decision_calls
+FAILED tests/test_probe_budget_repair.py::test_legacy_absent_reserve_keeps_three_finalization_slots
+FAILED tests/test_probe_budget_repair.py::test_refund_capability_declares_the_gross_amounts_it_actually_returns
+FAILED tests/test_probe_budget_repair.py::test_driver_freezes_its_two_http_limit_in_the_task
+FAILED tests/test_probe_budget_repair.py::test_one_call_fixed_probe_refuses_before_loading_credentials
+FAILED tests/test_probe_budget_repair.py::test_one_refund_query_completes_the_scope_identity_after_ranked_components
+6 failed in 5.02s

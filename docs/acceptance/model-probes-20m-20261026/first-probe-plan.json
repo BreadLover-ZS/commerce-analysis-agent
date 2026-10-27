@@ -1,0 +1,14 @@
+{
+  "status": "PREPARED_NOT_EXECUTED",
+  "implementation_sha256": "7ac0cfaa124cbdd78b44676e75756cc63b23ff96039556c8305a952502916734",
+  "case_id": "H03",
+  "group": "fixed",
+  "scope": "previously executed synthetic input regression, not new holdout",
+  "max_http": 2,
+  "max_total_tokens": 20000000,
+  "parent": "docs/acceptance/model-probes-20m-20261026/conservative-hold.json",
+  "output": "evaluations/results/model-probe-H03-fixed-20261026-01",
+  "stop_on_first_failure": true,
+  "legacy_unknown_frozen_tokens": 1051576,
+  "ready_evidence": "docs/acceptance/model-probes-20m-20261026/readiness.json"
+}

@@ -135,6 +135,7 @@ def postgres_setup(tmp_path):
         _env_file=None,
         app_env="test",
         diagnosis_runtime="legacy",
+        answer_boundary_version=1,
         database_url=url,
         data_dir=tmp_path,
     )

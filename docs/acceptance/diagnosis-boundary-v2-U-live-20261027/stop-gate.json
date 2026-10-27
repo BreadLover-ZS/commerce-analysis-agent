@@ -1,0 +1,11 @@
+{
+  "next_slot_blocked": true,
+  "reason": "formal_failed_round_stop_repair_refreeze_required",
+  "failed_receipt_sha256": "6ddff1bbdb90cd888652f66ab7c8fed470ce97b90320adeacc4c33d009d8f78a",
+  "known_tokens": 11122121,
+  "old_unknown_hold": 1051576,
+  "remaining_tokens": 7826303,
+  "next_output_created": false,
+  "provider_requests_in_gate_check": 0,
+  "failed_leaf_unclaimed": true
+}

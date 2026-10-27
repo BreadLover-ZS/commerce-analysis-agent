@@ -1,0 +1,145 @@
+{
+  "receipt_sha256": "dc209b2130b70b3a7e40570855302560e5a5d9871a90411efde9d6b947479b44",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "scope": "Previously executed synthetic H13 diagnosis regression; not fresh holdout or G6",
+  "checks": {
+    "per_sku_totals": {
+      "passed": true,
+      "witnesses": [
+        {
+          "sku": "T131",
+          "period": "current",
+          "net_cents": 887220000,
+          "reported": "8872200.00"
+        },
+        {
+          "sku": "T131",
+          "period": "comparison",
+          "net_cents": 1523340000,
+          "reported": "15233400.00"
+        },
+        {
+          "sku": "T132",
+          "period": "current",
+          "net_cents": 1188540000,
+          "reported": "11885400.00"
+        },
+        {
+          "sku": "T132",
+          "period": "comparison",
+          "net_cents": 853740000,
+          "reported": "8537400.00"
+        }
+      ]
+    },
+    "all_applicable_daily_cells": {
+      "passed": true,
+      "count": 12,
+      "witnesses": [
+        {
+          "sku": "T131",
+          "period": "current",
+          "date": "2026-12-13",
+          "net_cents": 284580000,
+          "reported": "2845800.00"
+        },
+        {
+          "sku": "T131",
+          "period": "current",
+          "date": "2026-12-14",
+          "net_cents": 295740000,
+          "reported": "2957400.00"
+        },
+        {
+          "sku": "T131",
+          "period": "current",
+          "date": "2026-12-15",
+          "net_cents": 306900000,
+          "reported": "3069000.00"
+        },
+        {
+          "sku": "T131",
+          "period": "comparison",
+          "date": "2026-11-12",
+          "net_cents": 507780000,
+          "reported": "5077800.00"
+        },
+        {
+          "sku": "T131",
+          "period": "comparison",
+          "date": "2026-11-13",
+          "net_cents": 507780000,
+          "reported": "5077800.00"
+        },
+        {
+          "sku": "T131",
+          "period": "comparison",
+          "date": "2026-11-14",
+          "net_cents": 507780000,
+          "reported": "5077800.00"
+        },
+        {
+          "sku": "T132",
+          "period": "current",
+          "date": "2026-12-13",
+          "net_cents": 396180000,
+          "reported": "3961800.00"
+        },
+        {
+          "sku": "T132",
+          "period": "current",
+          "date": "2026-12-14",
+          "net_cents": 396180000,
+          "reported": "3961800.00"
+        },
+        {
+          "sku": "T132",
+          "period": "current",
+          "date": "2026-12-15",
+          "net_cents": 396180000,
+          "reported": "3961800.00"
+        },
+        {
+          "sku": "T132",
+          "period": "comparison",
+          "date": "2026-11-12",
+          "net_cents": 284580000,
+          "reported": "2845800.00"
+        },
+        {
+          "sku": "T132",
+          "period": "comparison",
+          "date": "2026-11-13",
+          "net_cents": 284580000,
+          "reported": "2845800.00"
+        },
+        {
+          "sku": "T132",
+          "period": "comparison",
+          "date": "2026-11-14",
+          "net_cents": 284580000,
+          "reported": "2845800.00"
+        }
+      ]
+    },
+    "daily_coverage": {
+      "passed": true,
+      "reason": "Two SKUs, both explicit 3-day periods; all four SKU/period groups have expected=observed=3, missing=0"
+    },
+    "completion_and_boundaries": {
+      "passed": true,
+      "reason": "target_covered, fulfilled, complete; no omissions/open questions; actual daily variability distinguished from long-term trends or causes"
+    },
+    "all_observations_and_limitations_reviewed": {
+      "passed": true,
+      "reason": "T131 current days differ, T132 current days equal; nonadjacent periods and simulation retained. The step-specific unverified coverage candidate is not promoted to a global data gap."
+    },
+    "call_and_scope_audit": {
+      "passed": true,
+      "reason": "rank_contributors then one daily drilldown per authorized SKU; three successful model decisions, fresh information each time, no corrective calls or extra stop call"
+    }
+  },
+  "new_http_requests": 3,
+  "new_known_tokens": 20823
+}

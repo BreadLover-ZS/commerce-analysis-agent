@@ -1,0 +1,189 @@
+{
+  "original_files_sha256": {
+    "cases.json": "c9763571071fb638d3557b72d89dc5dffd7fb815fbf729e972277c741c539b57",
+    "answer-obligations.json": "265fc3f6959f78c83d0d6e930d3e3bfdfd31806befa6bb404bf9e9ca3d2a9cd4",
+    "semantic-contract.json": "bbc8b08ca8e6648ce7d6c5b3c39b7d8e2abb60c4bec66b73755b8025e074254f"
+  },
+  "H07_case": {
+    "case_id": "H07",
+    "split": "holdout",
+    "facet": "pre_activation_comparison_boundary",
+    "query": "比较期早于全部商品启用日期，请给出本期已有净销售额，并说明比较期不可比较的边界，不补造比较期零值。",
+    "execution": "diagnostic",
+    "sales": {
+      "schema_version": 1,
+      "products": [
+        {
+          "sku": "U071",
+          "name": "保温杯",
+          "category": "饮具",
+          "active_from": "2027-02-24"
+        },
+        {
+          "sku": "U072",
+          "name": "收纳包",
+          "category": "收纳",
+          "active_from": "2027-02-24"
+        }
+      ],
+      "daily_sales": [
+        {
+          "sku": "U071",
+          "day": "2027-02-24",
+          "paid_units": 167562,
+          "refunded_units": 46980,
+          "revenue_cents": 126376200,
+          "refund_cents": 46980000
+        },
+        {
+          "sku": "U072",
+          "day": "2027-02-24",
+          "paid_units": 89262,
+          "refunded_units": 0,
+          "revenue_cents": 110716200,
+          "refund_cents": 0
+        }
+      ]
+    },
+    "period": {
+      "start": "2027-02-24",
+      "end": "2027-02-24"
+    },
+    "comparison_period": {
+      "start": "2027-01-24",
+      "end": "2027-01-24"
+    },
+    "sources": [
+      "sales"
+    ],
+    "scope_skus": [
+      "U071",
+      "U072"
+    ],
+    "inventory": null,
+    "documents": [],
+    "expected": {
+      "outcome": "gap",
+      "net_cents": 190112400,
+      "comparison_net_cents": 0,
+      "delta_cents": null,
+      "comparable": false,
+      "required_tools": [],
+      "forbidden_metrics": [
+        "profit",
+        "conversion_rate",
+        "roi",
+        "cohort_refund_rate"
+      ],
+      "critical": false,
+      "positive": true,
+      "baseline_capability": "common",
+      "http_status": null,
+      "task_statuses": [
+        "succeeded",
+        "degraded"
+      ],
+      "stop_reasons": [
+        "evidence_gap"
+      ],
+      "required_assertions": [
+        "immutable_source_versions",
+        "facts_match_raw_records",
+        "bounded_execution",
+        "missing_is_not_zero",
+        "no_full_attribution_when_incomparable"
+      ],
+      "accepted_conclusions": [
+        "仅按固定版本和记账事实报告；未获资料支持的业务原因保持未证实。"
+      ],
+      "forbidden_conclusions": [
+        "把净销售额称作利润。",
+        "把记账期退款件数占比称作最终订单退款率。",
+        "没有证据却声称已证明质量、服务或流量原因。"
+      ]
+    },
+    "harness": {
+      "mode": "none",
+      "clarification_choice": null
+    }
+  },
+  "H07_author_obligations": {
+    "case_id": "H07",
+    "query": "比较期早于全部商品启用日期，请给出本期已有净销售额，并说明比较期不可比较的边界，不补造比较期零值。",
+    "authorized_skus": [
+      "U071",
+      "U072"
+    ],
+    "final_skus": [
+      "U071",
+      "U072"
+    ],
+    "excluded_skus": [],
+    "contribution_dimension": null,
+    "period": {
+      "start": "2027-02-24",
+      "end": "2027-02-24"
+    },
+    "comparison_period": {
+      "start": "2027-01-24",
+      "end": "2027-01-24"
+    },
+    "component_metrics": [],
+    "component_periods": [],
+    "raw_matrix": [],
+    "scope_matrix": [
+      {
+        "sku": "U071,U072",
+        "metric": "net_revenue",
+        "part": "current",
+        "unit": "CNY",
+        "raw_integer": 190112400,
+        "scale": 100,
+        "status": "required"
+      }
+    ],
+    "daily_matrix": [],
+    "raw_contributions": [],
+    "selected_aggregate_expected": {
+      "net_cents": 190112400,
+      "comparison_net_cents": 0,
+      "comparable": false,
+      "delta_cents": null
+    },
+    "authorized_aggregate_expected": {
+      "net_cents": 190112400,
+      "comparison_net_cents": 0,
+      "comparable": false,
+      "delta_cents": null
+    },
+    "required_assertions": [
+      "immutable_source_versions",
+      "facts_match_raw_records",
+      "bounded_execution",
+      "missing_is_not_zero",
+      "no_full_attribution_when_incomparable"
+    ],
+    "expected_stop_reasons": [
+      "evidence_gap"
+    ],
+    "mandatory_answer_assertions": [
+      "v15_required_values_displayed",
+      "v15_completion_not_self_certified",
+      "v15_boundary_requires_source_proof",
+      "v15_execution_failure_not_complete",
+      "v15_requested_dimensions",
+      "v15_expected_answer_status"
+    ],
+    "gap_inventory_policy": {
+      "all_pending_items_required": true,
+      "display_limit": 20,
+      "if_more_than_20": "full unique details, exact total/displayed/omitted, visible omission disclosure",
+      "force_budget_failure": false
+    },
+    "repair_coverage": [
+      "R2"
+    ]
+  },
+  "fresh_case_executions": 0,
+  "provider_requests": 0
+}

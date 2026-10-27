@@ -1,0 +1,170 @@
+..................FF----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+_ test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error[valid-2] _
+
+tmp_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-224/test_complete_one_task_probe_h0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110a42f30>
+mode = 'valid', expected_http = 2
+
+    @pytest.mark.parametrize(
+        "mode,expected_http", [("valid", 2), ("schema", 1), ("action", 1), ("zero", 0)]
+    )
+    async def test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error(
+        tmp_path, monkeypatch, mode, expected_http
+    ):
+        from evaluations import diagnosis_probe as module
+        from evaluations.diagnosis_probe_accounting import HOLD, LIMIT, file_hash
+    
+        source = Path("docs/acceptance/diagnosis-v15-h01-h20/cases.json").resolve()
+        case_id = "H03"
+        legacy = tmp_path / "legacy"
+        legacy.mkdir()
+        group = "fixed"
+        (legacy / "run.json").write_text(json.dumps({"cases_file_sha256": file_hash(source)}))
+        (legacy / "progress.jsonl").write_text(json.dumps({"case_id": case_id, "group": group}) + "\n")
+        parent = {
+            "known_tokens": 4,
+            "frozen_unknown_tokens": HOLD,
+            "confirmed_http_requests": 1,
+            "directory": str(legacy),
+            "legacy_root": str(legacy),
+            "run_id": "local-base",
+            "parent_failed": False,
+        }
+        monkeypatch.setattr(module, "load_parent", lambda *a, **kw: copy.deepcopy(parent))
+        monkeypatch.setenv("PROBE_TEST_KEY", "offline-key")
+        if mode == "zero":
+            # Fault injection: an operator cancels before the first model call.
+            # Accounting remains valid at zero while quality must remain FAIL.
+            created = {}
+            original_new_task = module.new_task
+    
+            def new_task(repo, user, *a, **kw):
+                task = original_new_task(repo, user, *a, **kw)
+                created.update(task_id=task["id"], user_id=user.id)
+                return task
+    
+            async def cancelled(repo, settings, **kwargs):
+                repo.cancel(created["task_id"], created["user_id"])
+    
+            monkeypatch.setattr(module, "new_task", new_task)
+            monkeypatch.setattr(module, "execute", cancelled)
+        requests = []
+    
+        async def transport(request):
+            requests.append(request)
+            if len(requests) == 1:
+                value = {"analysis": [], "recommendations": []}
+                if mode == "schema":
+                    value["analysis"] = ["not_registered"]
+                elif mode == "action":
+                    value["recommendations"] = [
+                        {"action_id": "forged", "precondition_id": "forged", "scope_skus": []}
+                    ]
+            else:
+                assert mode == "valid", "failed first response must not spend again"
+                value = {
+                    "unsupported_claim_ids": [],
+                    "unsupported_limitation_indices": [],
+                    "explanation": "local mock",
+                }
+            return completion(value)
+    
+        original = httpx.AsyncClient
+    
+        class OfflineClient(original):
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs, transport=httpx.MockTransport(transport))
+    
+>       monkeypatch.setattr(module.httpx, "AsyncClient", OfflineClient)
+                            ^^^^^^^^^^^^
+E       AttributeError: module 'evaluations.diagnosis_probe' has no attribute 'httpx'
+
+tests/test_diagnosis_probe.py:331: AttributeError
+_ test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error[schema-1] _
+
+tmp_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-224/test_complete_one_task_probe_h1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1119327b0>
+mode = 'schema', expected_http = 1
+
+    @pytest.mark.parametrize(
+        "mode,expected_http", [("valid", 2), ("schema", 1), ("action", 1), ("zero", 0)]
+    )
+    async def test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error(
+        tmp_path, monkeypatch, mode, expected_http
+    ):
+        from evaluations import diagnosis_probe as module
+        from evaluations.diagnosis_probe_accounting import HOLD, LIMIT, file_hash
+    
+        source = Path("docs/acceptance/diagnosis-v15-h01-h20/cases.json").resolve()
+        case_id = "H03"
+        legacy = tmp_path / "legacy"
+        legacy.mkdir()
+        group = "fixed"
+        (legacy / "run.json").write_text(json.dumps({"cases_file_sha256": file_hash(source)}))
+        (legacy / "progress.jsonl").write_text(json.dumps({"case_id": case_id, "group": group}) + "\n")
+        parent = {
+            "known_tokens": 4,
+            "frozen_unknown_tokens": HOLD,
+            "confirmed_http_requests": 1,
+            "directory": str(legacy),
+            "legacy_root": str(legacy),
+            "run_id": "local-base",
+            "parent_failed": False,
+        }
+        monkeypatch.setattr(module, "load_parent", lambda *a, **kw: copy.deepcopy(parent))
+        monkeypatch.setenv("PROBE_TEST_KEY", "offline-key")
+        if mode == "zero":
+            # Fault injection: an operator cancels before the first model call.
+            # Accounting remains valid at zero while quality must remain FAIL.
+            created = {}
+            original_new_task = module.new_task
+    
+            def new_task(repo, user, *a, **kw):
+                task = original_new_task(repo, user, *a, **kw)
+                created.update(task_id=task["id"], user_id=user.id)
+                return task
+    
+            async def cancelled(repo, settings, **kwargs):
+                repo.cancel(created["task_id"], created["user_id"])
+    
+            monkeypatch.setattr(module, "new_task", new_task)
+            monkeypatch.setattr(module, "execute", cancelled)
+        requests = []
+    
+        async def transport(request):
+            requests.append(request)
+            if len(requests) == 1:
+                value = {"analysis": [], "recommendations": []}
+                if mode == "schema":
+                    value["analysis"] = ["not_registered"]
+                elif mode == "action":
+                    value["recommendations"] = [
+                        {"action_id": "forged", "precondition_id": "forged", "scope_skus": []}
+                    ]
+            else:
+                assert mode == "valid", "failed first response must not spend again"
+                value = {
+                    "unsupported_claim_ids": [],
+                    "unsupported_limitation_indices": [],
+                    "explanation": "local mock",
+                }
+            return completion(value)
+    
+        original = httpx.AsyncClient
+    
+        class OfflineClient(original):
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs, transport=httpx.MockTransport(transport))
+    
+>       monkeypatch.setattr(module.httpx, "AsyncClient", OfflineClient)
+                            ^^^^^^^^^^^^
+E       AttributeError: module 'evaluations.diagnosis_probe' has no attribute 'httpx'
+
+tests/test_diagnosis_probe.py:331: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_diagnosis_probe.py::test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error[valid-2]
+FAILED tests/test_diagnosis_probe.py::test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error[schema-1]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 2 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+2 failed, 18 passed in 2.48s

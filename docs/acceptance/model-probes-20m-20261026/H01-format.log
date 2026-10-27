@@ -1,0 +1,46 @@
+unformatted: File would be reformatted
+   --> docs/acceptance/model-probes-20m-20261026/check_stop_mutations.py:89:16
+    |
+88  |
+    - MUTANTS.extend([
+    -     ("task_http_budget_mismatch", "evaluations/diagnosis_probe.py", "max_model_calls=args.max_http,", "max_model_calls=12,", "tests/test_probe_budget_repair.py::test_driver_freezes_its_two_http_limit_in_the_task"),
+    -     ("wrong_decision_reserve", "app/diagnosis/planner_budget.py", 'reserve = budget.get("decision_call_reserve", 3)', "reserve = 3", "tests/test_probe_budget_repair.py::test_explicit_zero_reserve_is_reported_as_four_decision_calls"),
+    -     ("omit_actual_gross_capability", "app/diagnosis/planner_v16.py", '"scope.gross_revenue.current/comparison/delta",', '"scope.unknown.current/comparison/delta",', "tests/test_probe_budget_repair.py::test_refund_capability_declares_the_gross_amounts_it_actually_returns"),
+    -     ("accept_structurally_insufficient_budget", "evaluations/diagnosis_probe.py", "if limit < minimum:", "if False:", "tests/test_probe_budget_repair.py::test_one_call_fixed_probe_refuses_before_loading_credentials"),
+    - ])
+89  + MUTANTS.extend(
+90  +     [
+91  +         (
+92  +             "task_http_budget_mismatch",
+93  +             "evaluations/diagnosis_probe.py",
+94  +             "max_model_calls=args.max_http,",
+95  +             "max_model_calls=12,",
+96  +             "tests/test_probe_budget_repair.py::test_driver_freezes_its_two_http_limit_in_the_task",
+97  +         ),
+98  +         (
+99  +             "wrong_decision_reserve",
+100 +             "app/diagnosis/planner_budget.py",
+101 +             'reserve = budget.get("decision_call_reserve", 3)',
+102 +             "reserve = 3",
+103 +             "tests/test_probe_budget_repair.py::test_explicit_zero_reserve_is_reported_as_four_decision_calls",
+104 +         ),
+105 +         (
+106 +             "omit_actual_gross_capability",
+107 +             "app/diagnosis/planner_v16.py",
+108 +             '"scope.gross_revenue.current/comparison/delta",',
+109 +             '"scope.unknown.current/comparison/delta",',
+110 +             "tests/test_probe_budget_repair.py::test_refund_capability_declares_the_gross_amounts_it_actually_returns",
+111 +         ),
+112 +         (
+113 +             "accept_structurally_insufficient_budget",
+114 +             "evaluations/diagnosis_probe.py",
+115 +             "if limit < minimum:",
+116 +             "if False:",
+117 +             "tests/test_probe_budget_repair.py::test_one_call_fixed_probe_refuses_before_loading_credentials",
+118 +         ),
+119 +     ]
+120 + )
+121 |
+    |
+
+1 file would be reformatted, 205 files already formatted

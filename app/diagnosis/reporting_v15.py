@@ -2,12 +2,15 @@
 
 from decimal import Decimal
 
-from app.diagnosis.completion_v15 import amount_witness, missing_coverage
 from app.diagnosis.inputs import digest
 from app.diagnosis.schemas_v4 import DiagnosticReportV4
 
 
 def contract(task):
+    from app.commerce.answer_versions import completion_module
+
+    semantic = completion_module(task["parameters"])
+    amount_witness, missing_coverage = semantic.amount_witness, semantic.missing_coverage
     from app.diagnosis.reporting import report_contract
 
     keys, previous_findings, _, _ = report_contract({**task, "graph_version": "diagnosis-v14"})

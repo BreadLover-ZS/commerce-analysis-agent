@@ -1,0 +1,12 @@
+{
+  "passed": 19,
+  "runtime": "v16/fixed6/answer_boundary_version2",
+  "agent_mode": "demo",
+  "provider_requests": 0,
+  "raw_images_directory": "evaluations/results/boundary-formal-repair-local-20261027-02/browser-images",
+  "restored_previously_clean_tracked_images": [
+    "docs/images/commerce-analysis-desktop.png",
+    "docs/images/workbench-create.png",
+    "docs/images/workbench-report.png"
+  ]
+}

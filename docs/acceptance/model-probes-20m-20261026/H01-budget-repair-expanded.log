@@ -1,0 +1,43 @@
+...............FF
+=================================== FAILURES ===================================
+___ test_structural_minimum_uses_actual_request_and_coverage[H01-agent-2-2] ____
+
+case_id = 'H01', group = 'agent', cap = 2, minimum = 2
+
+    @pytest.mark.parametrize(
+        "case_id,group,cap,minimum",
+        [
+            ("H01", "agent", 2, 2),
+            ("H13", "agent", 4, 3),
+            ("H03", "fixed", 2, 2),
+            ("H06", "agent", 1, 0),
+        ],
+    )
+    def test_structural_minimum_uses_actual_request_and_coverage(case_id, group, cap, minimum):
+>       from evaluations.diagnosis_cases import DiagnosisCase
+E       ImportError: cannot import name 'DiagnosisCase' from 'evaluations.diagnosis_cases' (/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/diagnosis_cases.py). Did you mean: 'diagnosis_cases'?
+
+tests/test_probe_budget_repair.py:173: ImportError
+___ test_structural_minimum_uses_actual_request_and_coverage[H13-agent-4-3] ____
+
+case_id = 'H13', group = 'agent', cap = 4, minimum = 3
+
+    @pytest.mark.parametrize(
+        "case_id,group,cap,minimum",
+        [
+            ("H01", "agent", 2, 2),
+            ("H13", "agent", 4, 3),
+            ("H03", "fixed", 2, 2),
+            ("H06", "agent", 1, 0),
+        ],
+    )
+    def test_structural_minimum_uses_actual_request_and_coverage(case_id, group, cap, minimum):
+>       from evaluations.diagnosis_cases import DiagnosisCase
+E       ImportError: cannot import name 'DiagnosisCase' from 'evaluations.diagnosis_cases' (/Users/zzds/Workspace/gitStore/commerce-analysis-agent/evaluations/diagnosis_cases.py). Did you mean: 'diagnosis_cases'?
+
+tests/test_probe_budget_repair.py:173: ImportError
+=========================== short test summary info ============================
+FAILED tests/test_probe_budget_repair.py::test_structural_minimum_uses_actual_request_and_coverage[H01-agent-2-2]
+FAILED tests/test_probe_budget_repair.py::test_structural_minimum_uses_actual_request_and_coverage[H13-agent-4-3]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 2 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+2 failed, 15 passed in 4.64s

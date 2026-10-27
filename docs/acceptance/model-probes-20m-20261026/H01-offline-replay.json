@@ -1,0 +1,71 @@
+{
+  "implementation_sha256": "5ff52e2142c408817a3ed1e42af003e76e0cb8218f8ff27740fd60de14673ad4",
+  "original_failed_receipt_sha256": "560aca600dc50b35fd79bf5ca0df0d3f3023dd2b0ae1b36c1370764290429bbb",
+  "actual_provider_requests": 0,
+  "original_paid_receipt_modified": false,
+  "mock_usage_not_added_to_user_accounting": true,
+  "rows": [
+    {
+      "variant": "original_order",
+      "actual_provider_requests": 0,
+      "mock_sdk_calls": 2,
+      "automatic_passed": false,
+      "completion": "incomplete",
+      "remaining_work": [
+        "accounting_amount_identity"
+      ],
+      "prompt_budgets": [
+        {
+          "tokens_before_soft_stop": 60000,
+          "model_calls": 2,
+          "decision_calls": 2,
+          "tool_calls": 8,
+          "decision_steps": 8,
+          "decision_call_reserve": 0,
+          "current_request_included": true
+        },
+        {
+          "tokens_before_soft_stop": 59996,
+          "model_calls": 1,
+          "decision_calls": 1,
+          "tool_calls": 7,
+          "decision_steps": 7,
+          "decision_call_reserve": 0,
+          "current_request_included": true
+        }
+      ],
+      "receipt": "evaluations/results/H01-budget-offline-repair-20261026-01/original_order/receipt.json",
+      "simulated_usage_not_billable": true
+    },
+    {
+      "variant": "efficient_order",
+      "actual_provider_requests": 0,
+      "mock_sdk_calls": 2,
+      "automatic_passed": true,
+      "completion": "fulfilled",
+      "remaining_work": [],
+      "prompt_budgets": [
+        {
+          "tokens_before_soft_stop": 60000,
+          "model_calls": 2,
+          "decision_calls": 2,
+          "tool_calls": 8,
+          "decision_steps": 8,
+          "decision_call_reserve": 0,
+          "current_request_included": true
+        },
+        {
+          "tokens_before_soft_stop": 59996,
+          "model_calls": 1,
+          "decision_calls": 1,
+          "tool_calls": 7,
+          "decision_steps": 7,
+          "decision_call_reserve": 0,
+          "current_request_included": true
+        }
+      ],
+      "receipt": "evaluations/results/H01-budget-offline-repair-20261026-01/efficient_order/receipt.json",
+      "simulated_usage_not_billable": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "implementation_sha256": "6a62858462e5fe8a7ac4dce3b79c00de51389c9b8c949cc3eecb87357c41e432",
+  "source_files": 254,
+  "prior_paid_core_files_verified": 56,
+  "frozen_source_sets_verified": 5,
+  "original_history_files_verified": 199,
+  "repair_readiness_evidence_unchanged": true,
+  "simple_secret_pattern_scan_files": 87,
+  "simple_secret_pattern_matches": 0,
+  "provider_requests_in_this_check": 0,
+  "not_a_complete_secret_audit": true
+}

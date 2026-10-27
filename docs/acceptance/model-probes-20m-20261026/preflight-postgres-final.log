@@ -1,0 +1,10 @@
+Isolated PostgreSQL version: 16.2
+........................................................................ [  5%]
+........................................................................ [ 10%]
+........................................................................ [ 16%]
+......................................................................----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/Users/zzds/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:380: KeyboardInterrupt
+(to show a full traceback on KeyboardInterrupt use --full-trace)
+286 passed in 54.64s

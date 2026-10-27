@@ -1,85 +1,14 @@
 # 电商运营分析助手 | commerce-analysis-agent
 
-2026-10-26完成独立模型前预检，默认诊断v16/固定v6。初始5条反例复现失败，修复否定解释约束、最终报告重校验、正式入口冻结、证书链路及祖先题源去重；最终1285项完整后端（含隔离PG）、19项串行Chrome、32次旧Q回放和9种缺陷注入通过，267份旧评分及199份核心原件未变。代码本地PASS；实际历史UNKNOWN仍BLOCKED，余额距下一次保守预占差6238 token，新版本模型效果UNTESTED。本轮提供方调用0、额度不变，G6未放行、G7排除。修复与配套材料合为一个提交；验收回执保留当时的未发布快照，后续提交和推送以Git记录及远端SHA核对为准。详见[53号预检与教训](docs/53-pre-model-preflight-and-lessons-20261026.md)；以下保留历史快照。
+面向经营复盘与诊断的 Agent 项目：程序计算业务事实，模型提出核查路径与待验证解释，报告保留来源、版本、用量和限制。技术与本地运行方式见下文。
 
-2026-10-26按51号方案完成v16/固定v5本地修复：报告原子组合与容量保护、计量发送协议v2、双入口NOT_SENT及追加式对账验证器已落地。最终隔离PostgreSQL1059项、串行Chrome19项、5种缺陷注入通过；267份历史评分及199份核心文件未变。实际v15历史拒绝缺直接调用关联，仍BLOCKED且不生成证书；真实模型新增调用0，1200万额度不变、G6未放行、G7排除，未提交推送。详见[52号修复验收](docs/52-v16-repair-and-local-validation-20261026.md)；以下为历史快照。
+- [文档导航](docs/README.md)：设计、学习、操作与验收入口。
+- [当前状态](docs/status.md)：实现、验证、费用及尚未解决的问题。
+- [当前待办](TASK.md)：下一步开发与验收要求。
+- [历史索引](docs/history/README.md)：分阶段报告及整理前入口快照。
+- [文件保留与清理规则](docs/project-files.md)：源码、依赖、账本与可再生产物。
 
-2026-10-26 v16修复方案已形成：覆盖报告容量、未来发送前拒绝分类及历史UNKNOWN追加式安全对账；15项局部原型检查通过，35类修复验收反例已列明。业务修复尚未实施，原始账本/成绩不改，历史证据不足继续阻断；真实模型新增调用0、累计上限仍1200万。详见[51号修复方案](docs/51-v16-repair-plan-and-confidence-gates-20261026.md)。
-
-2026-10-26 v15真实模型验证已停止并审查已有结果：计划96 Task，按原1200万累计预算在75份后发送前拒绝；自动与作者侧AI审查交集72/75。固定H03两份章节容量异常无报告，H13第三次日序列未答齐且暴露发送前预算拒绝误记Task UNKNOWN；21份H14—H20未执行。累计10,954,662/12,000,000 token、1576 HTTP；标准审计/扣费承接受阻，未修账、未增额、未额外付费重试。G6未放行、G7排除，详见[50号部分正式结果](docs/50-v15-formal-validation-budget-stop-20261026.md)；以下为历史快照。
-
-2026-10-25按48号方案完成R1—R4本地修复：默认诊断v15/schema4/answer-contract-v4及固定复盘v4，安全提议纠错、独立答复完成度、金额见证和比较期支付金额直接展示已落地。925项完整PG/HTTP、19项Chrome、59次开发/回归及32次旧Q本地回放通过；v11/v14各96份评分未变。新T题包20题/96 Task已冻结且未执行，本轮真实模型请求0、额度不变；G6未放行、G7排除，未提交推送。详见[49号修复验收](docs/49-v15-repair-and-local-validation-20261025.md)。以下保留阶段快照。
-
-2026-10-25 v14真实正式轮完成：用户授权1200万token后完整执行96 Task；原自动83/96、诊断47/60、正向41/54、固定自动36/36、关键6/6。作者侧严格审查91/96、交集80/96，G6未放行。新增153 HTTP/1,155,229 token，累计9,768,379/12,000,000，UNKNOWN0；完整账本与96份审查通过导入。两次真实漏答、工具路径/停止契约争议及固定展示缺口分别保留，未改评分或付费重跑；Q输入已执行，不能再当新保留集，G7排除。详见[47号验收](docs/47-v14-formal-acceptance-20261025.md)，材料未提交推送；以下为阶段快照。
-
-2026-10-25代码预检完成：新增诊断v14/answer-contract-v3，修复对象排除、贡献维度、范围汇总义务、已保存模型响应恢复及正式启动预算保护；869项完整后端、18项Chrome、59次开发/回归及21条独立Worker回放通过，旧96份评分不变。本轮真实提供方请求0；新v14正式20题/96 Task仍未执行，旧v13冻结源码已失效。预算估计缺口1,004,521 token，未增额；G6未放行、G7排除。详见[46号预检结果](docs/46-pre-model-code-preflight-results-20261025.md)；本轮修复与配套材料合为一个提交，推送状态以Git及远端SHA核验为准；以下保留阶段快照。
-
-2026-10-25正式轮准备：v13新20题／96 Task题包已冻结，含64项逐对象指标、12项每日事实及11个贡献组；29项冻结测试、15项元数据反例和零请求作者预检通过。题包尚未执行，本轮付费新增0，应用源码及旧题包/评分/账本不变。预算估计累计11,004,521，高于现有1,000万上限1,004,521，未增额；G6未放行、G7排除。材料与边界见[44号准备记录](docs/44-v13-formal-packet-preparation-20261025.md)，本轮尚未提交推送。
-
-2026-10-23本轮修复：按[42号方案](docs/42-v13-request-obligation-repair-plan.md)完成41号A01—A04，新增诊断v13/schema3/注册表6；对象排除、逐商品金额/件数、贡献维度与完整缺口均已接入。13条独立Worker回放、59个离线Task、18项Chrome及原始行算术复验通过；最终786项PG/HTTP通过，详见[43号修复验收](docs/43-v13-request-obligation-repair-and-validation.md)。旧v11正式96份评分逐项不变，本轮付费新增0，累计8,613,150/10,000,000 token。v12旧冻结指纹已失效，v13正式模型效果仍未验证，G6未放行、G7排除。本轮修复与验收材料按用户要求纳入同一提交，推送结果以Git记录与远端SHA核验为准；以下按阶段保留历史记录。
-
-2026-10-23修复前深度验收：历史提交4af0181的755项PG/HTTP、17项Chrome及构建通过，但新增反例复现3类P1（排除对象选错、逐商品义务漏登、贡献维度未校验）及1项P2缺口截断。**G0—G6整体验收不通过**；v12真实模型正式轮未执行，本轮付费新增0，业务代码未改、G7排除。详见[41号验收报告](docs/41-v12-deep-local-acceptance.md)。
-
-2026-10-23前轮v12修复快照：按39号结果新增诊断v12（schema2/注册表5），修复局部不适用误作全局缺口、字面比较强制动态核查，并补充批量能力/剩余额度与紧凑上下文。
-最终755项PG/HTTP、59个离线Task及6项Chrome均通过；新20题/96 Task计划已冻结，详见[40号修复记录](docs/40-v12-planning-completion-repair-and-validation.md)。本轮付费新增0，真实模型v12尚未运行；G6仍未放行，G7排除。
-
-2026-10-23最新正式结果：v11完整96 Task已执行、审计及逐份作者侧AI审查。诊断53/60、正向47/54、固定36/36、关键6/6，G6仍未放行。
-累计8,613,150/10,000,000 token、1288次HTTP、未知0；H01漏答、H05停止口径及H08报告门禁失败保留，详见[39号验收](docs/39-v11-formal-acceptance.md)。下文各批次记录为其阶段快照。
-
-2026-10-23执行前历史修复快照：按37号方案完成诊断v11/注册表5、固定答复v3的必答项、上下文、建议前提及自动收尾修复，旧版本继续恢复。
-728项PG/HTTP、59 Task离线及6项Chrome通过；新20题/96 Task计划已冻结，提供方新增请求0；当前真实模型正式结果仍为v10未放行。验证与剩余出口见[38号记录](docs/38-v11-request-contract-repair-and-validation.md)。
-
-产品名：**电商运营分析助手**；项目目录/仓库名：`commerce-analysis-agent`。
-完整介绍名：**电商运营分析与竞品研究 Agent 系统**。
-命名与迁移记录见 [项目命名](docs/10-project-naming.md)。
-
-最新正式轮（2026-10-22）：用户已批准累计900万token，v10完整96 Task已执行、审计及逐份作者侧AI审查完成。
-自动92/96，诊断共同通过54/60、正向48/54（88.89%）、固定27/36、关键6/6，**G6仍未放行**。
-库存快照误述未重现，但存在否定词误拒答、逐商品/两期净额漏答及固定建议冲突，见[36号正式验收](docs/36-v10-formal-acceptance.md)。
-累计7,273,355/9,000,000 token、1123次请求、未知0。审计链深度补修定向74 PASS，执行前验证694项PG/HTTP、59次离线、6项Chrome见[35号记录](docs/35-v10-repair-and-validation.md)。
-H61—H80旧正式轮结果和8条语义FAIL完整保留在[34号正式验收](docs/34-diagnosis-h61-h80-formal-acceptance.md)。
-下文各批次验证数字按其时间和源码版本保留，不能合并为当前生产验收。
-
-结合销售、退款、库存、内部规则和公开竞品资料，生成区分事实、分析与建议的报告。
-关键结论关联原文或确定性指标；长任务可以复核、取消、恢复，并交付 Markdown/PDF。
-
-基于 [didilili/deepsearch-agents](https://github.com/didilili/deepsearch-agents) 二次开发，
-来源与实际贡献见 [PROVENANCE](PROVENANCE.md)。定位为可复现学习、求职展示及逐步走向小规模试用。
-当前默认主入口为**经营复盘（固定流程）**：生成模拟场景或导入CSV，确认不可变数据版本，
-检查质量并生成可核对报告。程序计算事实与变化观察，AI选择受控假设并提出核对建议。
-使用、数据契约、开发与验收边界见[经营复盘开发与验证](docs/21-commerce-review-development-validation.md)。
-本轮251条后端、9条新离线、原32条离线和11条Chrome检查通过；
-真实模型九场景及两个场景各两次重复经过自动检查与逐条证据核对。
-模拟数据结果不代表真实业务效果，Docker/目标HTTPS仍待验；详见21号文档。
-以下214条等是此前审计批次记录。
-2026-10-16已修复恢复快照、库存精度、附件检索、文档配额、代理信任配置及前端证据读取竞态，
-本地214条后端、32条离线评估与9条Chrome浏览器检查通过，范围见[审计修复与验证](docs/20-audit-fixes-validation.md)。
-此前纯Python交付与负载见[历史交付验收](docs/18-python-delivery-validation.md)。
-f3a12de的库存、内部规则、综合补货三个真实教学单例见[模型记录](docs/16-usage-receipts-and-provider-check.md)，
-它们是原实现的历史证据，本轮没有新增真实模型复测；不代表新实现模型效果、稳定通过率或生产验收。
-
-浅色工作台的界面、交互与本地验证见[前端重构记录](docs/22-frontend-redesign.md)。
-
-2026-10-19 起按 [诊断 v1.1 契约](docs/commerce-diagnosis-spec-v1.1.md) 实施诊断开发；用户已于2026-10-20明确本轮G7不执行，当前范围为G0—G6：
-销售诊断、库存/规则工具、版本路由、同输入对照与维护工具已落地。当前新诊断使用v15图/Prompt、schema4/注册表6，固定复盘使用答复v4，保留旧诊断v1—v14及固定v1—v3业务契约；以下v9成绩属于历史版本。
-最新v9完整本机隔离 PostgreSQL/HTTP 后端回归656 PASS（H59修复后）；诊断Chrome6 PASS，62次离线执行通过；v9多商品日序列开发题3次真实验证通过。
-40个开发/回归问题的59次离线执行及补充3题4次执行均通过，提供方请求0。
-另完成PG双Worker的20任务教学负载及新旧等待任务备份/恢复演练，三页样例PDF已渲染核验。
-2026-10-21 v9新保留集正式轮96 Task已完整执行并逐条审查：固定对照36/36、共同诊断36/36、新增诊断22/24，
-行为率96.67%（58/60）、正向完成率96.30%，关键用例4/6未达100%，**G6未放行**；累计4,749,932/6,000,000 token、743次请求。
-失败为H59两次停止口径不一致，已修复并用R61—R66新题包18 Task复评18/18通过（全部`target_covered`），仍待完整20题新正式轮重判，见[v9正式验收](docs/32-diagnosis-v9-formal-acceptance.md)。
-当前进度与未完成事项见[2026-10-21进度整理](docs/31-development-progress-20261021.md)，历史过程见[诊断开发记录](docs/23-diagnosis-development.md)。
-2026-10-22已补充零请求题包冻结/预检与正式运行`--frozen-plan`保护，全量隔离PG/HTTP回归679 PASS。
-用户已授权累计800万token，[H61—H80完整96 Task](docs/acceptance/diagnosis-v9-h61-h80/README.md)已执行并逐份审查：
-自动96/96、诊断语义59/60、固定29/36、关键6/6，但库存快照缺失误述触发语义事实门槛，**G6仍未放行**。
-累计5,990,281 token、934次请求、未知0；完整失败与判定见[本轮正式验收](docs/34-diagnosis-h61-h80-formal-acceptance.md)，
-准备与验证见[复现交付](docs/33-diagnosis-acceptance-preparation-20261022.md)。
-新调用链与个人练习见[诊断源码路线](docs/24-diagnosis-source-map.md)。[评测入口](docs/26-diagnosis-evaluation.md)与[运行维护](docs/27-diagnosis-operations.md)已交付。
-本轮另补全轮token硬预算；完整保留集已累计执行99个Task、246次请求、1,495,690 token。独立自动证据复核诊断38/60，未达90%目标，继续保留固定Workflow。
-失败、续评与实现边界见[完整真实评测](docs/28-diagnosis-live-evaluation.md)；本轮不执行G7。
-本批迭代修复在本地验证后恢复真实开发测试，历史扣费继续计入累计预算。用户已将累计上限提高到500万token，新的96 Task正式复评已完成，随后按失败记录继续v8/v9修复；最新结果见[修复与复验](docs/29-diagnosis-v3-repair.md)。
-诊断界面见[规则与证据视图](docs/images/diagnosis-rules.png)、[移动端报告](docs/images/diagnosis-mobile.png)。
-当前输入的覆盖核对见[移动端预览](docs/images/diagnosis-preflight-mobile.png)，逐项未完成需求见[验收索引](docs/25-diagnosis-acceptance-matrix.md)。
+截至2026-10-27，最新源码为诊断 v16／固定 v6、边界策略2。本地1420项后端、19项Chrome证据见[59号报告](docs/59-boundary-and-formal-entry-local-validation-20261027.md)。随后真实U轮执行5/96位即停止，追加上下文审计后严格联合仅2/5通过；固定语义复核丢失证据的问题**尚未修复，当前不继续付费测试**。结果见[61号报告](docs/61-boundary-v2-U-formal-stop-and-root-cause-20261027.md)，下一步见[62号方案](docs/62-fixed-review-evidence-admission-repair-plan-20261027.md)。G6未放行，G7排除。
 
 ![电商运营分析助手工作台](docs/images/workbench-report.png)
 
@@ -106,7 +35,7 @@ SQLAlchemy/Alembic、PostgreSQL16、React19、TypeScript、Vite、Playwright。�
 以下命令均从 `commerce-analysis-agent` 项目目录开始。
 
 ```bash
-cp .env.example .env
+[ -f .env ] || cp .env.example .env
 uv sync --frozen --python 3.12
 uv run python scripts/dev_backend.py
 ```
@@ -130,7 +59,7 @@ pnpm dev
 ## PostgreSQL 容器版
 
 ```bash
-cp .env.example .env
+[ -f .env ] || cp .env.example .env
 # 保持默认值只用于本地演示；正式部署前设置独立凭据。
 docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 ```
@@ -140,7 +69,7 @@ docker compose --env-file .env -f docker/docker-compose.yaml up -d --build
 
 ## 阅读顺序
 
-学习只需从 [学习总览](docs/learning/01-总览.md) 开始，依次阅读 **总览 → 后端主链 → Agent与证据 → 实践与自测**，共 4 篇。六周安排和面试题已合入，不需要另外走一套路线。
+所有文档先看[文档导航](docs/README.md)。学习只需从 [学习总览](docs/learning/01-总览.md) 开始，依次阅读 **总览 → 后端主链 → Agent与证据 → 实践与自测**，共 4 篇。六周安排和面试题已合入，不需要另外走一套路线。
 
 其他文档按需查阅：
 
@@ -177,10 +106,10 @@ docs/           架构、学习、部署、评估与验收
 ```bash
 uv run ruff check app tests migrations evaluations scripts
 uv run ruff format --check app tests migrations evaluations scripts
-uv run pytest -q
+uv run python -m pytest -p tests.no_provider -q
 uv run python -m evaluations.commerce_review --mode demo --output evaluations/results/my-review-demo
 uv run python -m evaluations.run --mode demo
-uv run --with pgserver==0.1.4 python scripts/test_embedded_postgres.py tests
+uv run --with pgserver==0.1.4 python scripts/test_embedded_postgres.py -p tests.no_provider tests
 cd frontend
 pnpm build
 pnpm format:check

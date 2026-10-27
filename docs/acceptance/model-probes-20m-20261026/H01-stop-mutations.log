@@ -1,0 +1,14 @@
+drop_historical_hold_from_cap KILLED
+pay_after_failed_parse KILLED
+review_after_invalid_composition KILLED
+correct_rejected_proposal SURVIVED
+pay_for_second_nonprogress KILLED
+missing_zero_call_journal KILLED
+accept_new_unknown KILLED
+ignore_pending_review KILLED
+ignore_grade_failure KILLED
+remove_both_rejection_guards KILLED
+task_http_budget_mismatch KILLED
+wrong_decision_reserve KILLED
+omit_actual_gross_capability KILLED
+accept_structurally_insufficient_budget KILLED

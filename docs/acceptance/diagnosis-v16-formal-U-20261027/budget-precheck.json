@@ -1,0 +1,14 @@
+{
+  "cumulative_limit": 20000000,
+  "known_tokens": 11049569,
+  "legacy_unknown_hold_tokens": 1051576,
+  "effective_occupied_tokens": 12101145,
+  "remaining_tokens": 7898855,
+  "reference_round_new_tokens": 1155229,
+  "reference_round": "evaluations/results/diagnosis-v14-h01-h20-live-20261025-01",
+  "single_request_upper_bound": 1051576,
+  "estimated_round_plus_final_request_capacity": 14307950,
+  "estimated_margin": 5692050,
+  "double_reference_stress_margin": 4536821,
+  "estimate_not_completion_guarantee": true
+}

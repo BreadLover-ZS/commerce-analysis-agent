@@ -1,0 +1,26 @@
+{
+  "kind": "FORMAL_SINGLE_TASK_AUTHORIZATION",
+  "authorized_by": "HUMAN_USER_EXPLICIT_INSTRUCTION",
+  "granted": true,
+  "new_packet_transmission_granted": true,
+  "formal_conservative_carry_granted": true,
+  "cumulative_token_limit": 20000000,
+  "scope": "20 cases / 96 slots; exactly one Task per launch; PASS review before next; first failure or new UNKNOWN stops; no automatic retry; no increase beyond cumulative 20000000 tokens",
+  "legacy_unknown_hold_tokens": 1051576,
+  "plan_sha256": "07130b3c179ede63f65eded234dc35be8cdf9e2161912c84b75d7b2c5d06a335",
+  "cases_sha256": "d1a78b4450b7b4b0564c2bdc67f317d960180e1cac1d6838b4bf9888e9db9ccd",
+  "implementation_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "model": {
+    "provider": "DeepSeek",
+    "endpoint": "https://api.deepseek.com",
+    "model": "deepseek-flash",
+    "temperature": 0,
+    "max_output_tokens": 3000,
+    "sdk_max_retries": 0,
+    "accounting_protocol": 2
+  },
+  "parent_anchor_receipt_sha256": "35b7b74d5884f75a4b2d67f4da3108f409c134e96543d5efd9b48142b6a4163e",
+  "authorized_at": "2026-10-27T11:39:35.719384+08:00",
+  "user_answer": "授权上述范围，逐 Task 推进（推荐）",
+  "question_item": "call_219f69b35ff94768ae073b942468fcb5/0"
+}

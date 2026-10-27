@@ -2,7 +2,8 @@
 
 import hashlib
 import shutil
-from contextlib import contextmanager
+import sqlite3
+from contextlib import contextmanager, nullcontext
 from datetime import date, datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -64,9 +65,32 @@ def columns(row):
 
 
 @contextmanager
-def sandbox(**configuration):
-    with TemporaryDirectory(prefix="diagnosis-evaluation-") as directory:
+def sandbox(*, workspace=None, fork_from=None, **configuration):
+    # Paid one-Task drivers retain their DB/checkpoints even on interruption.
+    # Development and legacy callers continue to use disposable sandboxes.
+    context = (
+        TemporaryDirectory(prefix="diagnosis-evaluation-")
+        if workspace is None
+        else nullcontext(str(Path(workspace).resolve()))
+    )
+    with context as directory:
         root = Path(directory)
+        if workspace is not None:
+            root.mkdir(mode=0o700, parents=False, exist_ok=False)
+        if fork_from is not None:
+            source = Path(fork_from).resolve()
+            with sqlite3.connect(
+                (source / "app.sqlite").as_uri() + "?mode=ro", uri=True
+            ) as original:
+                with sqlite3.connect(root / "app.sqlite") as target:
+                    original.backup(target)
+            for item in source.iterdir():
+                if item.name in {"app.sqlite", "app.sqlite-shm", "app.sqlite-wal"}:
+                    continue
+                if item.is_dir():
+                    shutil.copytree(item, root / item.name)
+                else:
+                    shutil.copyfile(item, root / item.name)
         values = dict(
             _env_file=None,
             app_env="test",
@@ -93,13 +117,15 @@ def sandbox(**configuration):
             bootstrap_user(repo, settings)
             with repo.session() as db:
                 user = db.scalar(select(User).where(User.email == settings.bootstrap_email))
-                other = User(
-                    id=str(uuid4()),
-                    tenant_id="foreign-evaluation",
-                    email="foreign@example.invalid",
-                    password_hash="unusable",
-                )
-                db.add(other)
+                other = db.scalar(select(User).where(User.email == "foreign@example.invalid"))
+                if other is None:
+                    other = User(
+                        id=str(uuid4()),
+                        tenant_id="foreign-evaluation",
+                        email="foreign@example.invalid",
+                        password_hash="unusable",
+                    )
+                    db.add(other)
                 db.commit()
             yield settings, repo, user, other
         finally:

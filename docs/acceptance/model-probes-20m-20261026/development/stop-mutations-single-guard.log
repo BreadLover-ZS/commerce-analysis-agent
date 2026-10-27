@@ -1,0 +1,16 @@
+drop_historical_hold_from_cap KILLED
+pay_after_failed_parse KILLED
+review_after_invalid_composition KILLED
+correct_rejected_proposal SURVIVED
+pay_for_second_nonprogress KILLED
+missing_zero_call_journal KILLED
+accept_new_unknown KILLED
+ignore_pending_review KILLED
+ignore_grade_failure KILLED
+Traceback (most recent call last):
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/model-probes-20m-20261026/check_stop_mutations.py", line 150, in <module>
+    main()
+  File "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/model-probes-20m-20261026/check_stop_mutations.py", line 146, in main
+    assert all(r["killed"] for r in results)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

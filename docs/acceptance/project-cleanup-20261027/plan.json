@@ -1,0 +1,163 @@
+{
+  "scope": "User-confirmed documentation navigation plus confirmed regenerable caches; preserve source, uncommitted work, dependencies and all model/acceptance evidence",
+  "readiness_confidence": 0.95,
+  "readiness_basis": [
+    "No existing central docs index; append-only status headers caused duplicate current claims",
+    "Only documentation edits; no new dependencies or APIs",
+    "Explicit ignored/untracked deletion allowlist and inactive-use check",
+    "Runtime dependencies have no links into the uv cache",
+    "Source, raw results, config and initial work baselined before edits"
+  ],
+  "implementation_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "source_files": 267,
+  "initial_git_files": 862,
+  "initial_raw_evidence_files": 29777,
+  "planned_deletion_roots": [
+    {
+      "path": ".uv-cache",
+      "file_count": 3482,
+      "logical_bytes": 115972536
+    },
+    {
+      "path": ".pytest_cache",
+      "file_count": 5,
+      "logical_bytes": 197304
+    },
+    {
+      "path": ".ruff_cache",
+      "file_count": 27,
+      "logical_bytes": 20418
+    },
+    {
+      "path": "frontend/dist",
+      "file_count": 7,
+      "logical_bytes": 748550
+    },
+    {
+      "path": "frontend/test-results",
+      "file_count": 9,
+      "logical_bytes": 1697780
+    },
+    {
+      "path": "app/__pycache__",
+      "file_count": 3,
+      "logical_bytes": 4568
+    },
+    {
+      "path": "app/research/__pycache__",
+      "file_count": 9,
+      "logical_bytes": 148963
+    },
+    {
+      "path": "app/commerce/__pycache__",
+      "file_count": 20,
+      "logical_bytes": 161032
+    },
+    {
+      "path": "app/tasks/__pycache__",
+      "file_count": 3,
+      "logical_bytes": 23956
+    },
+    {
+      "path": "app/tools/__pycache__",
+      "file_count": 1,
+      "logical_bytes": 118
+    },
+    {
+      "path": "app/core/__pycache__",
+      "file_count": 6,
+      "logical_bytes": 33195
+    },
+    {
+      "path": "app/utils/__pycache__",
+      "file_count": 3,
+      "logical_bytes": 12531
+    },
+    {
+      "path": "app/agent/__pycache__",
+      "file_count": 1,
+      "logical_bytes": 118
+    },
+    {
+      "path": "app/agent/subagents/__pycache__",
+      "file_count": 1,
+      "logical_bytes": 128
+    },
+    {
+      "path": "app/storage/__pycache__",
+      "file_count": 4,
+      "logical_bytes": 83310
+    },
+    {
+      "path": "app/api/__pycache__",
+      "file_count": 2,
+      "logical_bytes": 37729
+    },
+    {
+      "path": "app/diagnosis/__pycache__",
+      "file_count": 43,
+      "logical_bytes": 481295
+    },
+    {
+      "path": "evaluations/__pycache__",
+      "file_count": 28,
+      "logical_bytes": 462226
+    },
+    {
+      "path": "scripts/__pycache__",
+      "file_count": 7,
+      "logical_bytes": 86783
+    },
+    {
+      "path": "tests/__pycache__",
+      "file_count": 92,
+      "logical_bytes": 2655530
+    },
+    {
+      "path": "migrations/__pycache__",
+      "file_count": 1,
+      "logical_bytes": 1869
+    },
+    {
+      "path": "migrations/versions/__pycache__",
+      "file_count": 8,
+      "logical_bytes": 52604
+    },
+    {
+      "path": ".DS_Store",
+      "file_count": 1,
+      "logical_bytes": 8196
+    },
+    {
+      "path": "app/.DS_Store",
+      "file_count": 1,
+      "logical_bytes": 8196
+    },
+    {
+      "path": "docs/.DS_Store",
+      "file_count": 1,
+      "logical_bytes": 6148
+    },
+    {
+      "path": "frontend/.DS_Store",
+      "file_count": 1,
+      "logical_bytes": 6148
+    },
+    {
+      "path": "examples/.DS_Store",
+      "file_count": 1,
+      "logical_bytes": 6148
+    }
+  ],
+  "preserve": [
+    "app and evaluation source",
+    "all initial uncommitted source and evidence",
+    "evaluations/results original bytes",
+    ".venv",
+    "frontend/node_modules",
+    ".env",
+    "all acceptance seals and original paths"
+  ],
+  "paid_model_requests": 0,
+  "commit_or_push": false
+}

@@ -129,7 +129,9 @@ class DiagnosisToolGateway:
             from app.commerce.answer_contract_v3 import bound_request
 
             if task.graph_version in {"diagnosis-v15", "diagnosis-v16"}:
-                from app.commerce.answer_contract_v4 import bound_request
+                from app.commerce.answer_versions import contract_module
+
+                bound_request = contract_module(task.parameters).bound_request
 
             if task.parameters.get("answer_contract") != bound_request(
                 task.query, bundle.payload, sales.payload["products"]

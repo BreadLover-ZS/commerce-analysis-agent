@@ -520,6 +520,10 @@ period给出本次明确的分析周期，指标事实目录也含销量周期�
             and model
             and settings.semantic_review
             and not (v5 and (state.get("model_stopped") or recovered_fallback))
+            and not (
+                task["parameters"].get("budget", {}).get("stop_after_model_failure")
+                and state.get("draft_fallback")
+            )
         ):
             try:
                 semantic_report = report.model_dump()

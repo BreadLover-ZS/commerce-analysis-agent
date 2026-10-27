@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-10-26T19:18:22.501674+08:00",
+  "user_authorization": "用户要求现在进行大模型测试，累计token上限提升到2000万，遇失败即停；随后明确选择小批探针通过后再扩展、保守冻结后继续新探针。",
+  "provider": "DeepSeek",
+  "endpoint": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "authorized_cumulative_token_limit": 20000000,
+  "historical_known_tokens": 10954662,
+  "authorized_legacy_unknown_hold_tokens": 1051576,
+  "effective_initial_occupied_tokens": 12006238,
+  "remaining_tokens_before_new_calls": 7993762,
+  "legacy_unknown_remains_unknown": true,
+  "legacy_strict_reconciliation_passed": false,
+  "scope": "Small used-input regression probes, one Task per invocation, stop on first failure, local RCA/fix/verify before a new paid batch; no G6 formal claim; G7 excluded.",
+  "new_unknown_automatically_authorized_for_conservative_carry": false,
+  "source_git_head": "c349922304d6b53a12a0cbe56903a4075f8e2461"
+}

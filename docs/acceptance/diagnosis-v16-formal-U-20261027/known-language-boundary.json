@@ -1,0 +1,29 @@
+{
+  "status": "KNOWN_METADATA_SEMANTIC_FAILURE_NOT_REPAIRED",
+  "implementation_sha256": "6a62858462e5fe8a7ac4dce3b79c00de51389c9b8c949cc3eecb87357c41e432",
+  "root_cause": "Both lexical boundary detectors omit the synonymous pre-activation phrase; agreement is not independent semantic truth.",
+  "current_formal_packet_uses_canonical_wording": true,
+  "canonical_wording_is_not_a_fix_or_generalization_evidence": true,
+  "required_before_formal_paid_testing": "Add literal-author independent paraphrase counterexamples, versioned semantic fix and local verification; refreeze source and packet afterward.",
+  "fresh_case_graph_tool_model_executions": 0,
+  "provider_requests": 0,
+  "does_not_claim_final_report_behavior_was_executed": true,
+  "rows": [
+    {
+      "label": "natural_synonym",
+      "query": "请给出授权范围本期已有净销售额，说明比较期（早于启用日）不适用的边界，不补造比较期零值。",
+      "literal_author_expected_boundary": true,
+      "production_boundary_intent": false,
+      "independent_boundary_intent": false,
+      "matches_author": false
+    },
+    {
+      "label": "frozen_canonical_wording",
+      "query": "请给出授权范围本期已有净销售额，说明比较期（早于启用日）不可比较的边界，不补造比较期零值。",
+      "literal_author_expected_boundary": true,
+      "production_boundary_intent": true,
+      "independent_boundary_intent": true,
+      "matches_author": true
+    }
+  ]
+}

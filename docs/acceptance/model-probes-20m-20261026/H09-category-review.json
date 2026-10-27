@@ -1,0 +1,35 @@
+{
+  "receipt_sha256": "c3a99c9d11f49277f47d1d0077a486d0cd00d38ccc38c727115a8c33d840538f",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "scope": "Used-input category regression only, not fresh G6",
+  "checks": {
+    "independent_category_raw_cents": {
+      "饮具": {
+        "current": 150668100,
+        "comparison": 268148100,
+        "delta": -117480000
+      },
+      "收纳": {
+        "current": 209408100,
+        "comparison": 150668100,
+        "delta": 58740000
+      }
+    },
+    "signed_percent": {
+      "饮具": 200,
+      "收纳": -100
+    },
+    "total_delta_cents": -58740000,
+    "both_signs_and_scope_reconcile": true,
+    "only_one_negative_category": "Input contains only two categories: one negative, one positive. Report preserves both signed amounts and does not invent a second declining category.",
+    "correct_dimension": "category",
+    "all_facts_observations_and_limitations_read": true,
+    "no_causal_inference": true,
+    "complete_no_omissions": true,
+    "one_successful_model_call_no_corrective_or_empty_followup": true
+  },
+  "new_http_requests": 1,
+  "new_known_tokens": 5799,
+  "new_unknown": 0
+}

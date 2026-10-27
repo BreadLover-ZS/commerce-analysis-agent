@@ -1,0 +1,64 @@
+{
+  "implementation_sha256": "7ac0cfaa124cbdd78b44676e75756cc63b23ff96039556c8305a952502916734",
+  "source_files": 252,
+  "local_verification_passed": true,
+  "source_snapshot": "evaluations/results/model-probes-20m-preflight-20261026-03/source-snapshot",
+  "postgres_passed": 1316,
+  "chrome_passed": 19,
+  "behavior_breaking_mutants_detected": 9,
+  "redundant_guard_control_survived": 1,
+  "hold_tampering_rejected": 12,
+  "legacy_grades_checked": 267,
+  "known_tokens_before_new_calls": 10954662,
+  "frozen_unknown_tokens": 1051576,
+  "remaining_tokens_before_new_calls": 7993762,
+  "network_guard_file": "docs/acceptance/model-probes-20m-20261026/preflight-network-release.json",
+  "evidence_files": [
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/authorization.json",
+      "sha256": "cecf135b1d333459c1956966346341d1895aa2cc7b8f8ba4064ea00a28a45c29"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/conservative-hold.json",
+      "sha256": "6ad5fbdf8695412dad4d80ad106f6d3d9f035af214eff3e22ca3ecc8cc8fecbd"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/preflight-postgres-release.log",
+      "sha256": "8ad1025f88ecb6788e52c5407e5cc442d5e17eab80c4bdd51b0e60263a4e2cc0"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/preflight-network-release.json",
+      "sha256": "82296b934b2d3baea71ddffeafee810d264bceb674005a71e4ec071578c65def"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/preflight-chrome-release.log",
+      "sha256": "13cf383505f613fa7043143616aa607ec217fac8a9a1ddaa4aae2c78812f3db8"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/stop-mutations.json",
+      "sha256": "8f87a02f3563156fdcf7ffa4b89d2d69dda814e1ead20a4fad5a406959802b3b"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/hold-tampering.json",
+      "sha256": "a740ddbb23f15a4ad1608e36d3d5f90551d5313effea05ccee7054d20c29641b"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/legacy-regrade-preflight.json",
+      "sha256": "d24ad5d11392aba90df81b8396348372dea54dacbabc5d523c8698b95bdd01cc"
+    },
+    {
+      "file": "docs/acceptance/model-probes-20m-20261026/launch_one_probe.py",
+      "sha256": "0d1a5f4aa5b07dca8886131acc7fa1712bf3b8b31783c57ad65fdf104e67dbfb"
+    }
+  ],
+  "dependency_versions": {
+    "openai": "2.35.1",
+    "langchain-openai": "1.2.1",
+    "langchain-core": "1.6.10",
+    "langgraph": "1.2.15",
+    "pydantic": "2.13.4",
+    "httpx": "0.28.1"
+  },
+  "new_provider_requests_at_preparation": 0,
+  "scope": "Local readiness only, not model quality or G6 acceptance"
+}

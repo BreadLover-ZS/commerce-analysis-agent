@@ -1,0 +1,12 @@
+{
+  "receipt_sha256": "6ddff1bbdb90cd888652f66ab7c8fed470ce97b90320adeacc4c33d009d8f78a",
+  "verdict": "FAIL",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "checks": {
+    "report_all_sections_or_complete_repeat_diff_read": true,
+    "author_raw_source_and_required_answer_obligations_reviewed": true,
+    "causal_language_limitations_rules_and_actions_reviewed": true,
+    "source_policy_and_usage_ledger_reviewed": true
+  },
+  "notes": "模型语义复核请求的证据列表实际为空；模型正确拒绝19条结论，最终程序报告数值仍完整但发生fallback。失败属于上下文容量与准入缺陷，不能用automatic_passed=true或有效兜底报告豁免，停止其余91位。"
+}

@@ -1,0 +1,99 @@
+.....................F----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+_ test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error[zero-0] _
+
+tmp_path = PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-164/test_complete_one_task_probe_h3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x113026db0>
+mode = 'zero', expected_http = 0
+
+    @pytest.mark.parametrize(
+        "mode,expected_http", [("valid", 2), ("schema", 1), ("action", 1), ("zero", 0)]
+    )
+    async def test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error(
+        tmp_path, monkeypatch, mode, expected_http
+    ):
+        from evaluations import diagnosis_probe as module
+        from evaluations.diagnosis_probe_accounting import HOLD, LIMIT, file_hash
+    
+        source = Path("docs/acceptance/diagnosis-v15-h01-h20/cases.json").resolve()
+        legacy = tmp_path / "legacy"
+        legacy.mkdir()
+        group = "agent" if mode == "zero" else "fixed"
+        (legacy / "run.json").write_text(json.dumps({"cases_file_sha256": file_hash(source)}))
+        (legacy / "progress.jsonl").write_text(json.dumps({"case_id": "H03", "group": group}) + "\n")
+        parent = {
+            "known_tokens": 4,
+            "frozen_unknown_tokens": HOLD,
+            "confirmed_http_requests": 1,
+            "directory": str(legacy),
+            "legacy_root": str(legacy),
+            "run_id": "local-base",
+            "parent_failed": False,
+        }
+        monkeypatch.setattr(module, "load_parent", lambda *a, **kw: copy.deepcopy(parent))
+        monkeypatch.setenv("PROBE_TEST_KEY", "offline-key")
+        requests = []
+    
+        async def transport(request):
+            requests.append(request)
+            if len(requests) == 1:
+                value = {"analysis": [], "recommendations": []}
+                if mode == "schema":
+                    value["analysis"] = ["not_registered"]
+                elif mode == "action":
+                    value["recommendations"] = [
+                        {"action_id": "forged", "precondition_id": "forged", "scope_skus": []}
+                    ]
+            else:
+                assert mode == "valid", "failed first response must not spend again"
+                value = {
+                    "unsupported_claim_ids": [],
+                    "unsupported_limitation_indices": [],
+                    "explanation": "local mock",
+                }
+            return completion(value)
+    
+        original = httpx.AsyncClient
+    
+        class OfflineClient(original):
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs, transport=httpx.MockTransport(transport))
+    
+        monkeypatch.setattr(module.httpx, "AsyncClient", OfflineClient)
+        out = tmp_path / "probe"
+        args = module.parser().parse_args(
+            [
+                "--parent",
+                str(tmp_path / "hold.json"),
+                "--legacy-root",
+                str(legacy),
+                "--cases",
+                str(source),
+                "--case-id",
+                "H03",
+                "--group",
+                group,
+                "--output",
+                str(out),
+                "--max-http",
+                "2",
+                "--max-total-tokens",
+                str(LIMIT),
+                "--allow-paid",
+                "--api-key-env",
+                "PROBE_TEST_KEY",
+            ]
+        )
+        failure = await module.run(args)
+>       assert len(requests) == expected_http
+E       AssertionError: assert 1 == 0
+E        +  where 1 = len([<Request('POST', 'https://api.deepseek.com/chat/completions')>])
+
+tests/test_diagnosis_probe.py:339: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"run_id": "a0abed90-1fdb-4858-a33e-7ede8d8f5539", "failure_reason": "model_call_failed_or_not_sent", "status": "FAIL_STOPPED", "receipt_sha256": "8e79152c5dd027fc5cf35c119cbf0e08d20cbeef7bfd374788d6ea1faa00359f", "budget": {"max_total_tokens": 20000000, "known_tokens": 8, "unresolved_reserved_tokens": 0, "upper_bound_charged_tokens": 1051584, "frozen_unknown_tokens": 1051576, "request_context_ceiling": 1048576, "denied_reason": null}, "confirmed_http_requests": 2, "new_http_requests": 1, "new_known_tokens": 4, "old_unknown_preserved": true, "real_model_formal_acceptance": "UNTESTED", "release_eligible": false}
+=========================== short test summary info ============================
+FAILED tests/test_diagnosis_probe.py::test_complete_one_task_probe_has_exact_spend_and_stops_on_first_error[zero-0]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 21 passed in 9.28s

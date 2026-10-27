@@ -1,0 +1,17 @@
+{
+  "receipt_sha256": "560aca600dc50b35fd79bf5ca0df0d3f3023dd2b0ae1b36c1370764290429bbb",
+  "verdict": "FAIL",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "reason": "Controller allowed 2 HTTP while frozen Task/prompt advertised 12 model calls (9 decision calls). Accurate refund-tool combined amount outputs were omitted from the capability frontier; rank + redundant gross comparison exhausted the external cap, leaving accounting_amount_identity unresolved.",
+  "observed": {
+    "sku_amount_cells_acquired": 27,
+    "remaining_work": [
+      "accounting_amount_identity"
+    ],
+    "actual_http": 2,
+    "new_known_tokens": 18468,
+    "third_invocation": "NOT_SENT_KNOWN_ZERO_WITH_BOUND_DURABLE_PROOF",
+    "new_unknown": 0
+  },
+  "next_action": "STOP all further probes; add independent budget/capability counterexamples and free replay, fix source, local verify, then only a new H01 batch within 2 HTTP. Preserve original FAIL and charges."
+}

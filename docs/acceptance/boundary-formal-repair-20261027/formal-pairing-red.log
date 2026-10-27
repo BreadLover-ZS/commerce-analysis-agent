@@ -1,0 +1,40 @@
+F                                                                        [100%]----------- external network attempts blocked: 0; provider sends: 0 ------------
+
+=================================== FAILURES ===================================
+______ test_two_adjacent_sdk_tasks_require_review_and_carry_exact_charges ______
+
+frozen = namespace(directory=PosixPath('/private/var/folders/08/bzzkrnf11nvfrmy4jqrkkc200000gn/T/pytest-of-zzds/pytest-231/test...3818d3d8c249154b4db1b4fc2fc15f67b1e9c6aec14e744fa', 'parent_implementation_sha256': 'prior-mock', 'ancestry_depth': 1})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x110b3f500>
+
+    async def test_two_adjacent_sdk_tasks_require_review_and_carry_exact_charges(frozen, monkeypatch):
+        sent = sdk_transport(monkeypatch)
+        a = args(frozen)
+        assert await formal.run(a) is None
+        first = probe.audit_probe(a.output)
+        assert len(sent) == 2 and first["known_tokens"] == 12 and first["confirmed_http_requests"] == 3
+        assert (a.output / "recovery-workspace/app.sqlite").is_file()
+        assert (a.output / "http-response-1.json").is_file()
+        b = args(frozen, a.output, "H01-1/agent", "slot-two")
+        with pytest.raises(ValueError, match="review_pending"):
+            await formal.run(b)
+        assert len(sent) == 2
+        reviewed(a.output)
+        assert await formal.run(b) is None
+        second = probe.audit_probe(b.output)
+        first_receipt = json.loads((a.output / "receipt.json").read_bytes())
+        second_receipt = json.loads((b.output / "receipt.json").read_bytes())
+>       assert first_receipt["task"]["bundle_id"] == second_receipt["task"]["bundle_id"]
+E       AssertionError: assert '2cbf5ab3-727...-c06d368b7eb9' == '3ff919a7-80c...-e15c969ef7e4'
+E         
+E         - 3ff919a7-80cc-437e-8c9b-e15c969ef7e4
+E         + 2cbf5ab3-7273-4833-bd45-c06d368b7eb9
+
+tests/test_formal_single_task.py:264: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"run_id": "3836fc0c-5129-454f-afcf-26dfbf63f23e", "failure_reason": null, "status": "AUTOMATIC_PASS_REVIEW_PENDING", "receipt_sha256": "1fe021af37b189241f266935a37c5a3e74ad8d2efb0b62406eea1d3f714b65db", "budget": {"max_total_tokens": 20000000, "known_tokens": 12, "unresolved_reserved_tokens": 0, "upper_bound_charged_tokens": 1051588, "frozen_unknown_tokens": 1051576, "request_context_ceiling": 1048576, "denied_reason": null}, "confirmed_http_requests": 3, "new_http_requests": 2, "new_known_tokens": 8, "old_unknown_preserved": true, "real_model_formal_acceptance": "UNTESTED", "release_eligible": false}
+{"run_id": "6f6e1f03-55c9-4f9e-bb18-c5f39f9b6764", "failure_reason": null, "status": "AUTOMATIC_PASS_REVIEW_PENDING", "receipt_sha256": "f46363f7920089f7bf4ecb463bfccaa467d8ab1d2d703cc5e45475d2788fdf87", "budget": {"max_total_tokens": 20000000, "known_tokens": 20, "unresolved_reserved_tokens": 0, "upper_bound_charged_tokens": 1051596, "frozen_unknown_tokens": 1051576, "request_context_ceiling": 1048576, "denied_reason": null}, "confirmed_http_requests": 5, "new_http_requests": 2, "new_known_tokens": 8, "old_unknown_preserved": true, "real_model_formal_acceptance": "UNTESTED", "release_eligible": false}
+------------------------------ Captured log call -------------------------------
+WARNING  langchain_openai.chat_models._client_utils:_client_utils.py:327 langchain-openai injected a custom httpx transport to apply `http_socket_options`, which disables httpx's proxy auto-detection (HTTP_PROXY, HTTPS_PROXY set in environment). Set `LANGCHAIN_OPENAI_TCP_KEEPALIVE=0` or pass `http_socket_options=()` to restore default proxy behavior, or supply `openai_proxy` / your own `http_client` / `http_async_client` to take full control.
+=========================== short test summary info ============================
+FAILED tests/test_formal_single_task.py::test_two_adjacent_sdk_tasks_require_review_and_carry_exact_charges
+1 failed in 2.24s

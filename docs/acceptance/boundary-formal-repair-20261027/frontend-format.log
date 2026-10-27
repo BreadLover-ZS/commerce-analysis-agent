@@ -1,0 +1,3 @@
+$ prettier --check src e2e *.ts *.json *.yaml
+Checking formatting...
+All matched files use Prettier code style!

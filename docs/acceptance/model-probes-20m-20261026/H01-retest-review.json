@@ -1,0 +1,100 @@
+{
+  "receipt_sha256": "a115207c6d6b05dba77c14d91dbe7d7bd48f9e05cfb15d3b9f4020632d16df2c",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "scope": "Previously used synthetic H01 repair probe, not fresh holdout or G6",
+  "checks": {
+    "all_27_sku_amounts_match_independent_raw_cents": {
+      "T011": {
+        "gross_revenue": {
+          "current": 77857200,
+          "comparison": 97297200,
+          "delta": -19440000
+        },
+        "refund_amount": {
+          "current": 29160000,
+          "comparison": 9720000,
+          "delta": 19440000
+        },
+        "net_revenue": {
+          "current": 48697200,
+          "comparison": 87577200,
+          "delta": -38880000
+        }
+      },
+      "T012": {
+        "gross_revenue": {
+          "current": 68137200,
+          "comparison": 48697200,
+          "delta": 19440000
+        },
+        "refund_amount": {
+          "current": 0,
+          "comparison": 0,
+          "delta": 0
+        },
+        "net_revenue": {
+          "current": 68137200,
+          "comparison": 48697200,
+          "delta": 19440000
+        }
+      },
+      "T013": {
+        "gross_revenue": {
+          "current": 155714400,
+          "comparison": 194594400,
+          "delta": -38880000
+        },
+        "refund_amount": {
+          "current": 58320000,
+          "comparison": 19440000,
+          "delta": 38880000
+        },
+        "net_revenue": {
+          "current": 97394400,
+          "comparison": 175154400,
+          "delta": -77760000
+        }
+      }
+    },
+    "scope_nine_amount_identity_cents": {
+      "gross_revenue": {
+        "current": 301708800,
+        "comparison": 340588800,
+        "delta": -38880000
+      },
+      "refund_amount": {
+        "current": 87480000,
+        "comparison": 29160000,
+        "delta": 58320000
+      },
+      "net_revenue": {
+        "current": 214228800,
+        "comparison": 311428800,
+        "delta": -97200000
+      }
+    },
+    "contribution_signed_percent": {
+      "T011": 40,
+      "T012": -20,
+      "T013": 80
+    },
+    "all_observations_and_limitations_read": true,
+    "accounting_not_causation": true,
+    "scope_periods_and_complete_coverage_verified": true,
+    "no_remaining_work_or_omitted_items": true,
+    "candidate_insufficient_is_not_source_gap": "Step2 chose data_coverage with refund tool; local candidate insufficient is retained explicitly, while independently checked amount obligations are fulfilled. No claim that source records are missing.",
+    "task_status_explained": "degraded retains local candidate uncertainty; program-verified report, all requested amounts and witnesses complete. Not converted to succeeded.",
+    "unchanged_http_cap": 2,
+    "actual_tool_order": [
+      "rank_contributors",
+      "analyze_refunds"
+    ],
+    "two_known_successful_invocations_no_repair_calls": true
+  },
+  "new_http_requests": 2,
+  "new_known_tokens": 18815,
+  "old_fail_and_charges_preserved": true,
+  "new_unknown": 0,
+  "limitation": "One real response path; does not prove all stochastic runs or full G6 acceptance."
+}

@@ -1,0 +1,45 @@
+$ playwright test --reporter=line
+[WebServer] INFO:     Started server process [41520]
+
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8091 (Press CTRL+C to quit)
+
+[WebServer] (node:41522) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] $ vite --host 127.0.0.1 --port 5191 --strictPort
+
+[WebServer] (node:41541) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:41541) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+
+
+Running 19 tests using 1 worker
+
+(node:41548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/19] e2e/commerce-review.spec.ts:4:1 › scenario preview, version binding, review, evidence and PDF
+[2/19] e2e/commerce-review.spec.ts:105:1 › invalid CSV shows row errors and missing data remains explicit
+[3/19] e2e/diagnosis.spec.ts:58:1 › same-input fixed comparison uses real API and survives refresh on mobile
+[4/19] e2e/diagnosis.spec.ts:99:1 › comparison discloses narrowed clarification scope instead of equating totals
+[5/19] e2e/diagnosis.spec.ts:118:1 › sales diagnosis actual API, evidence, feedback, refresh and a new followup task
+[6/19] e2e/diagnosis.spec.ts:204:1 › stock and rule upload, persisted clarification, exact version review and PDF
+[7/19] e2e/diagnosis.spec.ts:284:1 › invalid comparison is retained as an error; pending clarification can be cancelled
+[8/19] e2e/diagnosis.spec.ts:312:1 › exact preflight is shown before task creation and changing input requires reconfirmation
+[9/19] e2e/diagnosis.spec.ts:360:1 › v15 answer completion and all nine amounts are visible with raw evidence
+[10/19] e2e/diagnostics.spec.ts:88:1 › new report citations open even when a parallel ledger read would be stale
+[11/19] e2e/diagnostics.spec.ts:130:1 › read timeout survives refresh, shows unknown usage, and never retries
+[12/19] e2e/diagnostics.spec.ts:169:3 › provider category authentication has an actionable message
+[13/19] e2e/diagnostics.spec.ts:169:3 › provider category rate_limit has an actionable message
+[14/19] e2e/diagnostics.spec.ts:169:3 › provider category connection has an actionable message
+[15/19] e2e/diagnostics.spec.ts:191:1 › terminal runtime limit takes precedence over earlier model timeout
+[16/19] e2e/diagnostics.spec.ts:206:1 › legacy and unknown diagnostic fields cannot invent a timeout phase
+[17/19] e2e/diagnostics.spec.ts:229:1 › research fallback is visible while its report remains readable
+[18/19] e2e/diagnostics.spec.ts:278:1 › v13 discloses all 27 gaps after expanding the complete list
+[19/19] e2e/workspace.spec.ts:4:1 › login, review, evidence, PDF, refresh and mobile layout
+  19 passed (52.7s)

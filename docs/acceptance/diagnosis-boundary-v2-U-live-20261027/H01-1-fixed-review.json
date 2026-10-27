@@ -1,0 +1,16 @@
+{
+  "receipt_sha256": "ae1537bcb9eb086dc24a5b78ef81e63ea0e92aa4356cc9d8b0b42568d4ec4ffd",
+  "verdict": "PASS",
+  "reviewer": "CODE_AUTHOR_AI_MANUAL_REVIEW_NOT_EXTERNAL_BUSINESS_ACCEPTANCE",
+  "checks": {
+    "all_report_sections_and_limitations_read": true,
+    "author_raw_matrix_27_values_checked": true,
+    "per_sku_contributions_reconcile_to_minus_486000_yuan": true,
+    "current_net_1071144_previous_1557144_checked": true,
+    "amount_identity_not_causal_claim": true,
+    "no_fabricated_cause_or_threshold": true,
+    "fixed_policy2_and_two_http_exact_usage": true,
+    "no_fallback_or_retries": true
+  },
+  "notes": "逐商品支付/退款/净额两期和差额全部展示；贡献为-194400、97200、-388800元，总计-486000元。记账退款占比与订单队列区分，假设和建议有待核验前提。上下文排除披露与选择清单一致，完整报告与证据仍保留。"
+}

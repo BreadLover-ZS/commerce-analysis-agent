@@ -55,7 +55,9 @@ def report_refs(task, evidence, scope):
     keys = report_contract(task)[0]
     refs = [(e["id"], key) for e in evidence for key in keys(e["payload"])]
     if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-        from app.diagnosis.completion_v15 import required_detail_refs
+        from app.commerce.answer_versions import completion_module
+
+        required_detail_refs = completion_module(task["parameters"]).required_detail_refs
 
         refs = list(dict.fromkeys([*refs, *required_detail_refs(task["query"], evidence, scope)]))
     if task["graph_version"] in {"diagnosis-v14", "diagnosis-v15", "diagnosis-v16"}:
@@ -98,9 +100,9 @@ def report_refs(task, evidence, scope):
                 from app.diagnosis.planner_v14 import component_obligations
 
                 if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-                    from app.diagnosis.completion_v15 import (
-                        value_obligations as component_obligations,
-                    )
+                    from app.commerce.answer_versions import completion_module
+
+                    component_obligations = completion_module(task["parameters"]).value_obligations
 
         required = {
             i["fact_key"]
@@ -135,7 +137,9 @@ def display_gaps(task, evidence, scope):
             from app.diagnosis.planner_v14 import component_obligations
 
             if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-                from app.diagnosis.completion_v15 import value_obligations as component_obligations
+                from app.commerce.answer_versions import completion_module
+
+                component_obligations = completion_module(task["parameters"]).value_obligations
 
     selected = set(report_refs(task, evidence, scope))
     shown = {
@@ -151,7 +155,9 @@ def display_gaps(task, evidence, scope):
     ]
     gaps = ["报告展示容量不足，未展示必答项：" + "、".join(omitted)] if omitted else []
     if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-        from app.diagnosis.completion_v15 import required_detail_refs
+        from app.commerce.answer_versions import completion_module
+
+        required_detail_refs = completion_module(task["parameters"]).required_detail_refs
 
         detail_missing = set(required_detail_refs(task["query"], evidence, scope)) - selected
         if detail_missing:
@@ -256,7 +262,9 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
             from app.diagnosis.planner_v14 import component_obligations
 
             if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-                from app.diagnosis.completion_v15 import value_obligations as component_obligations
+                from app.commerce.answer_versions import completion_module
+
+                component_obligations = completion_module(task["parameters"]).value_obligations
 
         report.update(
             request_contract=task["parameters"]["answer_contract"],
@@ -285,7 +293,14 @@ def make_report(task, bundle, evidence, steps, scope, stop_reason, open_question
         if sum(len(e["payload"].get("items", [])) for e in evidence) > 40:
             report["limitations"].append("观察展示受50条上限约束，完整逐SKU状态保留在证据中。")
     if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-        from app.diagnosis.completion_v15 import amount_witness, completion, data_gaps
+        from app.commerce.answer_versions import completion_module
+
+        semantic = completion_module(task["parameters"])
+        amount_witness, completion, data_gaps = (
+            semantic.amount_witness,
+            semantic.completion,
+            semantic.data_gaps,
+        )
 
         report["answer_completion"] = completion(
             task["query"], evidence, scope, steps, report=report, stop_reason=report["stop_reason"]
@@ -405,7 +420,9 @@ def validate_report(report, task, bundle, evidence, steps):
                 catalog = task["parameters"]["answer_contract"]["entity_catalog"]
             expected_scope = scope_v3(task["query"], bundle, catalog)
             if task["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-                from app.commerce.answer_contract_v4 import bound_request as bind_v3
+                from app.commerce.answer_versions import contract_module
+
+                bind_v3 = contract_module(task["parameters"]).bound_request
             expected_contract = bind_v3(task["query"], bundle, catalog)
         else:
             expected_scope = v13_scope(task["query"], bundle)

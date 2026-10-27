@@ -1,0 +1,60 @@
+{
+  "implementation_sha256": "6e2308f2cfcbc3a36c0ef64000bff22ef7a75056e6f8766a4ff4adc952073ef4",
+  "source_files": 267,
+  "local_verification_passed": true,
+  "provider_requests": 0,
+  "paid_tokens": 0,
+  "backend_passed": 1420,
+  "chrome_demo_passed": 19,
+  "mutants_killed": 9,
+  "legacy_grades_unchanged": 267,
+  "protected_files_unchanged": 330,
+  "G6": "NOT_RELEASED",
+  "G7": "EXCLUDED",
+  "evidence_files": [
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/postgres-full.log",
+      "sha256": "486e5fc6fbc8d6a1ee5f53dc8d217665285e53dabc8076614bf2ed75c322ee00"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/network-full.json",
+      "sha256": "82296b934b2d3baea71ddffeafee810d264bceb674005a71e4ec071578c65def"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/chrome.log",
+      "sha256": "c6f33afa103b7e534637842cecf1fb4f5db90f7d43d1e094554f8d85bb8d4edd"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/browser-evidence.json",
+      "sha256": "28c014e3aae572ca3007aa6669a7df5a2f2f7e0460e10ab5303f214a311553f5"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/frontend-build.log",
+      "sha256": "e82e234d1b5d5e96aec7bce1d3ee5fdf6a495ce2965920663a258c5bad910c3a"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/frontend-format.log",
+      "sha256": "2a1baaff6534d8995cd4a41e4d940115f9b559dfd53fd24f1f19e267e7704cef"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/mutation-results.json",
+      "sha256": "637c60af43aadcc46406cd2e6ca6a03b465777ce3acb05ca88fb8ebc1b853ff5"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/legacy-regrade-final.json",
+      "sha256": "99cce23da7d64de8eb523d497454f4afa4f9321ea343ac3b836caff3b0bef604"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/history-protection.json",
+      "sha256": "143216b45dc80dafa3fa8077537c93503b70f2caa1b9b5d51b218560331a2476"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "file": "/Users/zzds/Workspace/gitStore/commerce-analysis-agent/docs/acceptance/boundary-formal-repair-20261027/ruff-format-final.log",
+      "sha256": "30c689af56ee22d48140f955e1f13df80526cddcc8deda9c44c1a6b9a9271c51"
+    }
+  ]
+}

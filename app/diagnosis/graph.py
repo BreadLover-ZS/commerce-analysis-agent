@@ -243,15 +243,22 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
 
     v15 = task["graph_version"] in {V15["graph_version"], V16["graph_version"]}
     if v15:
+        from app.commerce.answer_versions import boundary_version, completion_module
         from app.diagnosis import planner_v10, planner_v15
-        from app.diagnosis.completion_v15 import completion
         from app.diagnosis.proposals_v3 import correction
         from app.diagnosis.proposals_v3 import proposal_schema as schema_factory
 
+        if boundary_version(task["parameters"]) == 2:
+            from app.diagnosis import planner_boundary_v2 as planner_v15
+        completion = completion_module(task["parameters"]).completion
         proposal_schema = schema_factory(task)
         propose_fn, prompt_fn = planner_v15.demo_proposal, planner_v15.prompt
         if task["graph_version"] == V16["graph_version"]:
-            from app.diagnosis.planner_v16 import prompt as prompt_fn
+            from functools import partial
+
+            from app.diagnosis.planner_v16 import prompt as v16_prompt
+
+            prompt_fn = partial(v16_prompt, base_prompt=planner_v15.prompt)
         gaps_fn, computable_fn = planner_v15.missing_coverage, planner_v15.computable_gap_tools
         objectives_fn, unsupported_fn = planner_v15.objectives, planner_v15.unsupported_question
         scope_fn = planner_v15.initial_scope
@@ -407,10 +414,16 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         model_call_id = None
         invalid = False
         if calls:
+            if task["parameters"]["budget"].get("stop_after_model_failure") and any(
+                s["status"] in {"REJECTED", "FAILED"} for s in data["steps"]
+            ):
+                return {"stop_reason": "invalid_decision"}
             limit = min(
                 12, settings.max_model_calls, task["parameters"]["budget"]["max_model_calls"]
             )
-            decision_limit = limit - 3 if limit >= 4 else limit
+            from app.diagnosis.planner_budget import decision_limit as model_decision_limit
+
+            decision_limit = model_decision_limit(limit, task["parameters"]["budget"])
             recovered = await calls.recover(proposal_schema, step_id=f"step-{sequence}")
             if recovered is None and data["task"]["metrics"]["model_calls"] >= decision_limit:
                 return {"stop_reason": "model_budget"}
@@ -688,7 +701,9 @@ def build_diagnosis(repo, settings, ctx, checkpointer, model=None):
         stop = state.get("stop_reason")
         if len(rejected) == 2 and all(s["status"] == "REJECTED" for s in rejected):
             stop = stop or "invalid_decision"
-        elif no_information >= 2:
+        elif no_information >= (
+            1 if calls and task["parameters"]["budget"].get("stop_after_model_failure") else 2
+        ):
             stop = stop or "no_information"
         elif state["sequence"] >= 8:
             stop = stop or "step_budget"

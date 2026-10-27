@@ -167,6 +167,8 @@ VERSION_CONTRACTS = {
     },
 }
 ASSERTIONS = {
+    "boundary_semantics_version",
+    "v5_not_applicable_not_claimed_missing",
     "immutable_source_versions",
     "comparison_net_displayed",
     "multi_sku_daily_covered",
@@ -463,6 +465,16 @@ def single_sku_decomposition(business, sources, report):
     )
 
 
+def answer_checks(task):
+    if task.get("parameters", {}).get("answer_boundary_version", 1) == 2:
+        from evaluations import diagnosis_request_checks_v4
+
+        return diagnosis_request_checks_v4
+    from evaluations import diagnosis_request_checks_v3
+
+    return diagnosis_request_checks_v3
+
+
 def grade(case, bundle, run, *, semantic_contract=None):
     """All declared assertions must be recognized and evaluated; unknown fails closed."""
     expected = case.expected
@@ -557,7 +569,8 @@ def grade(case, bundle, run, *, semantic_contract=None):
             task.get("graph_version") in {"diagnosis-v15", "diagnosis-v16"}
             and not semantic_contract
         ):
-            from evaluations.diagnosis_request_checks_v3 import boundary_request, reported_status
+            checker = answer_checks(task)
+            boundary_request, reported_status = checker.boundary_request, checker.reported_status
 
             if (
                 boundary_request(case.query)
@@ -610,7 +623,7 @@ def grade(case, bundle, run, *, semantic_contract=None):
             }:
                 import re
 
-                from evaluations.diagnosis_request_checks_v3 import amount_identity
+                amount_identity = answer_checks(task).amount_identity
 
                 if (
                     not independent
@@ -927,7 +940,7 @@ def grade(case, bundle, run, *, semantic_contract=None):
         }
         and case.execution == "diagnostic"
     ):
-        from evaluations.diagnosis_request_checks_v3 import completion_checks as v3_completion
+        v3_completion = answer_checks(task).completion_checks
 
         selected = (
             [case.harness.clarification_choice]
@@ -935,7 +948,8 @@ def grade(case, bundle, run, *, semantic_contract=None):
             else expected_scope
         )
         v13_checks = v3_completion(business, report, sources, selected)
-        from evaluations.diagnosis_request_checks_v3 import boundary_request, reported_status
+        checker = answer_checks(task)
+        boundary_request, reported_status = checker.boundary_request, checker.reported_status
 
         rule = (semantic_contract or {}).get("cases", {}).get(case.case_id, {})
         statuses = rule.get("answer_statuses") or (
@@ -952,6 +966,18 @@ def grade(case, bundle, run, *, semantic_contract=None):
         )
         v13_checks["v15_expected_answer_status"] = reported_status(report) in statuses
         checks.update(v13_checks)
+    if task.get("parameters", {}).get("answer_boundary_version", 1) == 2 and report:
+        checks["boundary_semantics_version"] = (
+            all(
+                p.get("answer_boundary_version") == 2
+                and p.get("answer_contract", {}).get("version") == "answer-contract-v5"
+                for p in sources
+                if p.get("review_profile") == "commerce_review"
+            )
+            if fixed
+            else report.get("request_contract", {}).get("version") == "answer-contract-v5"
+        )
+        v13_checks["boundary_semantics_version"] = checks["boundary_semantics_version"]
     mandatory = declared | {"expected_outcome"} | set(v13_checks)
     if case.execution == "diagnostic":
         mandatory |= {

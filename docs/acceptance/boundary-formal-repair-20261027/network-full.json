@@ -1,0 +1,6 @@
+{
+  "external_attempts_blocked": 0,
+  "hosts": [],
+  "provider_requests": 0,
+  "loopback_and_unix_sockets_permitted": true
+}

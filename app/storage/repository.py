@@ -172,12 +172,25 @@ class Repository:
             return item.id
 
     def _bounded_commerce_budget(self):
+        if (
+            self.settings.model_decision_reserve != 3
+            and self.settings.model_decision_reserve >= min(12, self.settings.max_model_calls)
+        ):
+            raise ValueError("decision_reserve_must_be_below_call_limit")
         return {
             "max_tool_calls": min(10, self.settings.max_tool_calls),
             "max_model_calls": min(12, self.settings.max_model_calls),
             "max_tokens": self.settings.max_tokens,
             "max_runtime_seconds": self.settings.max_runtime_seconds,
             "max_attempts": self.settings.max_attempts,
+            **(
+                {"decision_call_reserve": self.settings.model_decision_reserve}
+                if self.settings.model_decision_reserve != 3
+                else {}
+            ),
+            **(
+                {"stop_after_model_failure": True} if self.settings.stop_after_model_failure else {}
+            ),
         }
 
     def create_task(self, user, request, idempotency_key):
@@ -189,6 +202,11 @@ class Repository:
             payload.pop("parent_task_id", None)
         if request.profile == "commerce_review":
             payload["review_answer_version"] = self.settings.commerce_review_answer_version
+            if (
+                self.settings.commerce_review_answer_version >= 4
+                and self.settings.answer_boundary_version == 2
+            ):
+                payload["answer_boundary_version"] = 2
         fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
         with self.session() as db:
             # Serialize admission per user in PostgreSQL, including duplicates.
@@ -236,6 +254,11 @@ class Repository:
                 versions = accepted_versions(
                     request.query, request.sources, self.settings.diagnosis_runtime
                 )
+                if (
+                    versions["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}
+                    and self.settings.answer_boundary_version == 2
+                ):
+                    payload["answer_boundary_version"] = 2
                 payload.update(
                     start_date=period["start"],
                     end_date=period["end"],
@@ -264,7 +287,9 @@ class Repository:
                             ]
                     else:
                         if versions["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}:
-                            from app.commerce.answer_contract_v4 import bound_request as bind_v4
+                            from app.commerce.answer_versions import contract_module
+
+                            bind_v4 = contract_module(payload).bound_request
 
                             payload["answer_contract"] = bind_v4(
                                 request.query, bundle.payload, diagnosis_sales.payload["products"]
@@ -319,6 +344,11 @@ class Repository:
                         else REVIEW_BUNDLE_VERSIONS
                     ),
                 )
+                if (
+                    versions["graph_version"] in {"diagnosis-v15", "diagnosis-v16"}
+                    and self.settings.answer_boundary_version == 2
+                ):
+                    payload["answer_boundary_version"] = 2
                 payload.update(
                     start_date=period["start"],
                     end_date=period["end"],
@@ -373,6 +403,7 @@ class Repository:
                     "answer_contract",
                     "accounting_protocol",
                     "explanation_contract",
+                    "answer_boundary_version",
                 }
                 prior_hash_valid = (
                     hashlib.sha256(
